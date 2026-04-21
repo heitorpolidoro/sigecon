@@ -1,13 +1,17 @@
 version = 1
+test_patterns = ["backend/tests/**", "frontend/src/**/*.test.ts", "frontend/src/**/*.test.tsx"]
 
 [[analyzers]]
 name = "python"
-backend = "python"
-version = "1.0.0"
-
-[transformers]
 enabled = true
 
-[test-case]
+  [analyzers.meta]
+  runtime_version = "3.13.x"
+
+[[analyzers]]
+name = "test-coverage"
 enabled = true
-pattern = "tests/**"
+
+[[analyzers]]
+name = "secrets"
+enabled = true

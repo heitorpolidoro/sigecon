@@ -1,5 +1,4 @@
 import React from 'react';
-import apiClient from '../../api/client';
 import { TaskRead, TaskStatus, TaskPriority } from '../types';
 import TaskCard from './TaskCard';
 import styles from './TaskList.module.css';
@@ -8,7 +7,7 @@ interface TaskListProps {
   tasks: TaskRead[];
   isLoading: boolean;
   isError: boolean;
-  error: any;
+  error: Error | null;
   filters: {
     status?: TaskStatus | null;
     priority?: TaskPriority | null;

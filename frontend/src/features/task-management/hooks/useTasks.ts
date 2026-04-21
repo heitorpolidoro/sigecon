@@ -20,8 +20,6 @@ const fetchTasks = async (options: FetchTasksOptions): Promise<TaskRead[]> => {
 };
 
 export const useTasks = (options: FetchTasksOptions) => {
-  const queryClient = useQueryClient();
-
   return useQuery<TaskRead[], Error>({
     queryKey: ['tasks', options], // Inclui options na chave para re-fetch quando filtros mudam
     queryFn: () => fetchTasks(options),
