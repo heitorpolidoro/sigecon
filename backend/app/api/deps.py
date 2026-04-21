@@ -18,10 +18,28 @@ def get_current_user(
     session: Annotated[Session, Depends(get_session)],
     token: Annotated[str, Depends(reusable_oauth2)]
 ) -> User:
-    try:
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+    # Try all available secret keys for rotation support
+    all_keys = [settings.SECRET_KEY] + settings.SECRET_KEYS
+    payload = None
+    last_error = None
+    
+    for key in all_keys:
+        try:
+            payload = jwt.decode(
+                token, key, algorithms=[settings.ALGORITHM]
+            )
+            break
+        except (JWTError, ValidationError, ValueError) as e:
+            last_error = e
+            continue
+            
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
         )
+        
+    try:
         user_id: str = payload.get("sub")
         if user_id is None:
             raise HTTPException(
@@ -29,7 +47,7 @@ def get_current_user(
                 detail="Could not validate credentials",
             )
         token_data = uuid.UUID(user_id)
-    except (JWTError, ValidationError, ValueError):
+    except (ValidationError, ValueError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",

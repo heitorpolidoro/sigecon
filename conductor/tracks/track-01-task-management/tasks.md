@@ -4,7 +4,7 @@ Este documento decompõe o plano de implementação do Track 01 em tarefas granu
 
 ## 1. Backend (FastAPI, SQLModel, Migrations)
 
-### [ ] Task 1.1: Database Schema & SQLModel Definitions
+### [x] Task 1.1: Database Schema & SQLModel Definitions
 - **Description:** Define the `Task` and `TaskHistory` models using SQLModel, including enums for status and priority.
 - **Traceability:** Plan Section 2.1, Spec Success Criteria (History, Status).
 - **Definition of Done:** 
@@ -14,7 +14,7 @@ Este documento decompõe o plano de implementação do Track 01 em tarefas granu
     - Initial migration generated and applied using Alembic.
 - **Estimated Effort:** 1 day.
 
-### [ ] Task 1.2: Base CRUD Endpoints for Tasks
+### [x] Task 1.2: Base CRUD Endpoints for Tasks
 - **Description:** Implement `GET /api/v1/tasks` (List) and `POST /api/v1/tasks` (Create) endpoints.
 - **Traceability:** Plan Section 3, Spec User Stories 1 & 2.
 - **Definition of Done:** 
@@ -23,7 +23,7 @@ Este documento decompõe o plano de implementação do Track 01 em tarefas granu
     - Basic unit tests for schemas and endpoint validation passing.
 - **Estimated Effort:** 1-2 days.
 
-### [ ] Task 1.3: Task Update Logic with History Logging
+### [x] Task 1.3: Task Update Logic with History Logging
 - **Description:** Implement `PATCH /api/v1/tasks/{id}` and the service logic to automatically log changes in `TaskHistory`.
 - **Traceability:** Plan Section 3 & 7, Spec Success Criteria (History).
 - **Definition of Done:** 
@@ -32,7 +32,7 @@ Este documento decompõe o plano de implementação do Track 01 em tarefas granu
     - Integration test confirming history entry creation upon task update.
 - **Estimated Effort:** 2 days.
 
-### [ ] Task 1.4: RBAC & Security Implementation
+### [x] Task 1.4: RBAC & Security Implementation
 - **Description:** Secure endpoints with JWT and implement Role-Based Access Control (RBAC) for Task operations.
 - **Traceability:** Plan Section 5, Spec Audience.
 - **Definition of Done:** 
