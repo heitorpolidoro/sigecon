@@ -39,7 +39,7 @@ def list_tasks(
     Diretores podem ver todas as tarefas.
     Funcionários podem ver apenas as tarefas atribuídas a eles.
     """
-    statement = select(Task).where(Task.is_deleted == False)
+    statement = select(Task).where(Task.is_deleted.is_(False))
     
     if current_user.role != UserRole.DIRETOR:
         statement = statement.where(Task.assigned_to_id == current_user.id)
