@@ -16,5 +16,6 @@ branches:
           - "SonarCloud Code Analysis"
           - "DeepSource: Test coverage"
           - "DeepSource: Secrets"
-          - "build"
+          - "Backend (Python 3.14)"
+          - "Frontend (Node.js)"
 # Refreshed after visibility change
