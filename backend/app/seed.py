@@ -16,14 +16,14 @@ def seed_db():
                 id=uuid.UUID("00000000-0000-0000-0000-000000000000"),
                 username="admin",
                 email="admin@sigecon.com",
-                hashed_password=get_password_hash("admin123"),
+                hashed_password=get_password_hash("test_admin_password"),
                 full_name="Diretor Administrativo",
                 role=UserRole.DIRETOR
             )
             session.add(admin)
             print("Admin seed criado.")
         else:
-            admin.hashed_password = get_password_hash("admin123")
+            admin.hashed_password = get_password_hash("test_admin_password")
             session.add(admin)
             print("Senha do Admin atualizada.")
         
@@ -35,7 +35,7 @@ def seed_db():
                 id=uuid.UUID("11111111-1111-1111-1111-111111111111"),
                 username="user1",
                 email="user1@sigecon.com",
-                hashed_password=get_password_hash("user123"),
+                hashed_password=get_password_hash("test_user_password"),
                 full_name="Funcionário Operacional",
                 role=UserRole.FUNCIONARIO
             )

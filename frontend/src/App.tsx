@@ -1,4 +1,3 @@
-import React from 'react';
 import TaskDashboard from './features/task-management/components/TaskDashboard';
 import './App.css';
 

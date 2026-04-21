@@ -1,6 +1,6 @@
 import React from 'react';
-import apiClient from '../../api/client';
-import { TaskRead, TaskStatus, TaskPriority } from '../types';
+import type { TaskRead } from '../types';
+import { TaskStatus, TaskPriority } from '../types';
 import TaskCard from './TaskCard';
 import styles from './TaskList.module.css';
 
@@ -8,7 +8,7 @@ interface TaskListProps {
   tasks: TaskRead[];
   isLoading: boolean;
   isError: boolean;
-  error: any;
+  error: Error | null;
   filters: {
     status?: TaskStatus | null;
     priority?: TaskPriority | null;
@@ -22,7 +22,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, isLoading, isError, error, f
   }
 
   if (isError) {
-    return <div className={styles.message}>Error loading tasks: {error.message}</div>;
+    return <div className={styles.message}>Error loading tasks: {error?.message}</div>;
   }
 
   if (tasks.length === 0) {

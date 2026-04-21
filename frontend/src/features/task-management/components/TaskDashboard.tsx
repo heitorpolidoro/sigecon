@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { TaskStatus, TaskPriority } from '../types';
 import TaskList from './TaskList';
 import styles from './TaskDashboard.module.css';
-import { useTasks, useInvalidateTasks } from '../hooks/useTasks';
-import { useQueryClient } from '@tanstack/react-query';
+import { useTasks } from '../hooks/useTasks';
 
 const TaskDashboard: React.FC = () => {
   const [filters, setFilters] = useState<{
@@ -15,7 +14,6 @@ const TaskDashboard: React.FC = () => {
   });
 
   const { data: tasks, isLoading, isError, error } = useTasks(filters);
-  const invalidateTasks = useInvalidateTasks(); // Hook para invalidar o cache e forçar refresh
 
   const handleFilterChange = (filterType: 'status' | 'priority', value: TaskStatus | TaskPriority | null) => {
     setFilters(prevFilters => ({

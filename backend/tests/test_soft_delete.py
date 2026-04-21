@@ -11,7 +11,7 @@ def get_token(client, username, password):
     return response.json()["access_token"]
 
 def test_soft_delete_flow(client: TestClient, session: Session, admin_user):
-    token = get_token(client, "admin", "admin123")
+    token = get_token(client, "admin", "test_admin_password")
     
     # 1. Create a task
     create_response = client.post(
@@ -53,7 +53,7 @@ def test_soft_delete_flow(client: TestClient, session: Session, admin_user):
 
 def test_delete_unauthorized(client: TestClient, session: Session, normal_user, admin_user):
     # Create task as admin
-    admin_token = get_token(client, "admin", "admin123")
+    admin_token = get_token(client, "admin", "test_admin_password")
     create_response = client.post(
         "/api/v1/tasks/",
         headers={"Authorization": f"Bearer {admin_token}"},
@@ -62,7 +62,7 @@ def test_delete_unauthorized(client: TestClient, session: Session, normal_user, 
     task_id = create_response.json()["id"]
     
     # Try to delete as normal user
-    user_token = get_token(client, "user1", "user123")
+    user_token = get_token(client, "user1", "test_user_password")
     delete_response = client.delete(
         f"/api/v1/tasks/{task_id}",
         headers={"Authorization": f"Bearer {user_token}"}

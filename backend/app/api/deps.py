@@ -21,7 +21,6 @@ def get_current_user(
     # Try all available secret keys for rotation support
     all_keys = [settings.SECRET_KEY] + settings.SECRET_KEYS
     payload = None
-    last_error = None
     
     for key in all_keys:
         try:
@@ -29,8 +28,7 @@ def get_current_user(
                 token, key, algorithms=[settings.ALGORITHM]
             )
             break
-        except (JWTError, ValidationError, ValueError) as e:
-            last_error = e
+        except (JWTError, ValidationError, ValueError):
             continue
             
     if payload is None:
@@ -54,9 +52,15 @@ def get_current_user(
         )
     user = session.get(User, token_data)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="User not found"
+        )
     if not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Inactive user"
+        )
     return user
 
 def get_current_active_director(

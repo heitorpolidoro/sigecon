@@ -8,7 +8,7 @@ on:
 
 jobs:
   backend:
-    name: Backend (Python 3.14)
+    name: Backend (Python 3.13)
     runs-on: ubuntu-latest
     env:
       SECRET_KEY: "test-secret-key-for-ci"
@@ -28,8 +28,8 @@ jobs:
         enable-cache: true
         package-directory: backend
 
-    - name: Set up Python 3.14
-      run: uv python install 3.14
+    - name: Set up Python 3.13
+      run: uv python install 3.13
 
     - name: Install dependencies
       run: |

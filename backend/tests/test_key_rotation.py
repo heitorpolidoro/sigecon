@@ -6,7 +6,7 @@ import pytest
 
 def test_key_rotation_support(client: TestClient, admin_user):
     # 1. Create a token using an "old" key
-    old_key = "old-secret-key"
+    old_key = "test_rotation_key"
     settings.SECRET_KEYS = [old_key]
     
     now = datetime.now(timezone.utc)

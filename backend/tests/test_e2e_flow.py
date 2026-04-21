@@ -11,7 +11,7 @@ def get_token(client, username, password):
 
 def test_e2e_task_lifecycle(client: TestClient, session: Session, admin_user, normal_user):
     # 1. Login as Admin
-    admin_token = get_token(client, "admin", "admin123")
+    admin_token = get_token(client, "admin", "test_admin_password")
     
     # 2. Create Task
     create_resp = client.post(
@@ -28,7 +28,7 @@ def test_e2e_task_lifecycle(client: TestClient, session: Session, admin_user, no
     task_id = create_resp.json()["id"]
     
     # 3. List Tasks as Normal User
-    user_token = get_token(client, "user1", "user123")
+    user_token = get_token(client, "user1", "test_user_password")
     list_resp = client.get(
         "/api/v1/tasks/",
         headers={"Authorization": f"Bearer {user_token}"}
