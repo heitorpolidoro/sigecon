@@ -8,6 +8,9 @@ from app.models.user import User
 from app.models.enums import UserRole
 import uuid
 
+# Disable rate limiting for tests
+app.state.limiter.enabled = False
+
 @pytest.fixture(name="session")
 def session_fixture():
     engine = create_engine(

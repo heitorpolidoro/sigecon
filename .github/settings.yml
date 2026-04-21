@@ -26,9 +26,9 @@ branches:
           - "SonarCloud Code Analysis"
           - "DeepSource: Test coverage"
           - "DeepSource: Secrets"
-          - "Backend (Python 3.14)"
+          - "Backend (Python 3.13)"
           - "Frontend (Node.js)"
-      enforce_admins: false
+      enforce_admins: true
       required_conversation_resolution: true
       restrictions:
         users:
