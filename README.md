@@ -5,7 +5,7 @@ Este projeto é uma aplicação web desenvolvida para gerenciar tarefas, permiti
 ## Tecnologias Utilizadas
 
 ### Backend
-*   **Linguagem:** Python 3.13
+*   **Linguagem:** Python 3.14
 *   **Framework:** FastAPI
 *   **ORM:** SQLModel (com SQLAlchemy)
 *   **Banco de Dados:** PostgreSQL
