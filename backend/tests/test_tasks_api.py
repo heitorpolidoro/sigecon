@@ -21,7 +21,8 @@ def test_get_task_not_found(client: TestClient, session: Session, admin_user):
         json={"title": "New Title"}
     )
     assert response.status_code == 404
-    assert response.json()["detail"] == "Task not found"
+    assert "not found" in response.json()["detail"]
+    assert str(random_id) in response.json()["detail"]
 
 def test_create_task_validation_error(client: TestClient, session: Session, admin_user):
     token = get_token(client, "admin", "admin123")

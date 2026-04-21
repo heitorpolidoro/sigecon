@@ -9,11 +9,15 @@ from app.core.config import settings
 from app.db import get_session
 from app.models.user import User
 from app.schemas.token import Token
+from app.core.limiter import limiter
+from fastapi import Request
 
 router = APIRouter()
 
 @router.post("/login", response_model=Token)
+@limiter.limit("5/minute")
 def login_access_token(
+    request: Request,
     session: Annotated[Session, Depends(get_session)],
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> Any:

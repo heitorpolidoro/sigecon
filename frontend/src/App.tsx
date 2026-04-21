@@ -1,12 +1,13 @@
-import TaskDashboard from './TaskDashboard'
-import './App.css'
+import React from 'react';
+import TaskDashboard from './features/task-management/components/TaskDashboard';
+import './App.css';
 
 function App() {
   return (
     <div className="App">
       <TaskDashboard />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
