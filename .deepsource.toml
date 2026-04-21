@@ -1,0 +1,13 @@
+version = 1
+
+[[analyzers]]
+name = "python"
+backend = "python"
+version = "1.0.0"
+
+[transformers]
+enabled = true
+
+[test-case]
+enabled = true
+pattern = "tests/**"
