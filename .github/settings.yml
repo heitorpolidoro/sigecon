@@ -1,0 +1,18 @@
+_extends: .github
+repository:
+  name: sigecon
+  description: Sistema de Gestão de Controle de Tarefas
+  topics: python, fastapi, task-management, sqlmodel
+  has_projects: true
+
+branches:
+  - name: master
+    protection:
+      required_status_checks:
+        contexts:
+          - "GitGuardian Security Checks"
+          - "SonarCloud"
+          - "SonarCloud Code Analysis"
+          - "DeepSource: Test coverage"
+          - "DeepSource: Secrets"
+          - "build"
