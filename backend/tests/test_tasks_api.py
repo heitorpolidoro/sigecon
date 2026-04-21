@@ -13,7 +13,7 @@ def get_token(client, username, password):
     return response.json()["access_token"]
 
 def test_get_task_not_found(client: TestClient, session: Session, admin_user):
-    token = get_token(client, "admin", "admin123")
+    token = get_token(client, "admin", "test_admin_password")
     random_id = uuid.uuid4()
     response = client.patch(
         f"/api/v1/tasks/{random_id}",
@@ -25,7 +25,7 @@ def test_get_task_not_found(client: TestClient, session: Session, admin_user):
     assert str(random_id) in response.json()["detail"]
 
 def test_create_task_validation_error(client: TestClient, session: Session, admin_user):
-    token = get_token(client, "admin", "admin123")
+    token = get_token(client, "admin", "test_admin_password")
     # Title is required and must be min_length 1
     response = client.post(
         "/api/v1/tasks/",
@@ -35,7 +35,7 @@ def test_create_task_validation_error(client: TestClient, session: Session, admi
     assert response.status_code == 422
 
 def test_update_task_validation_error(client: TestClient, session: Session, admin_user):
-    token = get_token(client, "admin", "admin123")
+    token = get_token(client, "admin", "test_admin_password")
     
     # Create a task first
     response = client.post(

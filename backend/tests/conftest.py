@@ -37,7 +37,7 @@ def admin_user_fixture(session: Session):
         username="admin",
         email="admin@test.com",
         full_name="Admin User",
-        hashed_password=get_password_hash("admin123"),
+        hashed_password=get_password_hash("test_admin_password"),
         role=UserRole.DIRETOR
     )
     session.add(user)
@@ -51,7 +51,7 @@ def normal_user_fixture(session: Session):
         username="user1",
         email="user1@test.com",
         full_name="Normal User",
-        hashed_password=get_password_hash("user123"),
+        hashed_password=get_password_hash("test_user_password"),
         role=UserRole.FUNCIONARIO
     )
     session.add(user)

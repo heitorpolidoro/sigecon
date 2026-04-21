@@ -11,7 +11,7 @@ def get_token(client, username, password):
     return response.json()["access_token"]
 
 def test_list_tasks_filters(client: TestClient, session: Session, admin_user, normal_user):
-    token = get_token(client, "admin", "admin123")
+    token = get_token(client, "admin", "test_admin_password")
     
     # Create tasks with different properties
     client.post("/api/v1/tasks/", headers={"Authorization": f"Bearer {token}"}, 
