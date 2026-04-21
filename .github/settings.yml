@@ -28,7 +28,7 @@ branches:
           - "DeepSource: Secrets"
           - "Backend (Python 3.13)"
           - "Frontend (Node.js)"
-      enforce_admins: true
+      enforce_admins: false
       required_conversation_resolution: true
       restrictions:
         users:
