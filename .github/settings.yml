@@ -30,4 +30,6 @@ branches:
           - "Frontend (Node.js)"
       enforce_admins: false
       required_conversation_resolution: true
-      restrictions: null
+      restrictions:
+        users:
+          - heitorpolidoro
