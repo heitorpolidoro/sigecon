@@ -1,5 +1,15 @@
 version = 1
+exclude_patterns = ["backend/tests/**", "backend/app/seed.py", "backend/app/seed_visual.py"]
 
 [[analyzers]]
 name = "python"
+enabled = true
+meta = { runtime_version = "3.13" }
+
+[[analyzers]]
+name = "test-coverage"
+enabled = true
+
+[[analyzers]]
+name = "secrets"
 enabled = true
