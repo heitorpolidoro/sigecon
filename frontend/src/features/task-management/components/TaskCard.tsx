@@ -1,5 +1,5 @@
 import React from 'react';
-import { TaskRead } from '../types';
+import type { TaskRead } from '../types';
 import styles from './TaskCard.module.css';
 
 interface TaskCardProps {

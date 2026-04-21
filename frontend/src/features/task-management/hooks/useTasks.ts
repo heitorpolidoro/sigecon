@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import apiClient from '../../api/client';
-import { TaskRead, TaskStatus, TaskPriority } from '../types';
+import apiClient from '../../../api/client';
+import type { TaskRead } from '../types';
+import { TaskStatus, TaskPriority } from '../types';
 
 interface FetchTasksOptions {
   status?: TaskStatus | null;
