@@ -2,12 +2,15 @@ version = 1
 
 [[analyzers]]
 name = "python"
-backend = "python"
-version = "1.0.0"
-
-[transformers]
 enabled = true
 
-[test-case]
+  [analyzers.meta]
+  runtime_version = "3.13"
+  dependency_file_paths = ["backend/pyproject.toml"]
+
+[[analyzers]]
+name = "javascript"
 enabled = true
-pattern = "tests/**"
+
+  [analyzers.meta]
+  dependency_file_paths = ["frontend/package.json"]
