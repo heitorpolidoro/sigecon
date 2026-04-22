@@ -3,10 +3,23 @@ import type { TaskRead } from '../types';
 import styles from './TaskCard.module.css';
 
 interface TaskCardProps {
+  /** The task object to display. */
   task: TaskRead;
 }
 
+/**
+ * Component to display a summary of a task.
+ * 
+ * @param props - Component props containing the task.
+ * @returns A card component with task details.
+ */
 const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
+  /**
+   * Maps a task status to a corresponding CSS color class.
+   * 
+   * @param status - The task status.
+   * @returns The CSS class name for the status color.
+   */
   const getStatusColorClass = (status: string): string => {
     switch (status) {
       case 'PENDING': return styles.pending;
@@ -17,6 +30,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     }
   };
 
+  /**
+   * Maps a task priority to a corresponding CSS color class.
+   * 
+   * @param priority - The task priority.
+   * @returns The CSS class name for the priority color.
+   */
   const getPriorityColorClass = (priority: string): string => {
     switch (priority) {
       case 'LOW': return styles.lowPriority;

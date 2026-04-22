@@ -5,10 +5,15 @@ import TaskCard from './TaskCard';
 import styles from './TaskList.module.css';
 
 interface TaskListProps {
+  /** Array of tasks to display. */
   tasks: TaskRead[];
+  /** Whether the tasks are currently being loaded. */
   isLoading: boolean;
+  /** Whether an error occurred while loading tasks. */
   isError: boolean;
+  /** The error object if an error occurred. */
   error: Error | null;
+  /** Active filters for local filtering. */
   filters: {
     status?: TaskStatus | null;
     priority?: TaskPriority | null;
@@ -16,6 +21,12 @@ interface TaskListProps {
   };
 }
 
+/**
+ * Component to display a list of task cards with loading and error states.
+ * 
+ * @param props - Component props containing tasks, loading state, and filters.
+ * @returns A list of task cards or a status message.
+ */
 const TaskList: React.FC<TaskListProps> = ({ tasks, isLoading, isError, error, filters }) => {
   if (isLoading) {
     return <div className={styles.message}>Loading tasks...</div>;

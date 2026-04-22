@@ -1,16 +1,15 @@
+import uuid
+
 from fastapi.testclient import TestClient
 from sqlmodel import Session
-import uuid
-from app.models.enums import UserRole
-from app.core.security import get_password_hash
-from app.models.user import User
+
 
 def get_token(client, username, password):
     response = client.post(
-        "/api/v1/auth/login",
-        data={"username": username, "password": password}
+        "/api/v1/auth/login", data={"username": username, "password": password}
     )
     return response.json()["access_token"]
+
 
 def test_get_task_not_found(client: TestClient, session: Session, admin_user):
     token = get_token(client, "admin", "test_admin_password")
@@ -18,11 +17,12 @@ def test_get_task_not_found(client: TestClient, session: Session, admin_user):
     response = client.patch(
         f"/api/v1/tasks/{random_id}",
         headers={"Authorization": f"Bearer {token}"},
-        json={"title": "New Title"}
+        json={"title": "New Title"},
     )
     assert response.status_code == 404
     assert "not found" in response.json()["detail"]
     assert str(random_id) in response.json()["detail"]
+
 
 def test_create_task_validation_error(client: TestClient, session: Session, admin_user):
     token = get_token(client, "admin", "test_admin_password")
@@ -30,25 +30,26 @@ def test_create_task_validation_error(client: TestClient, session: Session, admi
     response = client.post(
         "/api/v1/tasks/",
         headers={"Authorization": f"Bearer {token}"},
-        json={"title": ""}
+        json={"title": ""},
     )
     assert response.status_code == 422
 
+
 def test_update_task_validation_error(client: TestClient, session: Session, admin_user):
     token = get_token(client, "admin", "test_admin_password")
-    
+
     # Create a task first
     response = client.post(
         "/api/v1/tasks/",
         headers={"Authorization": f"Bearer {token}"},
-        json={"title": "Valid Task"}
+        json={"title": "Valid Task"},
     )
     task_id = response.json()["id"]
-    
+
     # Update with invalid status
     response = client.patch(
         f"/api/v1/tasks/{task_id}",
         headers={"Authorization": f"Bearer {token}"},
-        json={"status": "INVALID_STATUS"}
+        json={"status": "INVALID_STATUS"},
     )
     assert response.status_code == 422

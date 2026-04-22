@@ -1,8 +1,10 @@
-import pytest
-from app.core import security
-from jose import jwt
-from app.core.config import settings
 import uuid
+
+from jose import jwt
+
+from app.core import security
+from app.core.config import settings
+
 
 def test_password_hashing():
     password = "secret_password"
@@ -10,6 +12,7 @@ def test_password_hashing():
     assert hashed != password
     assert security.verify_password(password, hashed) is True
     assert security.verify_password("wrong_password", hashed) is False
+
 
 def test_create_access_token():
     user_id = uuid.uuid4()

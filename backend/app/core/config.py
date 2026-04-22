@@ -1,8 +1,11 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Settings(BaseSettings):
+    """Application settings loaded from environment variables."""
+
     PROJECT_NAME: str = "SIGECON"
-    
+
     # Database
     DB_HOST: str
     DB_PORT: str
@@ -10,9 +13,15 @@ class Settings(BaseSettings):
     DB_PASSWORD: str
     DB_NAME: str
     SQL_ECHO: bool = False
-    
+
     @property
-    def DATABASE_URL(self) -> str:
+    def database_url(self) -> str:
+        """
+        Construct the database URL from components.
+
+        Returns:
+            str: The full PostgreSQL connection string.
+        """
         return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     # Security
@@ -25,5 +34,6 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:5175", "http://127.0.0.1:5175"]
 
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
+
 
 settings = Settings()

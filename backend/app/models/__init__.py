@@ -1,5 +1,5 @@
-from .enums import TaskStatus, TaskPriority, UserRole
-from .user import User
+from .enums import TaskPriority, TaskStatus, UserRole
 from .task import Task, TaskHistory
+from .user import User
 
-__all__ = ["TaskStatus", "TaskPriority", "UserRole", "User", "Task", "TaskHistory"]
+__all__ = ["Task", "TaskHistory", "TaskPriority", "TaskStatus", "User", "UserRole"]
