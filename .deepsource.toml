@@ -1,0 +1,38 @@
+version = 1
+
+test_patterns = [
+  "backend/tests/**",
+  "frontend/src/**/*.test.{ts,tsx}",
+  "frontend/src/**/*.spec.{ts,tsx}"
+]
+
+exclude_patterns = [
+  "**/node_modules/**",
+  "**/dist/**",
+  "**/.venv/**",
+  "**/__pycache__/**",
+  "backend/alembic/versions/**"
+]
+
+[[analyzers]]
+name = "python"
+enabled = true
+
+  [analyzers.meta]
+  runtime_version = "3.11"
+
+[[analyzers]]
+name = "javascript"
+enabled = true
+
+[[analyzers]]
+name = "typescript"
+enabled = true
+
+[[analyzers]]
+name = "shell"
+enabled = true
+
+[[analyzers]]
+name = "docker"
+enabled = true
