@@ -4,6 +4,12 @@ import TaskList from './TaskList';
 import styles from './TaskDashboard.module.css';
 import { useTasks } from '../hooks/useTasks';
 
+/**
+ * Main dashboard component for managing and viewing tasks.
+ * Includes filters for status and priority.
+ * 
+ * @returns The TaskDashboard component.
+ */
 const TaskDashboard: React.FC = () => {
   const [filters, setFilters] = useState<{
     status: TaskStatus | null;
@@ -15,6 +21,12 @@ const TaskDashboard: React.FC = () => {
 
   const { data: tasks, isLoading, isError, error } = useTasks(filters);
 
+  /**
+   * Updates the active filters.
+   * 
+   * @param filterType - The type of filter to update (status or priority).
+   * @param value - The new filter value.
+   */
   const handleFilterChange = (filterType: 'status' | 'priority', value: TaskStatus | TaskPriority | null) => {
     setFilters(prevFilters => ({
       ...prevFilters,
@@ -22,6 +34,9 @@ const TaskDashboard: React.FC = () => {
     }));
   };
 
+  /**
+   * Resets all filters to their default (null) values.
+   */
   const clearFilters = () => {
     setFilters({ status: null, priority: null });
   };

@@ -21,7 +21,7 @@ def seed_db():
                 email="admin@sigecon.com",
                 hashed_password=get_password_hash("test_admin_password"),
                 full_name="Diretor Administrativo",
-                role=UserRole.DIRETOR
+                role=UserRole.DIRETOR,
             )
             session.add(admin)
             print("Admin seed criado.")
@@ -40,12 +40,13 @@ def seed_db():
                 email="user1@sigecon.com",
                 hashed_password=get_password_hash("test_user_password"),
                 full_name="Funcionário Operacional",
-                role=UserRole.FUNCIONARIO
+                role=UserRole.FUNCIONARIO,
             )
             session.add(user1)
             print("Funcionário seed criado.")
 
         session.commit()
+
 
 if __name__ == "__main__":
     seed_db()

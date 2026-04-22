@@ -10,9 +10,10 @@ def test_password_complexity_valid():
         username="test",
         email="test@example.com",
         full_name="Test User",
-        password="Password123!"
+        password="Password123!",
     )
     assert user.password == "Password123!"
+
 
 def test_password_complexity_invalid():
     # Too short

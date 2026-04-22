@@ -8,6 +8,7 @@ from app.models.task import Task
 
 engine = create_engine(settings.database_url)
 
+
 def seed_data():
     with Session(engine) as session:
         # 1. Garantir que temos usuários para atribuir as tarefas
@@ -23,22 +24,22 @@ def seed_data():
                 description="Realizar a migração dos dados para o novo servidor PostgreSQL 16.",
                 status=TaskStatus.IN_PROGRESS,
                 priority=TaskPriority.HIGH,
-                created_by_id=diretor_id  # Apenas IDs para o seed funcionar sem criar usuários complexos
+                created_by_id=diretor_id,  # Apenas IDs para o seed funcionar sem criar usuários complexos
             ),
             Task(
                 title="Relatório Trimestral",
                 description="Consolidar os gastos do primeiro trimestre para a diretoria.",
                 status=TaskStatus.PENDING,
                 priority=TaskPriority.MEDIUM,
-                created_by_id=diretor_id
+                created_by_id=diretor_id,
             ),
             Task(
                 title="Treinamento de Equipe",
                 description="Treinar novos funcionários no uso do SIGECON.",
                 status=TaskStatus.COMPLETED,
                 priority=TaskPriority.LOW,
-                created_by_id=diretor_id
-            )
+                created_by_id=diretor_id,
+            ),
         ]
 
         # Como o banco tem constraints de FK, vou rodar via SQL direto para simplificar o seed visual
@@ -53,6 +54,7 @@ def seed_data():
 
         session.commit()
         print("✅ Dados de exemplo criados com sucesso!")
+
 
 if __name__ == "__main__":
     seed_data()

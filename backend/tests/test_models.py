@@ -11,11 +11,12 @@ def test_user_model_creation():
         email="test@test.com",
         hashed_password="hash",
         full_name="Test User",
-        role=UserRole.FUNCIONARIO
+        role=UserRole.FUNCIONARIO,
     )
     assert user.username == "testuser"
     assert user.role == UserRole.FUNCIONARIO
     assert user.is_active is True
+
 
 def test_task_model_defaults():
     task = Task(
@@ -26,13 +27,14 @@ def test_task_model_defaults():
     assert task.priority == TaskPriority.MEDIUM
     assert task.created_at is not None
 
+
 def test_task_history_model():
     history = TaskHistory(
         task_id=uuid4(),
         changed_by_id=uuid4(),
         field_name="status",
         old_value="PENDING",
-        new_value="IN_PROGRESS"
+        new_value="IN_PROGRESS",
     )
     assert history.field_name == "status"
     assert history.old_value == "PENDING"

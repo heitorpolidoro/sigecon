@@ -18,8 +18,7 @@ def test_key_rotation_support(client: TestClient, admin_user):
 
     # 2. Try to access an endpoint with this token
     response = client.get(
-        "/api/v1/tasks/",
-        headers={"Authorization": f"Bearer {token}"}
+        "/api/v1/tasks/", headers={"Authorization": f"Bearer {token}"}
     )
 
     # Should be successful because old_key is in settings.SECRET_KEYS
@@ -28,7 +27,6 @@ def test_key_rotation_support(client: TestClient, admin_user):
     # 3. Try with an invalid key
     invalid_token = jwt.encode(to_encode, "wrong-key", algorithm=settings.ALGORITHM)
     response = client.get(
-        "/api/v1/tasks/",
-        headers={"Authorization": f"Bearer {invalid_token}"}
+        "/api/v1/tasks/", headers={"Authorization": f"Bearer {invalid_token}"}
     )
     assert response.status_code == 403

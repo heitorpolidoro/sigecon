@@ -5,6 +5,7 @@ Revises: 5702d6f1d1da
 Create Date: 2026-04-20 19:38:39.942587
 
 """
+
 from collections.abc import Sequence
 
 import sqlalchemy as sa
@@ -32,7 +33,9 @@ def upgrade() -> None:
     op.create_primary_key("taskhistory_pkey", "taskhistory", ["id"])
 
     # Re-create the FK with CASCADE
-    op.create_foreign_key(None, "taskhistory", "task", ["task_id"], ["id"], ondelete="CASCADE")
+    op.create_foreign_key(
+        None, "taskhistory", "task", ["task_id"], ["id"], ondelete="CASCADE"
+    )
 
 
 def downgrade() -> None:
@@ -40,4 +43,6 @@ def downgrade() -> None:
     op.drop_column("taskhistory", "id")
     op.add_column("taskhistory", sa.Column("id", sa.Integer(), nullable=False))
     op.create_primary_key("taskhistory_pkey", "taskhistory", ["id"])
-    op.create_foreign_key("taskhistory_task_id_fkey", "taskhistory", "task", ["task_id"], ["id"])
+    op.create_foreign_key(
+        "taskhistory_task_id_fkey", "taskhistory", "task", ["task_id"], ["id"]
+    )

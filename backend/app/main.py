@@ -16,6 +16,7 @@ def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse
         content={"error": "Rate limit exceeded", "detail": exc.detail},
     )
 
+
 app = FastAPI(title=settings.PROJECT_NAME)
 
 app.state.limiter = limiter
@@ -33,9 +34,11 @@ app.add_middleware(
 
 app.include_router(api_router, prefix="/api/v1")
 
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to SIGECON API"}
+
 
 @app.get("/health")
 def health_check():

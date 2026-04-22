@@ -10,6 +10,12 @@ interface Task {
   due_date?: string;
 }
 
+/**
+ * Dashboard component that displays and manages tasks.
+ * Fetches tasks from the API and provides a list view.
+ * 
+ * @returns React functional component for the Task Dashboard.
+ */
 const TaskDashboard: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);

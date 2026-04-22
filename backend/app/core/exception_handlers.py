@@ -5,6 +5,17 @@ from app.core.exceptions import DomainError, ForbiddenError, TaskNotFoundError
 
 
 async def domain_exception_handler(request: Request, exc: DomainError):  # noqa: ARG001
+    """
+    Global handler for domain-specific exceptions.
+    Converts DomainError subclasses to appropriate HTTP responses.
+
+    Args:
+        request: The incoming FastAPI request.
+        exc: The raised DomainError.
+
+    Returns:
+        JSONResponse: A response with appropriate status code and error message.
+    """
     status_code = status.HTTP_400_BAD_REQUEST
 
     if isinstance(exc, TaskNotFoundError):

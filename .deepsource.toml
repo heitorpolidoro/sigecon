@@ -24,14 +24,12 @@ name = "python"
 enabled = true
   [analyzers.meta]
   runtime_version = "3.x.x"
-  skip_docstrings = true
 
 [[analyzers]]
 name = "javascript"
 enabled = true
   [analyzers.meta]
   dialect = "typescript"
-  skip_docstrings = true
 
 [[analyzers]]
 name = "shell"

@@ -14,6 +14,7 @@ def test_task_create_validation():
     task = TaskCreate(title="Valid", priority=TaskPriority.HIGH)
     assert task.priority == "HIGH"
 
+
 def test_task_update_partial():
     # Update deve permitir apenas um campo
     update = TaskUpdate(status=TaskStatus.COMPLETED)

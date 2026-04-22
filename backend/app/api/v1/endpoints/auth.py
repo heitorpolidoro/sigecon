@@ -1,3 +1,5 @@
+"""Authentication API endpoints."""
+
 from datetime import timedelta
 from typing import Annotated, Any
 
@@ -14,25 +16,40 @@ from app.schemas.token import Token
 
 router = APIRouter()
 
+
 @router.post("/login", response_model=Token)
 @limiter.limit("5/minute")
 def login_access_token(
     request: Request,  # noqa: ARG001
     session: Annotated[Session, Depends(get_session)],
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Any:
+    """OAuth2 compatible token login, get an access token for future requests.
+
+    Args:
+        request: The incoming request object.
+        session: Database session.
+        form_data: OAuth2 password request form containing username and password.
+
+    Returns:
+        Any: A dictionary containing the access token and token type.
+
+    Raises:
+        HTTPException: If credentials are incorrect or user is inactive.
+    """
     statement = select(User).where(User.username == form_data.username)
     user = session.exec(statement).first()
 
-    if not user or not security.verify_password(form_data.password, user.hashed_password):
+    if not user or not security.verify_password(
+        form_data.password, user.hashed_password
+    ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect username or password"
+            detail="Incorrect username or password",
         )
     if not user.is_active:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Inactive user"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
         )
 
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)

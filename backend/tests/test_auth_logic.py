@@ -13,6 +13,7 @@ def test_password_hashing():
     assert security.verify_password(password, hashed) is True
     assert security.verify_password("wrong_password", hashed) is False
 
+
 def test_create_access_token():
     user_id = uuid.uuid4()
     token = security.create_access_token(user_id)
