@@ -2,14 +2,19 @@ version = 1
 
 test_patterns = [
   "backend/tests/**",
-  "frontend/src/**/*.test.{ts,tsx}",
-  "frontend/src/**/*.spec.{ts,tsx}"
+  "frontend/src/**/*.test.ts",
+  "frontend/src/**/*.test.tsx",
+  "frontend/src/**/*.spec.ts",
+  "frontend/src/**/*.spec.tsx"
 ]
 
 exclude_patterns = [
-  "**/node_modules/**",
-  "**/dist/**",
-  "**/.venv/**",
+  "node_modules/**",
+  "frontend/node_modules/**",
+  "dist/**",
+  "frontend/dist/**",
+  ".venv/**",
+  "backend/.venv/**",
   "**/__pycache__/**",
   "backend/alembic/versions/**"
 ]
@@ -17,13 +22,14 @@ exclude_patterns = [
 [[analyzers]]
 name = "python"
 enabled = true
-
-  [analyzers.meta]
-  runtime_version = "3.x.x"
+[analyzers.meta]
+runtime_version = "3.x.x"
 
 [[analyzers]]
 name = "javascript"
 enabled = true
+[analyzers.meta]
+dialect = "typescript"
 
 [[analyzers]]
 name = "shell"
