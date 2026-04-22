@@ -22,10 +22,10 @@ branches:
         strict: true
         contexts:
           - "GitGuardian Security Checks"
-          - "DeepSource: Python"
-          - "DeepSource: JavaScript"
-          - "DeepSource: Shell"
-          - "DeepSource: Docker"
+          - "SonarCloud"
+          - "SonarCloud Code Analysis"
+          - "DeepSource: Test coverage"
+          - "DeepSource: Secrets"
           - "Backend (Python 3.13)"
           - "Frontend (Node.js)"
       enforce_admins: false
