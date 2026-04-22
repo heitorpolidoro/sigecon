@@ -1,6 +1,8 @@
-from uuid import UUID, uuid4
 from typing import TYPE_CHECKING
-from sqlmodel import SQLModel, Field, Relationship
+from uuid import UUID, uuid4
+
+from sqlmodel import Field, Relationship, SQLModel
+
 from .enums import UserRole
 
 if TYPE_CHECKING:
@@ -17,7 +19,7 @@ class User(SQLModel, table=True):
 
     # Relationships
     created_tasks: list["Task"] = Relationship(
-        back_populates="creator", 
+        back_populates="creator",
         sa_relationship_kwargs={"foreign_keys": "Task.created_by_id"}
     )
     assigned_tasks: list["Task"] = Relationship(

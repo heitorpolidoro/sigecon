@@ -24,3 +24,54 @@ dev = [
     "httpx>=0.28.1",
     "pytest>=9.0.3",
 ]
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D",      # Docstrings (opcional para agora)
+    "COM812", # Trailing comma
+    "ANN",    # Type annotations (muito verboso)
+    "FA",     # Future annotations
+    "FIX",    # TODOs
+    "TD",     # TODOs
+    "T20",    # Print statements
+    "EM",     # Error messages
+    "TRY",    # Try-except patterns
+    "FBT",    # Boolean trap
+    "C901",   # Complexidade
+    "RET505", # Unnecessary else after return
+    "RET506",
+    "RET507",
+    "RET508",
+    "PTH",    # Pathlib (os.path é ok)
+    "ISC001", # Implicit string concatenation (conflita com formatter)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "S101",    # Assert em testes
+    "PLR2004", # Magic numbers em testes
+    "S105",    # Hardcoded passwords em testes
+    "S106",    # Hardcoded passwords em testes
+    "ARG001",  # Unused arguments em fixtures/testes (frequente)
+    "E501",    # Line too long em testes
+]
+"alembic/**" = [
+    "INP001", # Namespace package
+    "N806",   # Variable names em migrations
+    "E501",    # Line too long em migrations
+    "ERA001", # Código comentado em env.py
+]
+"app/seed_visual.py" = ["S106", "S101", "T201", "E501", "PLC0415", "INP001"]
+"app/services/task_service.py" = ["PLC0415", "INP001"]
+"app/api/**" = ["INP001", "E501"]
+"app/core/**" = ["INP001", "E501"]
+"app/models/**" = ["INP001"]
+"app/schemas/**" = ["INP001"]
+"app/main.py" = ["INP001"]
+"app/db.py" = ["INP001"]
+"app/seed.py" = ["INP001", "T201"]

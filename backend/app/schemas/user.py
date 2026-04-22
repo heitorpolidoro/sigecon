@@ -1,7 +1,10 @@
 import re
 from uuid import UUID
-from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+
 from app.models.enums import UserRole
+
 
 class UserBase(BaseModel):
     username: str

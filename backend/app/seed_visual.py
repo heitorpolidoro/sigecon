@@ -1,20 +1,22 @@
-from sqlmodel import Session, create_engine
-from app.models.task import Task
-from app.models.enums import TaskStatus, TaskPriority
-from app.core.config import settings
 import uuid
 
-engine = create_engine(settings.DATABASE_URL)
+from sqlmodel import Session, create_engine
+
+from app.core.config import settings
+from app.models.enums import TaskPriority, TaskStatus
+from app.models.task import Task
+
+engine = create_engine(settings.database_url)
 
 def seed_data():
     with Session(engine) as session:
         # 1. Garantir que temos usuários para atribuir as tarefas
         # (Assumindo que o banco pode estar vazio)
         diretor_id = uuid.uuid4()
-        
+
         # Tentamos buscar um usuário existente ou criamos um temporário para o seed
         # Nota: Em um sistema real, usaríamos os IDs reais do DB.
-        
+
         tasks = [
             Task(
                 title="Migração de Servidor",
@@ -38,17 +40,17 @@ def seed_data():
                 created_by_id=diretor_id
             )
         ]
-        
+
         # Como o banco tem constraints de FK, vou rodar via SQL direto para simplificar o seed visual
         # sem precisar criar toda a árvore de usuários agora.
         from sqlalchemy import text
-        
+
         # Desabilita constraints temporariamente para o seed visual (apenas dev)
         session.execute(text("TRUNCATE TABLE task CASCADE;"))
-        
+
         for t in tasks:
             session.add(t)
-        
+
         session.commit()
         print("✅ Dados de exemplo criados com sucesso!")
 

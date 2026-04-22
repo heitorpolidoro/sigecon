@@ -1,10 +1,13 @@
+import uuid
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
-from app.models.user import User
-from app.models.enums import UserRole
+
 from app.core.security import get_password_hash
-import uuid
+from app.models.enums import UserRole
+from app.models.user import User
+
 
 @pytest.fixture(name="test_users")
 def test_users_fixture(session: Session):
@@ -39,7 +42,7 @@ def get_token(client, username, password):
 def test_rbac_task_workflow(client: TestClient, session: Session, test_users):
     dir_token = get_token(client, "director", "pass")
     emp_token = get_token(client, "employee", "pass")
-    
+
     # 1. Funcionário não pode criar tarefas
     response = client.post(
         "/api/v1/tasks/",
@@ -47,7 +50,7 @@ def test_rbac_task_workflow(client: TestClient, session: Session, test_users):
         json={"title": "Unauthorized Task"}
     )
     assert response.status_code == 403
-    
+
     # 2. Diretor cria tarefa para o funcionário
     response = client.post(
         "/api/v1/tasks/",
@@ -59,7 +62,7 @@ def test_rbac_task_workflow(client: TestClient, session: Session, test_users):
     )
     assert response.status_code == 200
     task_id = response.json()["id"]
-    
+
     # 3. Funcionário tenta mudar o TÍTULO (Proibido)
     response = client.patch(
         f"/api/v1/tasks/{task_id}",
@@ -67,7 +70,7 @@ def test_rbac_task_workflow(client: TestClient, session: Session, test_users):
         json={"title": "Hacked Title"}
     )
     assert response.status_code == 403
-    
+
     # 4. Funcionário muda o STATUS (Permitido)
     response = client.patch(
         f"/api/v1/tasks/{task_id}",
@@ -76,7 +79,7 @@ def test_rbac_task_workflow(client: TestClient, session: Session, test_users):
     )
     assert response.status_code == 200
     assert response.json()["status"] == "IN_PROGRESS"
-    
+
     # 5. Verificar se o histórico foi criado
     response = client.get(
         f"/api/v1/tasks/{task_id}/history",

@@ -1,7 +1,9 @@
 from uuid import uuid4
+
+from app.models.enums import TaskPriority, TaskStatus, UserRole
 from app.models.task import Task, TaskHistory
 from app.models.user import User
-from app.models.enums import TaskStatus, TaskPriority, UserRole
+
 
 def test_user_model_creation():
     user = User(

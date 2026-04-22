@@ -1,6 +1,8 @@
+import uuid
+
 from fastapi.testclient import TestClient
 from sqlmodel import Session
-import uuid
+
 
 def get_token(client, username, password):
     response = client.post(
@@ -33,7 +35,7 @@ def test_create_task_validation_error(client: TestClient, session: Session, admi
 
 def test_update_task_validation_error(client: TestClient, session: Session, admin_user):
     token = get_token(client, "admin", "test_admin_password")
-    
+
     # Create a task first
     response = client.post(
         "/api/v1/tasks/",
@@ -41,7 +43,7 @@ def test_update_task_validation_error(client: TestClient, session: Session, admi
         json={"title": "Valid Task"}
     )
     task_id = response.json()["id"]
-    
+
     # Update with invalid status
     response = client.patch(
         f"/api/v1/tasks/{task_id}",

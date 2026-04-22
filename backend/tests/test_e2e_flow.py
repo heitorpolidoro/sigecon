@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 from sqlmodel import Session
-import pytest
+
 
 def get_token(client, username, password):
     response = client.post(
@@ -12,7 +12,7 @@ def get_token(client, username, password):
 def test_e2e_task_lifecycle(client: TestClient, session: Session, admin_user, normal_user):
     # 1. Login as Admin
     admin_token = get_token(client, "admin", "test_admin_password")
-    
+
     # 2. Create Task
     create_resp = client.post(
         "/api/v1/tasks/",
@@ -26,7 +26,7 @@ def test_e2e_task_lifecycle(client: TestClient, session: Session, admin_user, no
     )
     assert create_resp.status_code == 200
     task_id = create_resp.json()["id"]
-    
+
     # 3. List Tasks as Normal User
     user_token = get_token(client, "user1", "test_user_password")
     list_resp = client.get(
@@ -34,7 +34,7 @@ def test_e2e_task_lifecycle(client: TestClient, session: Session, admin_user, no
         headers={"Authorization": f"Bearer {user_token}"}
     )
     assert any(t["id"] == task_id for t in list_resp.json())
-    
+
     # 4. Update Task as Normal User (Status only)
     update_resp = client.patch(
         f"/api/v1/tasks/{task_id}",
@@ -43,7 +43,7 @@ def test_e2e_task_lifecycle(client: TestClient, session: Session, admin_user, no
     )
     assert update_resp.status_code == 200
     assert update_resp.json()["status"] == "COMPLETED"
-    
+
     # 5. Read History as Admin
     history_resp = client.get(
         f"/api/v1/tasks/{task_id}/history",
@@ -51,6 +51,6 @@ def test_e2e_task_lifecycle(client: TestClient, session: Session, admin_user, no
     )
     assert history_resp.status_code == 200
     history = history_resp.json()
-    assert any(h["field_name"] == "status" and h["new_value"] == "TaskStatus.COMPLETED" for h in history)
+    assert any(h["field_name"] == "status" and h["new_value"] == "COMPLETED" for h in history)
     # Check if user_name is present
     assert history[0]["user_name"] == "Normal User"

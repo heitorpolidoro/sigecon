@@ -1,8 +1,9 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Settings(BaseSettings):
     PROJECT_NAME: str = "SIGECON"
-    
+
     # Database
     DB_HOST: str
     DB_PORT: str
@@ -10,9 +11,9 @@ class Settings(BaseSettings):
     DB_PASSWORD: str
     DB_NAME: str
     SQL_ECHO: bool = False
-    
+
     @property
-    def DATABASE_URL(self) -> str:
+    def database_url(self) -> str:
         return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     # Security

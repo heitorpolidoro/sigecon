@@ -1,7 +1,10 @@
-from app.core import security
-from jose import jwt
-from app.core.config import settings
 import uuid
+
+from jose import jwt
+
+from app.core import security
+from app.core.config import settings
+
 
 def test_password_hashing():
     password = "secret_password"

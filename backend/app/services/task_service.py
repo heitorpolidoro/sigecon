@@ -1,10 +1,12 @@
-from sqlmodel import Session, select
-from uuid import UUID
 from typing import TYPE_CHECKING
+from uuid import UUID
+
+from sqlmodel import Session, select
+
+from app.core.exceptions import ForbiddenError
+from app.models.enums import UserRole
 from app.models.task import Task, TaskHistory, get_utc_now
 from app.schemas.task import TaskCreate, TaskUpdate
-from app.models.enums import UserRole
-from app.core.exceptions import ForbiddenError
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -12,12 +14,12 @@ if TYPE_CHECKING:
 class TaskService:
     @staticmethod
     def create_task(
-        session: Session, 
-        task_in: TaskCreate, 
+        session: Session,
+        task_in: TaskCreate,
         created_by_id: UUID
     ) -> Task:
         db_task = Task.model_validate(
-            task_in, 
+            task_in,
             update={"created_by_id": created_by_id}
         )
         session.add(db_task)
@@ -27,16 +29,16 @@ class TaskService:
 
     @staticmethod
     def update_task(
-        session: Session, 
-        db_task: Task, 
-        task_in: TaskUpdate, 
+        session: Session,
+        db_task: Task,
+        task_in: TaskUpdate,
         current_user: "User"
     ) -> Task:
         # RBAC Validation
         if current_user.role != UserRole.DIRETOR:
             if db_task.assigned_to_id != current_user.id:
-                raise ForbiddenError()
-            
+                raise ForbiddenError
+
             # Field restriction for Employee
             update_data = task_in.model_dump(exclude_unset=True)
             allowed_fields = {"status"}
@@ -44,7 +46,7 @@ class TaskService:
                 raise ForbiddenError("Employees can only update task status")
 
         update_data = task_in.model_dump(exclude_unset=True)
-        
+
         for key, value in update_data.items():
             old_value = getattr(db_task, key)
             if old_value != value:
@@ -59,7 +61,7 @@ class TaskService:
                 )
                 session.add(history)
                 setattr(db_task, key, value)
-        
+
         db_task.updated_at = get_utc_now()
         session.add(db_task)
         session.commit()
@@ -85,13 +87,13 @@ class TaskService:
 
     @staticmethod
     def delete_task(
-        session: Session, 
-        db_task: Task, 
+        session: Session,
+        db_task: Task,
         changed_by_id: UUID
     ) -> None:
         db_task.is_deleted = True
         db_task.updated_at = get_utc_now()
-        
+
         # Log deletion in history
         history = TaskHistory(
             task_id=db_task.id,

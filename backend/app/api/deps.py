@@ -1,14 +1,16 @@
 import uuid
 from typing import Annotated
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt, JWTError
+from jose import JWTError, jwt
 from pydantic import ValidationError
 from sqlmodel import Session
+
 from app.core.config import settings
 from app.db import get_session
-from app.models.user import User
 from app.models.enums import UserRole
+from app.models.user import User
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl="/api/v1/auth/login"
@@ -19,9 +21,9 @@ def get_current_user(
     token: Annotated[str, Depends(reusable_oauth2)]
 ) -> User:
     # Try all available secret keys for rotation support
-    all_keys = [settings.SECRET_KEY] + settings.SECRET_KEYS
+    all_keys = [settings.SECRET_KEY, *settings.SECRET_KEYS]
     payload = None
-    
+
     for key in all_keys:
         try:
             payload = jwt.decode(
@@ -30,13 +32,13 @@ def get_current_user(
             break
         except (JWTError, ValidationError, ValueError):
             continue
-            
+
     if payload is None:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-        
+
     try:
         user_id: str = payload.get("sub")
         if user_id is None:
@@ -45,20 +47,20 @@ def get_current_user(
                 detail="Could not validate credentials",
             )
         token_data = uuid.UUID(user_id)
-    except (ValidationError, ValueError):
+    except (ValidationError, ValueError) as err:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
-        )
+        ) from err
     user = session.get(User, token_data)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found"
         )
     if not user.is_active:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="Inactive user"
         )
     return user

@@ -1,21 +1,23 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlmodel import Session, select
 from typing import Annotated
 from uuid import UUID
-from app.db import get_session
+
+from fastapi import APIRouter, Depends, Query, status
+from sqlmodel import Session, select
+
 from app.api import deps
+from app.core.exceptions import ForbiddenError, TaskNotFoundError
+from app.db import get_session
+from app.models.enums import TaskPriority, TaskStatus, UserRole
 from app.models.task import Task
 from app.models.user import User
-from app.models.enums import TaskStatus, TaskPriority, UserRole
-from app.schemas.task import TaskCreate, TaskRead, TaskUpdate, TaskHistoryRead
+from app.schemas.task import TaskCreate, TaskHistoryRead, TaskRead, TaskUpdate
 from app.services.task_service import TaskService
-from app.core.exceptions import TaskNotFoundError, ForbiddenError
 
 router = APIRouter()
 
 @router.post("/", response_model=TaskRead)
 def create_task(
-    task_in: TaskCreate, 
+    task_in: TaskCreate,
     session: Annotated[Session, Depends(get_session)],
     current_user: Annotated[User, Depends(deps.get_current_active_director)]
 ):
@@ -30,9 +32,9 @@ def create_task(
 def list_tasks(
     session: Annotated[Session, Depends(get_session)],
     current_user: Annotated[User, Depends(deps.get_current_user)],
-    status: TaskStatus | None = Query(None),
-    priority: TaskPriority | None = Query(None),
-    assigned_to_id: UUID | None = Query(None)
+    status: Annotated[TaskStatus | None, Query()] = None,
+    priority: Annotated[TaskPriority | None, Query()] = None,
+    assigned_to_id: Annotated[UUID | None, Query()] = None
 ):
     """
     Lista tarefas.
@@ -40,20 +42,19 @@ def list_tasks(
     Funcionários podem ver apenas as tarefas atribuídas a eles.
     """
     statement = select(Task).where(Task.is_deleted.is_(False))
-    
+
     if current_user.role != UserRole.DIRETOR:
         statement = statement.where(Task.assigned_to_id == current_user.id)
     elif assigned_to_id:
         statement = statement.where(Task.assigned_to_id == assigned_to_id)
-        
+
     if status:
         statement = statement.where(Task.status == status)
-        
+
     if priority:
         statement = statement.where(Task.priority == priority)
-    
-    tasks = session.exec(statement).all()
-    return tasks
+
+    return session.exec(statement).all()
 
 @router.patch("/{task_id}", response_model=TaskRead)
 def update_task(
@@ -69,14 +70,13 @@ def update_task(
     db_task = session.get(Task, task_id)
     if not db_task or db_task.is_deleted:
         raise TaskNotFoundError(task_id)
-    
-    task = TaskService.update_task(
+
+    return TaskService.update_task(
         session=session,
         db_task=db_task,
         task_in=task_in,
         current_user=current_user
     )
-    return task
 
 @router.get("/{task_id}/history", response_model=list[TaskHistoryRead])
 def get_task_history(
@@ -88,10 +88,10 @@ def get_task_history(
     db_task = session.get(Task, task_id)
     if not db_task or db_task.is_deleted:
         raise TaskNotFoundError(task_id)
-        
+
     if current_user.role != UserRole.DIRETOR and db_task.assigned_to_id != current_user.id:
-        raise ForbiddenError()
-        
+        raise ForbiddenError
+
     return TaskService.get_history(session=session, task_id=task_id)
 
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -104,10 +104,9 @@ def delete_task(
     db_task = session.get(Task, task_id)
     if not db_task or db_task.is_deleted:
         raise TaskNotFoundError(task_id)
-        
+
     TaskService.delete_task(
         session=session,
         db_task=db_task,
         changed_by_id=current_user.id
     )
-    return None

@@ -1,12 +1,14 @@
+import uuid
+
 import pytest
 from fastapi.testclient import TestClient
-from sqlmodel import Session, SQLModel, create_engine, StaticPool
-from app.main import app
-from app.db import get_session
+from sqlmodel import Session, SQLModel, StaticPool, create_engine
+
 from app.core.security import get_password_hash
-from app.models.user import User
+from app.db import get_session
+from app.main import app
 from app.models.enums import UserRole
-import uuid
+from app.models.user import User
 
 # Disable rate limiting for tests
 app.state.limiter.enabled = False

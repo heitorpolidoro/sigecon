@@ -1,12 +1,15 @@
-from sqlmodel import Session, select, create_engine
-from app.models.user import User
-from app.models.enums import UserRole
-from app.core.config import settings
-from app.core.security import get_password_hash
 import uuid
 
+from sqlmodel import Session, create_engine, select
+
+from app.core.config import settings
+from app.core.security import get_password_hash
+from app.models.enums import UserRole
+from app.models.user import User
+
+
 def seed_db():
-    engine = create_engine(settings.DATABASE_URL)
+    engine = create_engine(settings.database_url)
     with Session(engine) as session:
         # 1. Admin / Diretor
         statement = select(User).where(User.username == "admin")
@@ -26,7 +29,7 @@ def seed_db():
             admin.hashed_password = get_password_hash("test_admin_password")
             session.add(admin)
             print("Senha do Admin atualizada.")
-        
+
         # 2. Funcionário
         statement = select(User).where(User.username == "user1")
         user1 = session.exec(statement).first()
@@ -41,7 +44,7 @@ def seed_db():
             )
             session.add(user1)
             print("Funcionário seed criado.")
-            
+
         session.commit()
 
 if __name__ == "__main__":

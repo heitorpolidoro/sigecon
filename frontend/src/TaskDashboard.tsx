@@ -33,7 +33,7 @@ const TaskDashboard: React.FC = () => {
     <div className={styles.dashboard}>
       <div className={styles.header}>
         <h1 className={styles.title}>📋 Gestão de Tarefas</h1>
-        <button onClick={() => alert('Abrir modal de criação')}>+ Nova Tarefa</button>
+        <button onClick={() => console.log('Abrir modal de criação')}>+ Nova Tarefa</button>
       </div>
 
       <div className={styles.taskList}>

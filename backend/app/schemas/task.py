@@ -1,7 +1,10 @@
 from datetime import datetime
 from uuid import UUID
+
 from pydantic import BaseModel, ConfigDict, Field
-from app.models.enums import TaskStatus, TaskPriority
+
+from app.models.enums import TaskPriority, TaskStatus
+
 
 class TaskBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=255)

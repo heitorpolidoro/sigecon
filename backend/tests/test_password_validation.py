@@ -1,6 +1,8 @@
 import pytest
 from pydantic import ValidationError
+
 from app.schemas.user import UserCreate
+
 
 def test_password_complexity_valid():
     # Valid password
