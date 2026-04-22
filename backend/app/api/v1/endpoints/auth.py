@@ -3,7 +3,6 @@ from typing import Any, Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
-from app.api import deps
 from app.core import security
 from app.core.config import settings
 from app.db import get_session

@@ -1,6 +1,5 @@
 from sqlmodel import Session, create_engine
 from app.models.task import Task
-from app.models.user import User
 from app.models.enums import TaskStatus, TaskPriority
 from app.core.config import settings
 import uuid
@@ -12,7 +11,6 @@ def seed_data():
         # 1. Garantir que temos usuários para atribuir as tarefas
         # (Assumindo que o banco pode estar vazio)
         diretor_id = uuid.uuid4()
-        funcionario_id = uuid.uuid4()
         
         # Tentamos buscar um usuário existente ou criamos um temporário para o seed
         # Nota: Em um sistema real, usaríamos os IDs reais do DB.

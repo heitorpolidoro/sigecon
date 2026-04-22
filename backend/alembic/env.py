@@ -11,7 +11,6 @@ from sqlmodel import SQLModel
 # add your model's MetaData object here
 # for 'autogenerate' support
 sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), "..")))
-from app.models import User, Task, TaskHistory
 
 from app.core.config import settings
 

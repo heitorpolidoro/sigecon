@@ -1,7 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
-from app.main import app
 from app.models.user import User
 from app.models.enums import UserRole
 from app.core.security import get_password_hash

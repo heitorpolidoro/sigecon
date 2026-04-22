@@ -1,5 +1,5 @@
 import uuid
-from typing import Generator, Annotated
+from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
@@ -11,7 +11,7 @@ from app.models.user import User
 from app.models.enums import UserRole
 
 reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"/api/v1/auth/login"
+    tokenUrl="/api/v1/auth/login"
 )
 
 def get_current_user(

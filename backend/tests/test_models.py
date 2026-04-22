@@ -1,4 +1,3 @@
-import pytest
 from uuid import uuid4
 from app.models.task import Task, TaskHistory
 from app.models.user import User

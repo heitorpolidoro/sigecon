@@ -1,4 +1,3 @@
-import pytest
 from app.core import security
 from jose import jwt
 from app.core.config import settings
