@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import apiClient from '../../api/client';
-import { TaskRead, TaskStatus, TaskPriority } from '../types';
+import apiClient from '../../../api/client';
+import type { TaskRead } from '../types';
+import { TaskStatus, TaskPriority } from '../types';
 
 interface FetchTasksOptions {
   status?: TaskStatus | null;
@@ -20,8 +21,6 @@ const fetchTasks = async (options: FetchTasksOptions): Promise<TaskRead[]> => {
 };
 
 export const useTasks = (options: FetchTasksOptions) => {
-  const queryClient = useQueryClient();
-
   return useQuery<TaskRead[], Error>({
     queryKey: ['tasks', options], // Inclui options na chave para re-fetch quando filtros mudam
     queryFn: () => fetchTasks(options),

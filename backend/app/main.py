@@ -1,17 +1,23 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.v1.api import api_router
 from app.core.exceptions import DomainException
 from app.core.exception_handlers import domain_exception_handler
 from app.core.limiter import limiter
-from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+
+def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+        content={"error": "Rate limit exceeded", "detail": exc.detail},
+    )
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 app.add_exception_handler(DomainException, domain_exception_handler)
 
 # CORS Configuration
