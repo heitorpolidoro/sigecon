@@ -2,9 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """
-    Application settings loaded from environment variables.
-    """
+    """Application settings loaded from environment variables."""
 
     PROJECT_NAME: str = "SIGECON"
 
