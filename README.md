@@ -1,5 +1,39 @@
 # SIGECON - Sistema de Gestão de Controle de Tarefas
 
+<div>
+<!-- GitHub CI & Sponsors -->
+<a href="https://github.com/heitorpolidoro/sigecon/actions/workflows/ci.yml"><img src="https://github.com/heitorpolidoro/sigecon/actions/workflows/ci.yml/badge.svg" alt="CI Status"></a>
+<a href="https://github.com/sponsors/heitorpolidoro"><img src="https://img.shields.io/github/sponsors/heitorpolidoro?color=ea4aaa" alt="GitHub Sponsors"></a>
+<br>
+
+<!-- GitHub Stats -->
+<a href="https://github.com/heitorpolidoro/sigecon/releases/latest"><img src="https://img.shields.io/github/v/release/heitorpolidoro/sigecon?label=Latest%20Version" alt="Latest Version"></a>
+<img src="https://img.shields.io/github/release-date/heitorpolidoro/sigecon" alt="GitHub Release Date">
+<img src="https://img.shields.io/github/commits-since/heitorpolidoro/sigecon/latest" alt="GitHub commits since latest release">
+<img src="https://img.shields.io/github/last-commit/heitorpolidoro/sigecon" alt="GitHub last commit">
+<br>
+
+<!-- GitHub Activity -->
+<a href="https://github.com/heitorpolidoro/sigecon/issues"><img src="https://img.shields.io/github/issues/heitorpolidoro/sigecon" alt="GitHub issues"></a>
+<a href="https://github.com/heitorpolidoro/sigecon/pulls"><img src="https://img.shields.io/github/issues-pr/heitorpolidoro/sigecon" alt="GitHub pull requests"></a>
+<br>
+
+<!-- DeepSource -->
+<a href="https://app.deepsource.com/gh/heitorpolidoro/sigecon/" target="_blank"><img alt="DeepSource" title="DeepSource" src="https://app.deepsource.com/gh/heitorpolidoro/sigecon.svg/?label=active+issues&show_trend=true"/></a>
+<a href="https://app.deepsource.io/gh/heitorpolidoro/sigecon/"><img src="https://app.deepsource.com/gh/heitorpolidoro/sigecon.svg/?label=coverage" alt="DeepSource Coverage"></a>
+<br>
+
+<!-- SonarCloud -->
+<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=alert_status" alt="SonarCloud Quality Gate"></a>
+<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=coverage" alt="SonarCloud Coverage"></a>
+<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=security_rating" alt="SonarCloud Security Rating"></a>
+<br>
+<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=bugs" alt="SonarCloud Bugs"></a>
+<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=vulnerabilities" alt="SonarCloud Vulnerabilities"></a>
+<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=code_smells" alt="SonarCloud Code Smells"></a>
+<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=sqale_rating" alt="SonarCloud Maintainability"></a>
+</div>
+
 Este projeto é uma aplicação web desenvolvida para gerenciar tarefas, permitindo a criação, atribuição, acompanhamento de status e auditoria de alterações.
 
 ## Tecnologias Utilizadas
