@@ -22,14 +22,16 @@ exclude_patterns = [
 [[analyzers]]
 name = "python"
 enabled = true
-[analyzers.meta]
-runtime_version = "3.x.x"
+  [analyzers.meta]
+  runtime_version = "3.x.x"
+  skip_docstrings = true
 
 [[analyzers]]
 name = "javascript"
 enabled = true
-[analyzers.meta]
-dialect = "typescript"
+  [analyzers.meta]
+  dialect = "typescript"
+  skip_docstrings = true
 
 [[analyzers]]
 name = "shell"
@@ -38,3 +40,13 @@ enabled = true
 [[analyzers]]
 name = "docker"
 enabled = true
+
+[exclude_patterns]
+# Adicionando padrões extras de exclusão para análise
+patterns = [
+  "**/node_modules/**",
+  "**/dist/**",
+  "**/.venv/**",
+  "**/__pycache__/**",
+  "backend/alembic/versions/**"
+]
