@@ -24,14 +24,14 @@
 <br>
 
 <!-- SonarCloud -->
-<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=alert_status" alt="SonarCloud Quality Gate"></a>
-<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=coverage" alt="SonarCloud Coverage"></a>
-<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=security_rating" alt="SonarCloud Security Rating"></a>
+<a href="https://sonarcloud.io/summary/new_code?id=heitorpolidoro_sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=heitorpolidoro_sigecon&metric=alert_status" alt="SonarCloud Quality Gate"></a>
+<a href="https://sonarcloud.io/summary/new_code?id=heitorpolidoro_sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=heitorpolidoro_sigecon&metric=coverage" alt="SonarCloud Coverage"></a>
+<a href="https://sonarcloud.io/summary/new_code?id=heitorpolidoro_sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=heitorpolidoro_sigecon&metric=security_rating" alt="SonarCloud Security Rating"></a>
 <br>
-<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=bugs" alt="SonarCloud Bugs"></a>
-<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=vulnerabilities" alt="SonarCloud Vulnerabilities"></a>
-<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=code_smells" alt="SonarCloud Code Smells"></a>
-<a href="https://sonarcloud.io/summary/new_code?id=sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=sigecon&metric=sqale_rating" alt="SonarCloud Maintainability"></a>
+<a href="https://sonarcloud.io/summary/new_code?id=heitorpolidoro_sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=heitorpolidoro_sigecon&metric=bugs" alt="SonarCloud Bugs"></a>
+<a href="https://sonarcloud.io/summary/new_code?id=heitorpolidoro_sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=heitorpolidoro_sigecon&metric=vulnerabilities" alt="SonarCloud Vulnerabilities"></a>
+<a href="https://sonarcloud.io/summary/new_code?id=heitorpolidoro_sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=heitorpolidoro_sigecon&metric=code_smells" alt="SonarCloud Code Smells"></a>
+<a href="https://sonarcloud.io/summary/new_code?id=heitorpolidoro_sigecon"><img src="https://sonarcloud.io/api/project_badges/measure?project=heitorpolidoro_sigecon&metric=sqale_rating" alt="SonarCloud Maintainability"></a>
 </div>
 
 Este projeto é uma aplicação web desenvolvida para gerenciar tarefas, permitindo a criação, atribuição, acompanhamento de status e auditoria de alterações.
