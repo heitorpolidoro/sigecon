@@ -8,7 +8,7 @@ on:
 
 jobs:
   backend:
-    name: Backend (Python 3.13)
+    name: Backend Tests
     runs-on: ubuntu-latest
     env:
       SECRET_KEY: "test-secret-key-for-ci"
@@ -36,13 +36,19 @@ jobs:
         cd backend
         uv sync --all-groups
 
-    - name: Run tests
+    - name: Run tests with coverage
       run: |
         cd backend
-        uv run pytest tests/
+        uv run pytest --cov=app --cov-report=xml:coverage.xml tests/
+
+    - name: Upload Backend Coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: backend-coverage
+        path: backend/coverage.xml
 
   frontend:
-    name: Frontend (Node.js)
+    name: Frontend Tests
     runs-on: ubuntu-latest
     
     steps:
@@ -61,12 +67,41 @@ jobs:
         cd frontend
         npm ci
 
-    - name: Lint
+    - name: Run tests with coverage
       run: |
         cd frontend
-        npm run lint
+        npm run test:coverage
 
-    - name: Build
-      run: |
-        cd frontend
-        npm run build
+    - name: Upload Frontend Coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-coverage
+        path: frontend/coverage/lcov.info
+
+  sonarcloud:
+    name: SonarCloud Scan
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Download Backend Coverage
+      uses: actions/download-artifact@v4
+      with:
+        name: backend-coverage
+        path: backend
+
+    - name: Download Frontend Coverage
+      uses: actions/download-artifact@v4
+      with:
+        name: frontend-coverage
+        path: frontend/coverage
+
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
