@@ -20,10 +20,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v4
 
     - name: Set up uv
-      uses: astral-sh/setup-uv@v5.3.1
+      uses: astral-sh/setup-uv@v5
       with:
         enable-cache: true
         package-directory: backend
@@ -42,7 +42,7 @@ jobs:
         uv run pytest --cov=app --cov-report=xml:coverage.xml tests/
 
     - name: Upload Backend Coverage
-      uses: actions/upload-artifact@v4.6.1
+      uses: actions/upload-artifact@v4
       with:
         name: backend-coverage
         path: backend/coverage.xml
@@ -53,10 +53,10 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v4
 
     - name: Set up Node.js
-      uses: actions/setup-node@v4.2.0
+      uses: actions/setup-node@v4
       with:
         node-version: 20
         cache: 'npm'
@@ -73,7 +73,7 @@ jobs:
         npm run test:coverage
 
     - name: Upload Frontend Coverage
-      uses: actions/upload-artifact@v4.6.1
+      uses: actions/upload-artifact@v4
       with:
         name: frontend-coverage
         path: frontend/coverage/lcov.info
@@ -84,24 +84,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
     - name: Download Backend Coverage
-      uses: actions/download-artifact@v4.1.9
+      uses: actions/download-artifact@v4
       with:
         name: backend-coverage
         path: backend
 
     - name: Download Frontend Coverage
-      uses: actions/download-artifact@v4.1.9
+      uses: actions/download-artifact@v4
       with:
         name: frontend-coverage
         path: frontend/coverage
 
     - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@v4.0.0
+      uses: SonarSource/sonarcloud-github-action@v4
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
