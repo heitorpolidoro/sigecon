@@ -28,7 +28,7 @@ jobs:
         fetch-depth: 0
 
     - name: Set up uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@v8
       with:
         enable-cache: false
         pyproject-file: backend/pyproject.toml
@@ -65,7 +65,7 @@ jobs:
         fetch-depth: 0
 
     - name: Set up Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 24
 
