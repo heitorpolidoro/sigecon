@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
-import { TaskPriority, TaskStatus, TaskRead, TaskCreate, TaskUpdate } from '../types';
-import { useCreateTask, useUpdateTask } from '../hooks/useTasks';
-import styles from './TaskForm.module.css';
+import React, { useState } from "react";
+import {
+  TaskPriority,
+  TaskStatus,
+  TaskRead,
+  TaskCreate,
+  TaskUpdate,
+} from "../types";
+import { useCreateTask, useUpdateTask } from "../hooks/useTasks";
+import styles from "./TaskForm.module.css";
 
 interface TaskFormProps {
   /** Optional task for editing mode. If omitted, the form is in creation mode. */
@@ -14,7 +20,7 @@ interface TaskFormProps {
 
 /**
  * Form component for creating and editing tasks.
- * 
+ *
  * @param props - Component props.
  * @returns The TaskForm component.
  */
@@ -25,23 +31,29 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
 
   // Initial state helper
   const getInitialState = () => ({
-    title: task?.title || '',
-    description: task?.description || '',
+    title: task?.title || "",
+    description: task?.description || "",
     priority: task?.priority || TaskPriority.MEDIUM,
-    assigned_to_id: task?.assigned_to_id || '',
-    due_date: task?.due_date ? new Date(task.due_date).toISOString().split('T')[0] : '',
+    assigned_to_id: task?.assigned_to_id || "",
+    due_date: task?.due_date
+      ? new Date(task.due_date).toISOString().split("T")[0]
+      : "",
     status: task?.status || TaskStatus.PENDING,
   });
 
   const [formData, setFormData] = useState(getInitialState());
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     // Clear error when user types
     if (errors[name]) {
-      setErrors(prev => {
+      setErrors((prev) => {
         const newErrors = { ...prev };
         delete newErrors[name];
         return newErrors;
@@ -51,7 +63,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.title.trim()) newErrors.title = 'Title is required';
+    if (!formData.title.trim()) newErrors.title = "Title is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -75,35 +87,39 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
       };
       updateTaskMutation.mutate(
         { id: task.id, data: updatePayload },
-        { onSuccess }
+        { onSuccess },
       );
     } else {
       const createPayload: TaskCreate = {
         ...commonData,
       };
-      createTaskMutation.mutate(
-        createPayload,
-        { onSuccess }
-      );
+      createTaskMutation.mutate(createPayload, { onSuccess });
     }
   };
 
-  const isLoading = createTaskMutation.isPending || updateTaskMutation.isPending;
-  const serverError = (createTaskMutation.error || updateTaskMutation.error) as any;
+  const isLoading =
+    createTaskMutation.isPending || updateTaskMutation.isPending;
+  const serverError = (createTaskMutation.error ||
+    updateTaskMutation.error) as any;
 
   return (
     <div className={styles.formContainer}>
-      <h2 className={styles.title}>{isEditing ? 'Edit Task' : 'Create New Task'}</h2>
-      
+      <h2 className={styles.title}>
+        {isEditing ? "Edit Task" : "Create New Task"}
+      </h2>
+
       {serverError && (
-        <div className={styles.error} style={{ marginBottom: '1rem' }}>
-          {serverError.response?.data?.detail || 'An error occurred while saving the task.'}
+        <div className={styles.error} style={{ marginBottom: "1rem" }}>
+          {serverError.response?.data?.detail ||
+            "An error occurred while saving the task."}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>
-          <label className={styles.label} htmlFor="title">Title *</label>
+          <label className={styles.label} htmlFor="title">
+            Title *
+          </label>
           <input
             type="text"
             id="title"
@@ -119,7 +135,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label} htmlFor="description">Description</label>
+          <label className={styles.label} htmlFor="description">
+            Description
+          </label>
           <textarea
             id="description"
             name="description"
@@ -132,7 +150,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label} htmlFor="priority">Priority</label>
+          <label className={styles.label} htmlFor="priority">
+            Priority
+          </label>
           <select
             id="priority"
             name="priority"
@@ -141,15 +161,19 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
             onChange={handleChange}
             disabled={isLoading}
           >
-            {Object.values(TaskPriority).map(p => (
-              <option key={p} value={p}>{p.toLowerCase()}</option>
+            {Object.values(TaskPriority).map((p) => (
+              <option key={p} value={p}>
+                {p.toLowerCase()}
+              </option>
             ))}
           </select>
         </div>
 
         {isEditing && (
           <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor="status">Status</label>
+            <label className={styles.label} htmlFor="status">
+              Status
+            </label>
             <select
               id="status"
               name="status"
@@ -158,37 +182,45 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
               onChange={handleChange}
               disabled={isLoading}
             >
-              {Object.values(TaskStatus).map(s => (
-                <option key={s} value={s}>{s.replace('_', ' ').toLowerCase()}</option>
+              {Object.values(TaskStatus).map((s) => (
+                <option key={s} value={s}>
+                  {s.replace("_", " ").toLowerCase()}
+                </option>
               ))}
             </select>
           </div>
         )}
 
         <div className={styles.formGroup}>
-          <label className={styles.label} htmlFor="assigned_to_id">Assigned To</label>
+          <label className={styles.label} htmlFor="assigned_to_id">
+            Assigned To
+          </label>
           <select
             id="assigned_to_id"
             name="assigned_to_id"
             className={styles.select}
-            value={formData.assigned_to_id || ''}
+            value={formData.assigned_to_id || ""}
             onChange={handleChange}
             disabled={isLoading}
           >
             <option value="">Unassigned</option>
             {/* Mocking the current assigned user ID if present */}
             {formData.assigned_to_id && (
-              <option value={formData.assigned_to_id}>{formData.assigned_to_id}</option>
+              <option value={formData.assigned_to_id}>
+                {formData.assigned_to_id}
+              </option>
             )}
             {/* In a real app, map over users from useUsers hook here */}
           </select>
-          <small style={{ color: '#888', fontSize: '0.75rem' }}>
+          <small style={{ color: "#888", fontSize: "0.75rem" }}>
             User selection will be improved in future updates.
           </small>
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label} htmlFor="due_date">Due Date</label>
+          <label className={styles.label} htmlFor="due_date">
+            Due Date
+          </label>
           <input
             type="date"
             id="due_date"
@@ -201,20 +233,24 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
         </div>
 
         <div className={styles.buttonGroup}>
-          <button 
-            type="button" 
-            onClick={onCancel} 
-            className={styles.cancelButton} 
+          <button
+            type="button"
+            onClick={onCancel}
+            className={styles.cancelButton}
             disabled={isLoading}
           >
             Cancel
           </button>
-          <button 
-            type="submit" 
-            className={styles.submitButton} 
+          <button
+            type="submit"
+            className={styles.submitButton}
             disabled={isLoading}
           >
-            {isLoading ? 'Saving...' : (isEditing ? 'Update Task' : 'Create Task')}
+            {isLoading
+              ? "Saving..."
+              : isEditing
+                ? "Update Task"
+                : "Create Task"}
           </button>
         </div>
       </form>

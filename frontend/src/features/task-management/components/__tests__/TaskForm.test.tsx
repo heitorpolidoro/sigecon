@@ -1,16 +1,16 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-import TaskForm from '../TaskForm';
-import { TaskPriority, TaskStatus } from '../../types';
-import * as useTasks from '../../hooks/useTasks';
+import { render, screen, fireEvent } from "@testing-library/react";
+import { vi, describe, it, expect, beforeEach } from "vitest";
+import TaskForm from "../TaskForm";
+import { TaskPriority, TaskStatus } from "../../types";
+import * as useTasks from "../../hooks/useTasks";
 
 // Mock the hooks
-vi.mock('../../hooks/useTasks', () => ({
+vi.mock("../../hooks/useTasks", () => ({
   useCreateTask: vi.fn(),
   useUpdateTask: vi.fn(),
 }));
 
-describe('TaskForm', () => {
+describe("TaskForm", () => {
   const mockOnSuccess = vi.fn();
   const mockOnCancel = vi.fn();
 
@@ -19,7 +19,7 @@ describe('TaskForm', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     (useTasks.useCreateTask as any).mockReturnValue({
       mutate: mockCreateMutate,
       isPending: false,
@@ -33,102 +33,132 @@ describe('TaskForm', () => {
     });
   });
 
-  it('renders correctly in Create mode', () => {
+  it("renders correctly in Create mode", () => {
     render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
-    
-    expect(screen.getByText('Create New Task')).toBeInTheDocument();
-    expect(screen.getByLabelText(/Title */i)).toHaveValue('');
-    expect(screen.getByLabelText(/Description/i)).toHaveValue('');
+
+    expect(screen.getByText("Create New Task")).toBeInTheDocument();
+    expect(screen.getByLabelText(/Title */i)).toHaveValue("");
+    expect(screen.getByLabelText(/Description/i)).toHaveValue("");
     expect(screen.getByLabelText(/Priority/i)).toHaveValue(TaskPriority.MEDIUM);
-    expect(screen.getByRole('button', { name: /Create Task/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Create Task/i }),
+    ).toBeInTheDocument();
   });
 
-  it('renders correctly with initial values in Edit mode', () => {
+  it("renders correctly with initial values in Edit mode", () => {
     const task = {
-      id: '1',
-      title: 'Existing Task',
-      description: 'Existing Description',
+      id: "1",
+      title: "Existing Task",
+      description: "Existing Description",
       priority: TaskPriority.HIGH,
       status: TaskStatus.IN_PROGRESS,
-      created_by_id: 'user1',
+      created_by_id: "user1",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
-    render(<TaskForm task={task as any} onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
-    
-    expect(screen.getByText('Edit Task')).toBeInTheDocument();
-    expect(screen.getByLabelText(/Title */i)).toHaveValue('Existing Task');
-    expect(screen.getByLabelText(/Description/i)).toHaveValue('Existing Description');
+    render(
+      <TaskForm
+        task={task as any}
+        onSuccess={mockOnSuccess}
+        onCancel={mockOnCancel}
+      />,
+    );
+
+    expect(screen.getByText("Edit Task")).toBeInTheDocument();
+    expect(screen.getByLabelText(/Title */i)).toHaveValue("Existing Task");
+    expect(screen.getByLabelText(/Description/i)).toHaveValue(
+      "Existing Description",
+    );
     expect(screen.getByLabelText(/Priority/i)).toHaveValue(TaskPriority.HIGH);
-    expect(screen.getByLabelText(/Status/i)).toHaveValue(TaskStatus.IN_PROGRESS);
-    expect(screen.getByRole('button', { name: /Update Task/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/Status/i)).toHaveValue(
+      TaskStatus.IN_PROGRESS,
+    );
+    expect(
+      screen.getByRole("button", { name: /Update Task/i }),
+    ).toBeInTheDocument();
   });
 
-  it('shows validation error when title is empty', () => {
+  it("shows validation error when title is empty", () => {
     render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
-    
-    fireEvent.click(screen.getByRole('button', { name: /Create Task/i }));
-    
-    expect(screen.getByText('Title is required')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Create Task/i }));
+
+    expect(screen.getByText("Title is required")).toBeInTheDocument();
     expect(mockCreateMutate).not.toHaveBeenCalled();
   });
 
-  it('calls useCreateTask mutate with correct data on submission in Create mode', () => {
+  it("calls useCreateTask mutate with correct data on submission in Create mode", () => {
     render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
-    
-    fireEvent.change(screen.getByLabelText(/Title */i), { target: { value: 'New Task' } });
-    fireEvent.change(screen.getByLabelText(/Description/i), { target: { value: 'New Description' } });
-    fireEvent.change(screen.getByLabelText(/Priority/i), { target: { value: TaskPriority.URGENT } });
-    
-    fireEvent.click(screen.getByRole('button', { name: /Create Task/i }));
-    
+
+    fireEvent.change(screen.getByLabelText(/Title */i), {
+      target: { value: "New Task" },
+    });
+    fireEvent.change(screen.getByLabelText(/Description/i), {
+      target: { value: "New Description" },
+    });
+    fireEvent.change(screen.getByLabelText(/Priority/i), {
+      target: { value: TaskPriority.URGENT },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Create Task/i }));
+
     expect(mockCreateMutate).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'New Task',
-        description: 'New Description',
+        title: "New Task",
+        description: "New Description",
         priority: TaskPriority.URGENT,
       }),
-      expect.any(Object)
+      expect.any(Object),
     );
   });
 
-  it('calls useUpdateTask mutate with correct data on submission in Edit mode', () => {
+  it("calls useUpdateTask mutate with correct data on submission in Edit mode", () => {
     const task = {
-      id: '1',
-      title: 'Existing Task',
-      description: 'Existing Description',
+      id: "1",
+      title: "Existing Task",
+      description: "Existing Description",
       priority: TaskPriority.HIGH,
       status: TaskStatus.IN_PROGRESS,
-      created_by_id: 'user1',
+      created_by_id: "user1",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
 
-    render(<TaskForm task={task as any} onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
-    
-    fireEvent.change(screen.getByLabelText(/Title */i), { target: { value: 'Updated Task' } });
-    fireEvent.change(screen.getByLabelText(/Status/i), { target: { value: TaskStatus.COMPLETED } });
-    
-    fireEvent.click(screen.getByRole('button', { name: /Update Task/i }));
-    
+    render(
+      <TaskForm
+        task={task as any}
+        onSuccess={mockOnSuccess}
+        onCancel={mockOnCancel}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText(/Title */i), {
+      target: { value: "Updated Task" },
+    });
+    fireEvent.change(screen.getByLabelText(/Status/i), {
+      target: { value: TaskStatus.COMPLETED },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Update Task/i }));
+
     expect(mockUpdateMutate).toHaveBeenCalledWith(
       {
-        id: '1',
+        id: "1",
         data: expect.objectContaining({
-          title: 'Updated Task',
+          title: "Updated Task",
           status: TaskStatus.COMPLETED,
         }),
       },
-      expect.any(Object)
+      expect.any(Object),
     );
   });
 
-  it('calls onCancel when Cancel button is clicked', () => {
+  it("calls onCancel when Cancel button is clicked", () => {
     render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
-    
-    fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
-    
+
+    fireEvent.click(screen.getByRole("button", { name: /Cancel/i }));
+
     expect(mockOnCancel).toHaveBeenCalled();
   });
 });

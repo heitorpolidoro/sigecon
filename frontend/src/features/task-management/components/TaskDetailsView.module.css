@@ -36,16 +36,40 @@
 }
 
 /* Status Colors */
-.status_pending { background-color: #ffeeba; color: #856404; }
-.status_in_progress { background-color: #b8daff; color: #004085; }
-.status_completed { background-color: #c3e6cb; color: #155724; }
-.status_canceled { background-color: #f5c6cb; color: #721c24; }
+.status_pending {
+  background-color: #ffeeba;
+  color: #856404;
+}
+.status_in_progress {
+  background-color: #b8daff;
+  color: #004085;
+}
+.status_completed {
+  background-color: #c3e6cb;
+  color: #155724;
+}
+.status_canceled {
+  background-color: #f5c6cb;
+  color: #721c24;
+}
 
 /* Priority Colors */
-.priority_low { background-color: #e2e3e5; color: #383d41; }
-.priority_medium { background-color: #d1ecf1; color: #0c5460; }
-.priority_high { background-color: #fff3cd; color: #856404; }
-.priority_urgent { background-color: #f8d7da; color: #721c24; }
+.priority_low {
+  background-color: #e2e3e5;
+  color: #383d41;
+}
+.priority_medium {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+.priority_high {
+  background-color: #fff3cd;
+  color: #856404;
+}
+.priority_urgent {
+  background-color: #f8d7da;
+  color: #721c24;
+}
 
 .section {
   margin-bottom: 1.5rem;

@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { TaskStatus, TaskPriority } from '../types';
-import TaskList from './TaskList';
-import TaskForm from './TaskForm';
-import TaskDetailsView from './TaskDetailsView';
-import styles from './TaskDashboard.module.css';
-import { useTasks } from '../hooks/useTasks';
+import React, { useState } from "react";
+import { TaskStatus, TaskPriority } from "../types";
+import TaskList from "./TaskList";
+import TaskForm from "./TaskForm";
+import TaskDetailsView from "./TaskDetailsView";
+import styles from "./TaskDashboard.module.css";
+import { useTasks } from "../hooks/useTasks";
 
 /**
  * Main dashboard component for managing and viewing tasks.
  * Includes filters for status and priority, and manages task creation and details views.
- * 
+ *
  * @returns The TaskDashboard component.
  */
 const TaskDashboard: React.FC = () => {
@@ -27,16 +27,19 @@ const TaskDashboard: React.FC = () => {
 
   const { data: tasks, isLoading, isError, error } = useTasks(filters);
 
-  const selectedTask = tasks?.find(t => t.id === selectedTaskId);
+  const selectedTask = tasks?.find((t) => t.id === selectedTaskId);
 
   /**
    * Updates the active filters.
-   * 
+   *
    * @param filterType - The type of filter to update (status or priority).
    * @param value - The new filter value.
    */
-  const handleFilterChange = (filterType: 'status' | 'priority', value: TaskStatus | TaskPriority | null) => {
-    setFilters(prevFilters => ({
+  const handleFilterChange = (
+    filterType: "status" | "priority",
+    value: TaskStatus | TaskPriority | null,
+  ) => {
+    setFilters((prevFilters) => ({
       ...prevFilters,
       [filterType]: value,
     }));
@@ -82,24 +85,37 @@ const TaskDashboard: React.FC = () => {
 
       <div className={styles.filters}>
         <select
-          value={filters.status || ''}
-          onChange={(e) => handleFilterChange('status', e.target.value as TaskStatus || null)}
+          value={filters.status || ""}
+          onChange={(e) =>
+            handleFilterChange("status", (e.target.value as TaskStatus) || null)
+          }
         >
           <option value="">All Statuses</option>
-          {Object.values(TaskStatus).map(s => (
-            <option key={s} value={s}>{s.replace('_', ' ').toLowerCase()}</option>
+          {Object.values(TaskStatus).map((s) => (
+            <option key={s} value={s}>
+              {s.replace("_", " ").toLowerCase()}
+            </option>
           ))}
         </select>
         <select
-          value={filters.priority || ''}
-          onChange={(e) => handleFilterChange('priority', e.target.value as TaskPriority || null)}
+          value={filters.priority || ""}
+          onChange={(e) =>
+            handleFilterChange(
+              "priority",
+              (e.target.value as TaskPriority) || null,
+            )
+          }
         >
           <option value="">All Priorities</option>
-          {Object.values(TaskPriority).map(p => (
-            <option key={p} value={p}>{p.toLowerCase()}</option>
+          {Object.values(TaskPriority).map((p) => (
+            <option key={p} value={p}>
+              {p.toLowerCase()}
+            </option>
           ))}
         </select>
-        <button onClick={clearFilters} className={styles.clearButton}>Clear Filters</button>
+        <button onClick={clearFilters} className={styles.clearButton}>
+          Clear Filters
+        </button>
       </div>
 
       {tasks && (
@@ -116,18 +132,27 @@ const TaskDashboard: React.FC = () => {
       {/* Overlays / Modals */}
       {isCreating && (
         <div className={styles.modalOverlay} onClick={handleCloseOverlay}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <TaskForm onCancel={handleCloseOverlay} onSuccess={handleCloseOverlay} />
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <TaskForm
+              onCancel={handleCloseOverlay}
+              onSuccess={handleCloseOverlay}
+            />
           </div>
         </div>
       )}
 
       {selectedTask && !isEditing && (
         <div className={styles.modalOverlay} onClick={handleCloseOverlay}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <TaskDetailsView 
-              task={selectedTask} 
-              onClose={handleCloseOverlay} 
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <TaskDetailsView
+              task={selectedTask}
+              onClose={handleCloseOverlay}
               onEdit={handleEditTask}
             />
           </div>
@@ -136,11 +161,14 @@ const TaskDashboard: React.FC = () => {
 
       {selectedTask && isEditing && (
         <div className={styles.modalOverlay} onClick={handleCloseOverlay}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <TaskForm 
-              task={selectedTask} 
-              onCancel={() => setIsEditing(false)} 
-              onSuccess={handleCloseOverlay} 
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <TaskForm
+              task={selectedTask}
+              onCancel={() => setIsEditing(false)}
+              onSuccess={handleCloseOverlay}
             />
           </div>
         </div>

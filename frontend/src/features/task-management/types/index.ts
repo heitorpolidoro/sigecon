@@ -49,7 +49,10 @@ export interface TaskBase {
 /**
  * Interface for task creation data.
  */
-export interface TaskCreate extends Omit<TaskBase, 'status' | 'priority' | 'due_date' | 'assigned_to_id'> {
+export interface TaskCreate extends Omit<
+  TaskBase,
+  "status" | "priority" | "due_date" | "assigned_to_id"
+> {
   title: string;
   description?: string | null;
   priority?: TaskPriority;
@@ -60,8 +63,7 @@ export interface TaskCreate extends Omit<TaskBase, 'status' | 'priority' | 'due_
 /**
  * Interface for task update data.
  */
-export interface TaskUpdate extends Partial<TaskBase> {
-}
+export interface TaskUpdate extends Partial<TaskBase> {}
 
 /**
  * Interface for reading task data from the API.

@@ -1,7 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import apiClient from '../../../api/client';
-import type { TaskRead, TaskCreate, TaskUpdate, TaskHistoryRead } from '../types';
-import { TaskStatus, TaskPriority } from '../types';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import apiClient from "../../../api/client";
+import type {
+  TaskRead,
+  TaskCreate,
+  TaskUpdate,
+  TaskHistoryRead,
+} from "../types";
+import { TaskStatus, TaskPriority } from "../types";
 
 /**
  * Options for fetching tasks, including various filters.
@@ -17,12 +22,12 @@ interface FetchTasksOptions {
 
 /**
  * Fetches tasks from the API based on provided options.
- * 
+ *
  * @param options - Filters for status, priority, and assignee.
  * @returns A promise with the list of tasks.
  */
 const fetchTasks = async (options: FetchTasksOptions): Promise<TaskRead[]> => {
-  const response = await apiClient.get('/tasks/', {
+  const response = await apiClient.get("/tasks/", {
     params: {
       status: options.status,
       priority: options.priority,
@@ -34,7 +39,7 @@ const fetchTasks = async (options: FetchTasksOptions): Promise<TaskRead[]> => {
 
 /**
  * Fetches a single task by its ID.
- * 
+ *
  * @param id - The task UUID.
  * @returns A promise with the task data.
  */
@@ -45,7 +50,7 @@ const fetchTask = async (id: string): Promise<TaskRead> => {
 
 /**
  * Fetches the audit history for a single task.
- * 
+ *
  * @param id - The task UUID.
  * @returns A promise with the task history.
  */
@@ -56,13 +61,13 @@ const fetchTaskHistory = async (id: string): Promise<TaskHistoryRead[]> => {
 
 /**
  * Hook to retrieve and manage tasks with filtering.
- * 
+ *
  * @param options - Filters for the task list.
  * @returns React Query result with task data.
  */
 export const useTasks = (options: FetchTasksOptions) => {
   return useQuery<TaskRead[], Error>({
-    queryKey: ['tasks', options], // Inclui options na chave para re-fetch quando filtros mudam
+    queryKey: ["tasks", options], // Inclui options na chave para re-fetch quando filtros mudam
     queryFn: () => fetchTasks(options),
     initialData: [], // Começa com um array vazio enquanto carrega
   });
@@ -70,13 +75,13 @@ export const useTasks = (options: FetchTasksOptions) => {
 
 /**
  * Hook to retrieve a single task by its ID.
- * 
+ *
  * @param id - The task UUID.
  * @returns React Query result with the task data.
  */
 export const useTask = (id: string) => {
   return useQuery<TaskRead, Error>({
-    queryKey: ['tasks', id],
+    queryKey: ["tasks", id],
     queryFn: () => fetchTask(id),
     enabled: !!id,
   });
@@ -84,13 +89,13 @@ export const useTask = (id: string) => {
 
 /**
  * Hook to retrieve the audit history of a task.
- * 
+ *
  * @param id - The task UUID.
  * @returns React Query result with the history data.
  */
 export const useTaskHistory = (id: string) => {
   return useQuery<TaskHistoryRead[], Error>({
-    queryKey: ['tasks', id, 'history'],
+    queryKey: ["tasks", id, "history"],
     queryFn: () => fetchTaskHistory(id),
     enabled: !!id,
   });
@@ -98,25 +103,25 @@ export const useTaskHistory = (id: string) => {
 
 /**
  * Hook to create a new task.
- * 
+ *
  * @returns React Query mutation for creating a task.
  */
 export const useCreateTask = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (newTask: TaskCreate) => {
-      const response = await apiClient.post('/tasks/', newTask);
+      const response = await apiClient.post("/tasks/", newTask);
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
 };
 
 /**
  * Hook to update an existing task.
- * 
+ *
  * @returns React Query mutation for updating a task.
  */
 export const useUpdateTask = () => {
@@ -127,18 +132,18 @@ export const useUpdateTask = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['tasks', data.id] });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["tasks", data.id] });
     },
   });
 };
 
 /**
  * Hook to get a function that invalidates the tasks query.
- * 
+ *
  * @returns A function to invalidate tasks.
  */
 export const useInvalidateTasks = () => {
   const queryClient = useQueryClient();
-  return () => queryClient.invalidateQueries({ queryKey: ['tasks'] });
+  return () => queryClient.invalidateQueries({ queryKey: ["tasks"] });
 };
