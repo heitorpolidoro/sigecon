@@ -1,5 +1,6 @@
 import React from "react";
 import { useTaskHistory } from "../hooks/useTasks";
+import type { TaskHistoryRead } from "../types";
 import styles from "./AuditTimeline.module.css";
 
 interface AuditTimelineProps {
@@ -77,7 +78,7 @@ const AuditTimeline: React.FC<AuditTimelineProps> = ({ taskId }) => {
     <div className={styles.timelineContainer}>
       <h3 className={styles.title}>Audit History</h3>
       <div className={styles.timeline}>
-        {history.map((entry) => (
+        {(history as TaskHistoryRead[]).map((entry) => (
           <div key={entry.id} className={styles.timelineItem}>
             <div className={styles.timelineDot} />
             <div className={styles.itemHeader}>

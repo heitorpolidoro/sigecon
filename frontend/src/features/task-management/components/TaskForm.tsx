@@ -1,11 +1,6 @@
 import React, { useState } from "react";
-import {
-  TaskPriority,
-  TaskStatus,
-  TaskRead,
-  TaskCreate,
-  TaskUpdate,
-} from "../types";
+import { TaskPriority, TaskStatus } from "../types";
+import type { TaskRead, TaskCreate, TaskUpdate } from "../types";
 import { useCreateTask, useUpdateTask } from "../hooks/useTasks";
 import styles from "./TaskForm.module.css";
 

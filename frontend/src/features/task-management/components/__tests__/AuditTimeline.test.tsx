@@ -2,7 +2,6 @@ import { render, screen } from "@testing-library/react";
 import { vi, describe, it, expect } from "vitest";
 import AuditTimeline from "../AuditTimeline";
 import { useTaskHistory } from "../../hooks/useTasks";
-import "@testing-library/jest-dom";
 
 // Mock the hook
 vi.mock("../../hooks/useTasks", () => ({
@@ -11,39 +10,33 @@ vi.mock("../../hooks/useTasks", () => ({
 
 describe("AuditTimeline", () => {
   it("renders loading state", () => {
-    (
-      useTaskHistory as jest.MockedFunction<typeof useTaskHistory>
-    ).mockReturnValue({
+    vi.mocked(useTaskHistory).mockReturnValue({
       data: undefined,
       isLoading: true,
       error: null,
-    });
+    } as any);
 
     render(<AuditTimeline taskId="test-id" />);
     expect(screen.getByText(/Loading history.../i)).toBeInTheDocument();
   });
 
   it("renders error state", () => {
-    (
-      useTaskHistory as jest.MockedFunction<typeof useTaskHistory>
-    ).mockReturnValue({
+    vi.mocked(useTaskHistory).mockReturnValue({
       data: undefined,
       isLoading: false,
       error: new Error("Failed to fetch"),
-    });
+    } as any);
 
     render(<AuditTimeline taskId="test-id" />);
     expect(screen.getByText(/Error loading history./i)).toBeInTheDocument();
   });
 
   it("renders empty state when no history is returned", () => {
-    (
-      useTaskHistory as jest.MockedFunction<typeof useTaskHistory>
-    ).mockReturnValue({
+    vi.mocked(useTaskHistory).mockReturnValue({
       data: [],
       isLoading: false,
       error: null,
-    });
+    } as any);
 
     render(<AuditTimeline taskId="test-id" />);
     expect(
@@ -75,13 +68,11 @@ describe("AuditTimeline", () => {
       },
     ];
 
-    (
-      useTaskHistory as jest.MockedFunction<typeof useTaskHistory>
-    ).mockReturnValue({
+    vi.mocked(useTaskHistory).mockReturnValue({
       data: mockHistory,
       isLoading: false,
       error: null,
-    });
+    } as any);
 
     render(<AuditTimeline taskId="test-id" />);
 
@@ -109,11 +100,11 @@ describe("AuditTimeline", () => {
       },
     ];
 
-    (useTaskHistory as jest.Mock).mockReturnValue({
+    vi.mocked(useTaskHistory).mockReturnValue({
       data: mockHistory,
       isLoading: false,
       error: null,
-    });
+    } as any);
 
     render(<AuditTimeline taskId="test-id" />);
 
