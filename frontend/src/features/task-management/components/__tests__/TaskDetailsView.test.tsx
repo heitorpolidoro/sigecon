@@ -31,12 +31,12 @@ describe("TaskDetailsView", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    vi.spyOn(useTasks, 'useUpdateTask').mockReturnValue({
+    vi.spyOn(useTasks, "useUpdateTask").mockReturnValue({
       mutate: mockUpdateMutate,
       isPending: false,
     });
 
-    vi.spyOn(useTasks, 'useTaskHistory').mockReturnValue({
+    vi.spyOn(useTasks, "useTaskHistory").mockReturnValue({
       data: [],
       isLoading: false,
       error: null,
