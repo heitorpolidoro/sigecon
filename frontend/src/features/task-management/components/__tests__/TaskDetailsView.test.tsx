@@ -31,22 +31,22 @@ describe("TaskDetailsView", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    vi.spyOn(useTasks, "useUpdateTask").mockReturnValue({
+    vi.mocked(useUpdateTask).mockReturnValue({
       mutate: mockUpdateMutate,
       isPending: false,
-    });
+    } as any);
 
-    vi.spyOn(useTasks, "useTaskHistory").mockReturnValue({
+    vi.mocked(useTaskHistory).mockReturnValue({
       data: [],
       isLoading: false,
       error: null,
-    });
+    } as any);
   });
 
   it("renders all task metadata correctly", () => {
     render(
       <TaskDetailsView
-        task={mockTask as Task}
+        task={mockTask as any}
         onEdit={mockOnEdit}
         onClose={mockOnClose}
       />,

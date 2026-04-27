@@ -20,7 +20,7 @@ interface TaskFormProps {
  * @returns The TaskForm component.
  */
 const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
-  const isEditing = Boolean(task);
+  const isEditing = !!task;
   const createTaskMutation = useCreateTask();
   const updateTaskMutation = useUpdateTask();
 
@@ -40,14 +40,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
   /**
    * Transforms task values for form compatibility.
    */
-  const transforms: Record<string, (value: unknown) => unknown> = {
+  const transforms: Record<string, (value: any) => any> = {
     title: (v) => v,
     description: (v) => v || "",
     priority: (v) => v,
     assigned_to_id: (v) => v || "",
-    due_date: (v) => v || "",
-    status: (v) => v,
-  };
     due_date: (v) => (v ? new Date(v).toISOString().split("T")[0] : ""),
     status: (v) => v,
   };
@@ -56,7 +53,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
    * Helper to get initial state from task or defaults.
    */
   const getInitialState = () => {
-    const initial: Record<string, unknown> = {};
+    const initial: Record<string, any> = {};
     (Object.keys(defaultValues) as Array<keyof typeof defaultValues>).forEach(
       (key) => {
         const value = task ? task[key as keyof TaskRead] : defaultValues[key];
@@ -109,69 +106,22 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
       description: formData.description || null,
       priority: formData.priority as TaskPriority,
       due_date: formData.due_date ? new Date(formData.due_date) : null,
-    assigned_to_id: formData.assigned_to_id || null,
-  };
+      assigned_to_id: formData.assigned_to_id || null,
+    };
 
-  const operations = {
-    edit: () => {
+    if (isEditing && task) {
       const updatePayload: TaskUpdate = {
         ...commonData,
         status: formData.status as TaskStatus,
       };
       updateTaskMutation.mutate(
-        { id: task!.id, data: updatePayload },
+        { id: task.id, data: updatePayload },
         { onSuccess },
       );
-    },
-    create: () => {
+    } else {
       createTaskMutation.mutate(commonData as TaskCreate, { onSuccess });
-    },
+    }
   };
-
-  const operationKey = isEditing && task ? "edit" : "create";
-  operations[operationKey]();
-
-  const FormField = ({
-    label,
-    id,
-    name,
-    type,
-    value,
-    onChange,
-    disabled,
-    placeholder,
-  }: {
-    label: string;
-    id: string;
-    name: string;
-    type: string;
-    value: string;
-    onChange: React.ChangeEventHandler<HTMLInputElement>;
-    disabled: boolean;
-    placeholder: string;
-  }) => (
-    <div className={styles.formGroup}>
-      <label className={styles.label} htmlFor={id}>
-        {label}
-      </label>
-      <input
-        type={type}
-        id={id}
-        name={name}
-        className={styles.input}
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        placeholder={placeholder}
-      />
-    </div>
-  );
-
-  const ErrorMessage = ({ message }: { message: string }) => (
-    <div className={styles.error} style={{ marginBottom: "1rem" }}>
-      {message}
-    </div>
-  );
 
   return (
     <div className={styles.formContainer}>
@@ -180,26 +130,26 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
       </h2>
 
       {serverError && (
-        <ErrorMessage
-          message={
-            serverError instanceof Error
-              ? serverError.message
-              : "An error occurred while saving the task."
-          }
-        />
+        <div className={styles.error} style={{ marginBottom: "1rem" }}>
+          {(serverError as any).response?.data?.detail ||
+            "An error occurred while saving the task."}
+        </div>
       )}
 
       <form onSubmit={handleSubmit} className={styles.form}>
-        <FormField
-          label="Title *"
-          id="title"
-          name="title"
-          type="text"
-          value={formData.title}
-          onChange={handleChange}
-          disabled={isLoading}
-          placeholder="Enter task title"
-        />
+        <div className={styles.formGroup}>
+          <label className={styles.label} htmlFor="title">
+            Title *
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            className={styles.input}
+            value={formData.title}
+            onChange={handleChange}
+            disabled={isLoading}
+            placeholder="Enter task title"
           />
           {errors.title && <span className={styles.error}>{errors.title}</span>}
         </div>
