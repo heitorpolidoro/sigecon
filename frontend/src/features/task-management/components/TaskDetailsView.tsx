@@ -26,6 +26,11 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
 }) => {
   const updateTaskMutation = useUpdateTask();
 
+  /**
+   * Handles status change for the task by mutating its status.
+   *
+   * @param newStatus - The new status to set for the task.
+   */
   const handleStatusChange = (newStatus: TaskStatus) => {
     updateTaskMutation.mutate({
       id: task.id,
@@ -33,15 +38,47 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
     });
   };
 
+  /**
+   * Formats a date into a locale string or returns a default string if not set.
+   *
+   * @param date - The date to format, can be Date, string, null, or undefined.
+   * @returns The formatted date string or "Not set" if date is invalid.
+   */
   const formatDate = (date: Date | string | null | undefined) => {
     if (!date) return "Not set";
     return new Date(date).toLocaleString();
   };
 
+  /**
+   * Returns the CSS class for a given status.
+   *
+   * @param status - The status string to derive the CSS class for.
+   * @returns The CSS class name for the status badge.
+   */
   const getStatusClass = (status: string) =>
     styles[`status_${status.toLowerCase()}`] || "";
+
+  /**
+   * Returns the CSS class for a given priority.
+   *
+   * @param priority - The priority string to derive the CSS class for.
+   * @returns The CSS class name for the priority badge.
+   */
   const getPriorityClass = (priority: string) =>
     styles[`priority_${priority.toLowerCase()}`] || "";
+
+  const MetadataItem = ({
+    label,
+    children,
+  }: {
+    label: string;
+    children: React.ReactNode;
+  }) => (
+    <div className={styles.metaItem}>
+      <span className={styles.metaLabel}>{label}</span>
+      {children}
+    </div>
+  );
 
   return (
     <div className={styles.detailsContainer}>
@@ -68,8 +105,30 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
 
       <section className={styles.section}>
         <div className={styles.metadataGrid}>
-          <div className={styles.metaItem}>
-            <span className={styles.metaLabel}>Assignee</span>
+          <MetadataItem label="Assignee">
+            <span className={styles.metaValue}>
+              {task.assignee?.name || "Unassigned"}
+            </span>
+          </MetadataItem>
+          <MetadataItem label="Reporter">
+            <span className={styles.metaValue}>
+              {task.reporter?.name || "Unknown"}
+            </span>
+          </MetadataItem>
+          <MetadataItem label="Created">
+            <span className={styles.metaValue}>
+              {formatDate(task.createdAt)}
+            </span>
+          </MetadataItem>
+          <MetadataItem label="Due Date">
+            <span className={styles.metaValue}>
+              {formatDate(task.dueDate)}
+            </span>
+          </MetadataItem>
+        </div>
+      </section>
+    </div>
+  );
             <span className={styles.metaValue}>
               {task.assigned_to_id || "Unassigned"}
             </span>

@@ -16,6 +16,12 @@ interface AuditTimelineProps {
 const AuditTimeline: React.FC<AuditTimelineProps> = ({ taskId }) => {
   const { data: history, isLoading, error } = useTaskHistory(taskId);
 
+  /**
+   * Formats a Date or date string into a localized string with year, month, day, hour, and minute.
+   *
+   * @param date - The Date object or date string to format.
+   * @returns The formatted date string.
+   */
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleString(undefined, {
       year: "numeric",
@@ -26,10 +32,22 @@ const AuditTimeline: React.FC<AuditTimelineProps> = ({ taskId }) => {
     });
   };
 
+  /**
+   * Formats a field name by replacing underscores with spaces.
+   *
+   * @param name - The field name string to format.
+   * @returns The formatted field name.
+   */
   const formatFieldName = (name: string) => {
     return name.replace(/_/g, " ");
   };
 
+  /**
+   * Formats a value for display, converting null or "null" to "None" and empty string to "Empty".
+   *
+   * @param value - The value string or null to format.
+   * @returns The formatted value string.
+   */
   const formatValue = (value: string | null) => {
     if (value === null || value === "null") return "None";
     if (value === "") return "Empty";

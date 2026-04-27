@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { vi, describe, it, expect, beforeEach } from "vitest";
 import TaskForm from "../TaskForm";
-import { TaskPriority, TaskStatus } from "../../types";
-import * as useTasks from "../../hooks/useTasks";
+import { Task, TaskPriority, TaskStatus } from "../../types";
+import { useCreateTask, useUpdateTask } from "../../hooks/useTasks";
 
 // Mock the hooks
 vi.mock("../../hooks/useTasks", () => ({
@@ -20,13 +20,13 @@ describe("TaskForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (useTasks.useCreateTask as any).mockReturnValue({
+    vi.mocked(useCreateTask).mockReturnValue({
       mutate: mockCreateMutate,
       isPending: false,
       error: null,
     });
 
-    (useTasks.useUpdateTask as any).mockReturnValue({
+    vi.mocked(useUpdateTask).mockReturnValue({
       mutate: mockUpdateMutate,
       isPending: false,
       error: null,
@@ -46,7 +46,7 @@ describe("TaskForm", () => {
   });
 
   it("renders correctly with initial values in Edit mode", () => {
-    const task = {
+    const task: Task = {
       id: "1",
       title: "Existing Task",
       description: "Existing Description",
@@ -59,10 +59,10 @@ describe("TaskForm", () => {
 
     render(
       <TaskForm
-        task={task as any}
+        task={task}
         onSuccess={mockOnSuccess}
         onCancel={mockOnCancel}
-      />,
+      />,    
     );
 
     expect(screen.getByText("Edit Task")).toBeInTheDocument();
@@ -127,7 +127,7 @@ describe("TaskForm", () => {
 
     render(
       <TaskForm
-        task={task as any}
+        task={task}
         onSuccess={mockOnSuccess}
         onCancel={mockOnCancel}
       />,

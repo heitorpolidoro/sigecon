@@ -44,6 +44,12 @@ const TaskDashboard: React.FC = () => {
       [filterType]: value,
     }));
   };
+  ) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [filterType]: value,
+    }));
+  };
 
   /**
    * Resets all filters to their default (null) values.
@@ -52,22 +58,36 @@ const TaskDashboard: React.FC = () => {
     setFilters({ status: null, priority: null });
   };
 
+  /**
+   * Handles clicking on a task, setting it as selected and exiting other modes.
+   *
+   * @param taskId - The ID of the task to select.
+   */
   const handleTaskClick = (taskId: string) => {
     setSelectedTaskId(taskId);
     setIsEditing(false);
     setIsCreating(false);
   };
 
+  /**
+   * Initiates the creation of a new task.
+   */
   const handleCreateNewTask = () => {
     setIsCreating(true);
     setSelectedTaskId(null);
     setIsEditing(false);
   };
 
+  /**
+   * Enables edit mode for the selected task.
+   */
   const handleEditTask = () => {
     setIsEditing(true);
   };
 
+  /**
+   * Closes any open overlay by resetting selected task and modes.
+   */
   const handleCloseOverlay = () => {
     setSelectedTaskId(null);
     setIsCreating(false);

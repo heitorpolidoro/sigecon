@@ -63,7 +63,6 @@ export interface TaskCreate extends Omit<
 /**
  * Interface for task update data.
  */
-export interface TaskUpdate extends Partial<TaskBase> {}
 
 /**
  * Interface for reading task data from the API.

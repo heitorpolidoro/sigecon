@@ -83,7 +83,7 @@ export const useTask = (id: string) => {
   return useQuery<TaskRead, Error>({
     queryKey: ["tasks", id],
     queryFn: () => fetchTask(id),
-    enabled: !!id,
+    enabled: Boolean(id),
   });
 };
 
@@ -97,7 +97,7 @@ export const useTaskHistory = (id: string) => {
   return useQuery<TaskHistoryRead[], Error>({
     queryKey: ["tasks", id, "history"],
     queryFn: () => fetchTaskHistory(id),
-    enabled: !!id,
+    enabled: Boolean(id),
   });
 };
 
