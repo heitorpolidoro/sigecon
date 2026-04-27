@@ -65,7 +65,9 @@ describe("TaskForm", () => {
 
     expect(screen.getByText(/Edit Task/i)).toBeInTheDocument();
     expect(screen.getByDisplayValue("Existing Task")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("Existing Description")).toBeInTheDocument();
+    expect(
+      screen.getByDisplayValue("Existing Description"),
+    ).toBeInTheDocument();
     expect(screen.getByLabelText(/Status/i)).toBeInTheDocument();
   });
 
