@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { vi, describe, it, expect, beforeEach } from "vitest";
 import TaskDetailsView from "../TaskDetailsView";
-import { Task, TaskPriority, TaskStatus } from "../../types";
-import { useUpdateTask, useTaskHistory } from "../../hooks/useTasks";
+import { TaskPriority, TaskStatus } from "../../types";
+import * as useTasks from "../../hooks/useTasks";
 
 // Mock the hooks
 vi.mock("../../hooks/useTasks", () => ({
@@ -31,12 +31,12 @@ describe("TaskDetailsView", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    vi.spyOn(useTasks, "useUpdateTask").mockReturnValue({
+    (useTasks.useUpdateTask as any).mockReturnValue({
       mutate: mockUpdateMutate,
       isPending: false,
     });
 
-    vi.spyOn(useTasks, "useTaskHistory").mockReturnValue({
+    (useTasks.useTaskHistory as any).mockReturnValue({
       data: [],
       isLoading: false,
       error: null,
@@ -46,7 +46,7 @@ describe("TaskDetailsView", () => {
   it("renders all task metadata correctly", () => {
     render(
       <TaskDetailsView
-        task={mockTask}
+        task={mockTask as any}
         onEdit={mockOnEdit}
         onClose={mockOnClose}
       />,
@@ -66,7 +66,7 @@ describe("TaskDetailsView", () => {
   it("triggers onEdit callback when Edit button is clicked", () => {
     render(
       <TaskDetailsView
-        task={mockTask}
+        task={mockTask as any}
         onEdit={mockOnEdit}
         onClose={mockOnClose}
       />,
@@ -80,7 +80,7 @@ describe("TaskDetailsView", () => {
   it("triggers onClose callback when Close button is clicked", () => {
     render(
       <TaskDetailsView
-        task={mockTask as unknown}
+        task={mockTask as any}
         onEdit={mockOnEdit}
         onClose={mockOnClose}
       />,
@@ -94,7 +94,7 @@ describe("TaskDetailsView", () => {
   it("triggers updateTask mutation when quick action status buttons are clicked", () => {
     render(
       <TaskDetailsView
-        task={mockTask as Task}
+        task={mockTask as any}
         onEdit={mockOnEdit}
         onClose={mockOnClose}
       />,
@@ -114,7 +114,7 @@ describe("TaskDetailsView", () => {
   it("disables the button for the current status", () => {
     render(
       <TaskDetailsView
-        task={mockTask as Task}
+        task={mockTask as any}
         onEdit={mockOnEdit}
         onClose={mockOnClose}
       />,

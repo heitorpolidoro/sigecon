@@ -44,12 +44,6 @@ const TaskDashboard: React.FC = () => {
       [filterType]: value,
     }));
   };
-  ) => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [filterType]: value,
-    }));
-  };
 
   /**
    * Resets all filters to their default (null) values.

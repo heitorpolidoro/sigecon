@@ -67,19 +67,6 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
   const getPriorityClass = (priority: string) =>
     styles[`priority_${priority.toLowerCase()}`] || "";
 
-  const MetadataItem = ({
-    label,
-    children,
-  }: {
-    label: string;
-    children: React.ReactNode;
-  }) => (
-    <div className={styles.metaItem}>
-      <span className={styles.metaLabel}>{label}</span>
-      {children}
-    </div>
-  );
-
   return (
     <div className={styles.detailsContainer}>
       <header className={styles.header}>
@@ -105,30 +92,8 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
 
       <section className={styles.section}>
         <div className={styles.metadataGrid}>
-          <MetadataItem label="Assignee">
-            <span className={styles.metaValue}>
-              {task.assignee?.name || "Unassigned"}
-            </span>
-          </MetadataItem>
-          <MetadataItem label="Reporter">
-            <span className={styles.metaValue}>
-              {task.reporter?.name || "Unknown"}
-            </span>
-          </MetadataItem>
-          <MetadataItem label="Created">
-            <span className={styles.metaValue}>
-              {formatDate(task.createdAt)}
-            </span>
-          </MetadataItem>
-          <MetadataItem label="Due Date">
-            <span className={styles.metaValue}>
-              {formatDate(task.dueDate)}
-            </span>
-          </MetadataItem>
-        </div>
-      </section>
-    </div>
-  );
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>Assignee</span>
             <span className={styles.metaValue}>
               {task.assigned_to_id || "Unassigned"}
             </span>
