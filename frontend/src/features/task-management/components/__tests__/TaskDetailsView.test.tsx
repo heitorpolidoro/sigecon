@@ -1,8 +1,8 @@
-  import { render, screen, fireEvent } from "@testing-library/react";
-  import { vi, describe, it, expect, beforeEach } from "vitest";
-  import TaskDetailsView from "../TaskDetailsView";
-  import { Task, TaskPriority, TaskStatus } from "../../types";
-  import { useUpdateTask, useTaskHistory } from "../../hooks/useTasks";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { vi, describe, it, expect, beforeEach } from "vitest";
+import TaskDetailsView from "../TaskDetailsView";
+import { Task, TaskPriority, TaskStatus } from "../../types";
+import { useUpdateTask, useTaskHistory } from "../../hooks/useTasks";
 
 // Mock the hooks
 vi.mock("../../hooks/useTasks", () => ({
@@ -31,12 +31,12 @@ describe("TaskDetailsView", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    vi.spyOn(useTasks, 'useUpdateTask').mockReturnValue({
+    vi.spyOn(useTasks, "useUpdateTask").mockReturnValue({
       mutate: mockUpdateMutate,
       isPending: false,
     });
 
-    vi.spyOn(useTasks, 'useTaskHistory').mockReturnValue({
+    vi.spyOn(useTasks, "useTaskHistory").mockReturnValue({
       data: [],
       isLoading: false,
       error: null,

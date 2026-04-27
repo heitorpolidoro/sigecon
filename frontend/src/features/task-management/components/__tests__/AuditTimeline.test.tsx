@@ -11,7 +11,9 @@ vi.mock("../../hooks/useTasks", () => ({
 
 describe("AuditTimeline", () => {
   it("renders loading state", () => {
-    (useTaskHistory as jest.MockedFunction<typeof useTaskHistory>).mockReturnValue({
+    (
+      useTaskHistory as jest.MockedFunction<typeof useTaskHistory>
+    ).mockReturnValue({
       data: undefined,
       isLoading: true,
       error: null,
@@ -22,7 +24,9 @@ describe("AuditTimeline", () => {
   });
 
   it("renders error state", () => {
-    (useTaskHistory as jest.MockedFunction<typeof useTaskHistory>).mockReturnValue({
+    (
+      useTaskHistory as jest.MockedFunction<typeof useTaskHistory>
+    ).mockReturnValue({
       data: undefined,
       isLoading: false,
       error: new Error("Failed to fetch"),
@@ -33,7 +37,9 @@ describe("AuditTimeline", () => {
   });
 
   it("renders empty state when no history is returned", () => {
-    (useTaskHistory as jest.MockedFunction<typeof useTaskHistory>).mockReturnValue({
+    (
+      useTaskHistory as jest.MockedFunction<typeof useTaskHistory>
+    ).mockReturnValue({
       data: [],
       isLoading: false,
       error: null,
@@ -69,7 +75,9 @@ describe("AuditTimeline", () => {
       },
     ];
 
-    (useTaskHistory as jest.MockedFunction<typeof useTaskHistory>).mockReturnValue({
+    (
+      useTaskHistory as jest.MockedFunction<typeof useTaskHistory>
+    ).mockReturnValue({
       data: mockHistory,
       isLoading: false,
       error: null,

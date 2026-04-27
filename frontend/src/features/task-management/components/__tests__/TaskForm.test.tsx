@@ -62,7 +62,7 @@ describe("TaskForm", () => {
         task={task}
         onSuccess={mockOnSuccess}
         onCancel={mockOnCancel}
-      />,    
+      />,
     );
 
     expect(screen.getByText("Edit Task")).toBeInTheDocument();
