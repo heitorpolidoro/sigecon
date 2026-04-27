@@ -7,6 +7,7 @@ import * as useTasks from "../../hooks/useTasks";
 // Mock the hooks
 vi.mock("../../hooks/useTasks", () => ({
   useUpdateTask: vi.fn(),
+  useTaskHistory: vi.fn(),
 }));
 
 describe("TaskDetailsView", () => {
@@ -33,6 +34,12 @@ describe("TaskDetailsView", () => {
     (useTasks.useUpdateTask as any).mockReturnValue({
       mutate: mockUpdateMutate,
       isPending: false,
+    });
+
+    (useTasks.useTaskHistory as any).mockReturnValue({
+      data: [],
+      isLoading: false,
+      error: null,
     });
   });
 
