@@ -39,6 +39,9 @@ const TaskDashboard: React.FC = () => {
     filterType: "status" | "priority",
     value: TaskStatus | TaskPriority | null,
   ) => {
+    setFilters((prev) => ({ ...prev, [filterType]: value }));
+  };
+  ) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
       [filterType]: value,
