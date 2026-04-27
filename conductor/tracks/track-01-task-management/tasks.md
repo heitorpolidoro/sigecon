@@ -44,7 +44,7 @@ Este documento decompõe o plano de implementação do Track 01 em tarefas granu
 
 ## 2. Frontend (React Components, State Management)
 
-### [ ] Task 2.1: Task Dashboard & List Components
+### [x] Task 2.1: Task Dashboard & List Components
 - **Description:** Create the `TaskDashboard`, `TaskList`, `TaskCard`, and `TaskFilters` components.
 - **Traceability:** Plan Section 4, Spec Success Criteria (Filtros).
 - **Definition of Done:** 
@@ -53,7 +53,7 @@ Este documento decompõe o plano de implementação do Track 01 em tarefas granu
     - Responsive layout (mobile-first) implemented.
 - **Estimated Effort:** 2 days.
 
-### [ ] Task 2.2: Task Form & Detail View
+### [x] Task 2.2: Task Form & Detail View
 - **Description:** Implement `TaskForm` (Modal/Page) for creation/edition and `TaskDetailsView`.
 - **Traceability:** Plan Section 4, Spec User Story 1.
 - **Definition of Done:** 
@@ -62,7 +62,7 @@ Este documento decompõe o plano de implementação do Track 01 em tarefas granu
     - Form handles both Create and Edit modes seamlessly.
 - **Estimated Effort:** 2 days.
 
-### [ ] Task 2.3: Audit Timeline Component
+### [x] Task 2.3: Audit Timeline Component
 - **Description:** Create the `AuditTimeline` component to visualize the `task_history` data.
 - **Traceability:** Plan Section 4, Spec Success Criteria (Histórico).
 - **Definition of Done:** 
@@ -70,7 +70,7 @@ Este documento decompõe o plano de implementação do Track 01 em tarefas granu
     - Component integrated into the `TaskDetailsView` (tab or section).
 - **Estimated Effort:** 1 day.
 
-### [ ] Task 2.4: Frontend API Integration & State Management
+### [x] Task 2.4: Frontend API Integration & State Management
 - **Description:** Integrate components with backend endpoints and manage global/local state.
 - **Traceability:** Plan Section 1 & 4.
 - **Definition of Done:** 
@@ -81,7 +81,7 @@ Este documento decompõe o plano de implementação do Track 01 em tarefas granu
 
 ## 3. Integration & Final Validation
 
-### [ ] Task 3.1: Comprehensive Backend Test Suite
+### [x] Task 3.1: Comprehensive Backend Test Suite
 - **Description:** Ensure high coverage for task logic, status transitions, and history logging.
 - **Traceability:** Plan Section 8.1.
 - **Definition of Done:** 
@@ -89,7 +89,7 @@ Este documento decompõe o plano de implementação do Track 01 em tarefas granu
     - Coverage report above 90% for the `tasks` module.
 - **Estimated Effort:** 1 day.
 
-### [ ] Task 3.2: Frontend Unit & Component Tests
+### [x] Task 3.2: Frontend Unit & Component Tests
 - **Description:** Test key frontend components and form validation logic.
 - **Traceability:** Plan Section 8.2.
 - **Definition of Done:** 

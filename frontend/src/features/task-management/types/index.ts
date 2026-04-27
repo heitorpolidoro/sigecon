@@ -60,9 +60,7 @@ export interface TaskCreate extends Omit<TaskBase, 'status' | 'priority' | 'due_
 /**
  * Interface for task update data.
  */
-export interface TaskUpdate extends Partial<Omit<TaskBase, 'assigned_to_id'>> {
-  status?: TaskStatus;
-  priority?: TaskPriority;
+export interface TaskUpdate extends Partial<TaskBase> {
 }
 
 /**

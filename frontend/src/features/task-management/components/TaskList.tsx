@@ -19,6 +19,8 @@ interface TaskListProps {
     priority?: TaskPriority | null;
     assigned_to_id?: string | null;
   };
+  /** Callback triggered when a task card is clicked. */
+  onTaskClick?: (taskId: string) => void;
 }
 
 /**
@@ -27,7 +29,7 @@ interface TaskListProps {
  * @param props - Component props containing tasks, loading state, and filters.
  * @returns A list of task cards or a status message.
  */
-const TaskList: React.FC<TaskListProps> = ({ tasks, isLoading, isError, error, filters }) => {
+const TaskList: React.FC<TaskListProps> = ({ tasks, isLoading, isError, error, filters, onTaskClick }) => {
   if (isLoading) {
     return <div className={styles.message}>Loading tasks...</div>;
   }
@@ -62,7 +64,11 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, isLoading, isError, error, f
   return (
     <div className={styles.taskList}>
       {filteredTasks.map((task) => (
-        <TaskCard key={task.id} task={task} />
+        <TaskCard 
+          key={task.id} 
+          task={task} 
+          onClick={() => onTaskClick?.(task.id)} 
+        />
       ))}
     </div>
   );

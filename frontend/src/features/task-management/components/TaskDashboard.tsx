@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { TaskStatus, TaskPriority } from '../types';
 import TaskList from './TaskList';
+import TaskForm from './TaskForm';
+import TaskDetailsView from './TaskDetailsView';
 import styles from './TaskDashboard.module.css';
 import { useTasks } from '../hooks/useTasks';
 
 /**
  * Main dashboard component for managing and viewing tasks.
- * Includes filters for status and priority.
+ * Includes filters for status and priority, and manages task creation and details views.
  * 
  * @returns The TaskDashboard component.
  */
@@ -19,7 +21,13 @@ const TaskDashboard: React.FC = () => {
     priority: null,
   });
 
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
   const { data: tasks, isLoading, isError, error } = useTasks(filters);
+
+  const selectedTask = tasks?.find(t => t.id === selectedTaskId);
 
   /**
    * Updates the active filters.
@@ -41,9 +49,36 @@ const TaskDashboard: React.FC = () => {
     setFilters({ status: null, priority: null });
   };
 
+  const handleTaskClick = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setIsEditing(false);
+    setIsCreating(false);
+  };
+
+  const handleCreateNewTask = () => {
+    setIsCreating(true);
+    setSelectedTaskId(null);
+    setIsEditing(false);
+  };
+
+  const handleEditTask = () => {
+    setIsEditing(true);
+  };
+
+  const handleCloseOverlay = () => {
+    setSelectedTaskId(null);
+    setIsCreating(false);
+    setIsEditing(false);
+  };
+
   return (
     <div className={styles.dashboardContainer}>
-      <h1 className={styles.title}>Task Dashboard</h1>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Task Dashboard</h1>
+        <button onClick={handleCreateNewTask} className={styles.createButton}>
+          + New Task
+        </button>
+      </div>
 
       <div className={styles.filters}>
         <select
@@ -74,7 +109,41 @@ const TaskDashboard: React.FC = () => {
           isError={isError}
           error={error}
           filters={filters}
+          onTaskClick={handleTaskClick}
         />
+      )}
+
+      {/* Overlays / Modals */}
+      {isCreating && (
+        <div className={styles.modalOverlay} onClick={handleCloseOverlay}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <TaskForm onCancel={handleCloseOverlay} onSuccess={handleCloseOverlay} />
+          </div>
+        </div>
+      )}
+
+      {selectedTask && !isEditing && (
+        <div className={styles.modalOverlay} onClick={handleCloseOverlay}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <TaskDetailsView 
+              task={selectedTask} 
+              onClose={handleCloseOverlay} 
+              onEdit={handleEditTask}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedTask && isEditing && (
+        <div className={styles.modalOverlay} onClick={handleCloseOverlay}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <TaskForm 
+              task={selectedTask} 
+              onCancel={() => setIsEditing(false)} 
+              onSuccess={handleCloseOverlay} 
+            />
+          </div>
+        </div>
       )}
     </div>
   );

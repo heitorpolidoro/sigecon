@@ -5,6 +5,8 @@ import styles from './TaskCard.module.css';
 interface TaskCardProps {
   /** The task object to display. */
   task: TaskRead;
+  /** Callback triggered when the card is clicked. */
+  onClick?: () => void;
 }
 
 /**
@@ -13,7 +15,7 @@ interface TaskCardProps {
  * @param props - Component props containing the task.
  * @returns A card component with task details.
  */
-const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
   /**
    * Maps a task status to a corresponding CSS color class.
    * 
@@ -47,7 +49,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   };
 
   return (
-    <div className={styles.card}>
+    <div className={styles.card} onClick={onClick}>
       <h3 className={styles.title}>{task.title}</h3>
       <p className={styles.description}>{task.description || 'No description'}</p>
       <div className={styles.details}>
