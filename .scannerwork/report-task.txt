@@ -1,7 +1,0 @@
-organization=heitorpolidoro
-projectKey=heitorpolidoro_sigecon
-serverUrl=https://sonarcloud.io
-serverVersion=8.0.0.86098
-dashboardUrl=https://sonarcloud.io/dashboard?id=heitorpolidoro_sigecon
-ceTaskId=AZ3QDqX6K2nS7mqll1Ug
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZ3QDqX6K2nS7mqll1Ug
