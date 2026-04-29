@@ -1,3 +1,6 @@
+"""
+Authentication and authorization dependencies for the API.
+"""
 import uuid
 from typing import Annotated
 
@@ -40,7 +43,7 @@ def get_current_user(
         try:
             payload = jwt.decode(token, key, algorithms=[settings.ALGORITHM])
             break
-        except (JWTError, ValidationError, ValueError):
+        except (JWTError, ValidationError):
             continue
 
     if payload is None:
