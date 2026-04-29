@@ -10,7 +10,7 @@ export default mergeConfig(
       setupFiles: "./src/test/setup.ts",
       coverage: {
         provider: "v8",
-        reporter: ["text", "lcov"],
+        reporter: ["text", "lcov", "json-summary"],
         include: ["src/**/*"],
         exclude: [
           "src/main.tsx",

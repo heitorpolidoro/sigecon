@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, within } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import TaskDashboard from "../TaskDashboard";
 import { useTasks, useCreateTask, useUpdateTask, useTaskHistory } from "../../hooks/useTasks";
@@ -126,24 +126,68 @@ describe("TaskDashboard", () => {
     expect(screen.getByText("Close")).toBeInTheDocument();
   });
 
+  it("handles successful task creation/update and closes overlay", () => {
+    const mockMutate = vi.fn((data, options) => {
+      if (options?.onSuccess) options.onSuccess();
+    });
+    (useCreateTask as any).mockReturnValue({ mutate: mockMutate, isPending: false });
+
+    render(<TaskDashboard />);
+    
+    // Test creation success
+    fireEvent.click(screen.getByText("+ New Task"));
+    
+    const titleInput = screen.getByPlaceholderText(/Enter task title/i);
+    fireEvent.change(titleInput, { target: { value: "Success Task" } });
+    
+    const createBtn = screen.getByRole("button", { name: "Create Task" });
+    fireEvent.click(createBtn);
+    
+    expect(screen.queryByText("Create New Task")).not.toBeInTheDocument();
+  });
+
   it("closes overlay when clicking on background", () => {
     render(<TaskDashboard />);
     
     fireEvent.click(screen.getByText("+ New Task"));
     
-    // O TaskDashboard renderiza o overlay com uma classe modalOverlay
-    // No código: <div className={styles.modalOverlay} onClick={handleCloseOverlay}>
-    // Vamos buscar por esse elemento. Como não temos a classe real no teste (devido ao CSS modules),
-    // vamos buscar pelo papel ou testar via stopPropagation.
-    // Mas uma forma simples é clicar em um elemento que sabemos que fecha o modal.
-    
-    // Alternativa: testar a função handleCloseOverlay indiretamente.
     const modalContent = screen.getByText("Create New Task").closest('div');
-    const overlay = modalContent?.parentElement?.parentElement; // Camada externa
+    const overlay = modalContent?.parentElement?.parentElement;
     
     if (overlay) {
         fireEvent.click(overlay);
         expect(screen.queryByText("Create New Task")).not.toBeInTheDocument();
     }
+  });
+
+  it("renders TaskList when tasks data is present", () => {
+    (useTasks as any).mockReturnValue({
+      data: mockTasks,
+      isLoading: false,
+      isError: false,
+      error: null,
+    });
+    render(<TaskDashboard />);
+    expect(screen.getByText("Task 1")).toBeInTheDocument();
+  });
+
+  it("handles loading and error states from useTasks", () => {
+    (useTasks as any).mockReturnValue({
+      data: [],
+      isLoading: true,
+      isError: false,
+      error: null,
+    });
+    render(<TaskDashboard />);
+    expect(screen.getByText(/Loading tasks.../i)).toBeInTheDocument();
+
+    (useTasks as any).mockReturnValue({
+      data: [],
+      isLoading: false,
+      isError: true,
+      error: new Error("Fetch error"),
+    });
+    render(<TaskDashboard />);
+    expect(screen.getByText(/Error loading tasks: Fetch error/i)).toBeInTheDocument();
   });
 });

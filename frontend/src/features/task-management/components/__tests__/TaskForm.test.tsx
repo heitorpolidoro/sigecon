@@ -78,7 +78,30 @@ describe("TaskForm", () => {
 
     expect(screen.getByText(/Title is required/i)).toBeInTheDocument();
     expect(mockCreateMutate).not.toHaveBeenCalled();
+
+    // Clear error on change
+    fireEvent.change(screen.getByLabelText(/Title \*/i), {
+      target: { value: "A" },
+    });
+    expect(screen.queryByText(/Title is required/i)).not.toBeInTheDocument();
   });
+
+  it("handles null/missing description and assigned_to_id in submission", () => {
+    render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
+    fireEvent.change(screen.getByLabelText(/Title \*/i), {
+      target: { value: "Minimal Task" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Create Task/i }));
+    
+    expect(mockCreateMutate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        description: null,
+        assigned_to_id: null,
+      }),
+      expect.any(Object),
+    );
+  });
+
 
   it("calls useCreateTask mutate with correct data on submission", () => {
     render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);

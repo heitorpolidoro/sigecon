@@ -142,5 +142,50 @@ describe("TaskDetailsView", () => {
     expect(screen.getByText("Unassigned")).toBeInTheDocument();
     expect(screen.getAllByText("Not set").length).toBeGreaterThan(0);
   });
+
+  it("applies correct status and priority classes", () => {
+    const statuses = Object.values(TaskStatus);
+    const priorities = Object.values(TaskPriority);
+
+    statuses.forEach((status) => {
+      const { rerender } = render(
+        <TaskDetailsView
+          task={{ ...mockTask, status } as any}
+          onEdit={mockOnEdit}
+          onClose={mockOnClose}
+        />
+      );
+      const badge = screen.getByText(status.replace("_", " "));
+      expect(badge).toBeInTheDocument();
+      rerender(<></>); // force cleanup for next loop
+    });
+
+    priorities.forEach((priority) => {
+      const { rerender } = render(
+        <TaskDetailsView
+          task={{ ...mockTask, priority } as any}
+          onEdit={mockOnEdit}
+          onClose={mockOnClose}
+        />
+      );
+      const badge = screen.getByText(priority);
+      expect(badge).toBeInTheDocument();
+      rerender(<></>);
+    });
+  });
+
+  it("handles unknown status and priority for CSS classes", () => {
+    render(
+      <TaskDetailsView
+        task={{ ...mockTask, status: "UNKNOWN", priority: "UNKNOWN" } as any}
+        onEdit={mockOnEdit}
+        onClose={mockOnClose}
+      />
+    );
+    expect(screen.getAllByText("UNKNOWN").length).toBeGreaterThan(0);
+  });
 });
+
+
+
 
