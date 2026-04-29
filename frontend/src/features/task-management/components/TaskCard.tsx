@@ -58,8 +58,24 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
     }
   };
 
+  /**
+   * Handles keyboard events for accessibility.
+   */
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
-    <div className={styles.card} onClick={onClick}>
+    <div
+      className={styles.card}
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="button"
+    >
       <h3 className={styles.title}>{task.title}</h3>
       <p className={styles.description}>
         {task.description || "No description"}
