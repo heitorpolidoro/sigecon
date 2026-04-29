@@ -123,4 +123,24 @@ describe("TaskDetailsView", () => {
     const pendingButton = screen.getByRole("button", { name: /pending/i });
     expect(pendingButton).toBeDisabled();
   });
+
+  it("renders 'Unassigned' and 'Not set' when metadata is missing", () => {
+    const incompleteTask = {
+      ...mockTask,
+      assigned_to_id: null,
+      due_date: null,
+    };
+
+    render(
+      <TaskDetailsView
+        task={incompleteTask as any}
+        onEdit={mockOnEdit}
+        onClose={mockOnClose}
+      />,
+    );
+
+    expect(screen.getByText("Unassigned")).toBeInTheDocument();
+    expect(screen.getAllByText("Not set").length).toBeGreaterThan(0);
+  });
 });
+

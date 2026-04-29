@@ -144,4 +144,33 @@ describe("TaskForm", () => {
 
     expect(mockOnCancel).toHaveBeenCalled();
   });
+
+  it("displays server error detail when mutation fails", () => {
+    vi.mocked(useCreateTask).mockReturnValue({
+      mutate: mockCreateMutate,
+      isPending: false,
+      error: {
+        response: {
+          data: { detail: "Server error occurred" }
+        }
+      } as any,
+    });
+
+    render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
+
+    expect(screen.getByText("Server error occurred")).toBeInTheDocument();
+  });
+
+  it("displays default server error when detail is missing", () => {
+    vi.mocked(useCreateTask).mockReturnValue({
+      mutate: mockCreateMutate,
+      isPending: false,
+      error: new Error("Generic error"),
+    } as any);
+
+    render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
+
+    expect(screen.getByText("An error occurred while saving the task.")).toBeInTheDocument();
+  });
 });
+

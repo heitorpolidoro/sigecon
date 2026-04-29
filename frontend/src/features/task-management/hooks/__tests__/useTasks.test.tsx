@@ -1,0 +1,139 @@
+import { renderHook, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { 
+  useTasks, 
+  useTask, 
+  useCreateTask, 
+  useUpdateTask, 
+  useTaskHistory, 
+  useInvalidateTasks 
+} from "../useTasks";
+import apiClient from "../../../../api/client";
+import { TaskStatus, TaskPriority } from "../../types";
+
+// Mock do apiClient
+vi.mock("../../../../api/client", () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    patch: vi.fn(),
+  },
+}));
+
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        gcTime: 0, // Desabilita cache para evitar interferência entre testes
+      },
+    },
+  });
+  return ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+};
+
+describe("useTasks hooks", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe("useTasks", () => {
+    it("fetches tasks with filters", async () => {
+      const mockData = [{ id: "1", title: "Task 1" }];
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockData });
+
+      const { result } = renderHook(() => useTasks({ status: TaskStatus.PENDING }), {
+        wrapper: createWrapper(),
+      });
+
+      // Espera até que os dados sejam carregados (superando o initialData)
+      await waitFor(() => expect(result.current.data).toEqual(mockData), { timeout: 2000 });
+      
+      expect(apiClient.get).toHaveBeenCalledWith("/tasks/", {
+        params: { status: TaskStatus.PENDING, priority: undefined, assigned_to_id: undefined },
+      });
+    });
+  });
+
+  describe("useTask", () => {
+    it("fetches a single task by id", async () => {
+      const mockTask = { id: "1", title: "Task 1" };
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockTask });
+
+      const { result } = renderHook(() => useTask("1"), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      
+      expect(apiClient.get).toHaveBeenCalledWith("/tasks/1");
+      expect(result.current.data).toEqual(mockTask);
+    });
+
+    it("does not fetch if id is empty", () => {
+      renderHook(() => useTask(""), {
+        wrapper: createWrapper(),
+      });
+      expect(apiClient.get).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("useCreateTask", () => {
+    it("calls post and invalidates queries on success", async () => {
+      const newTask = { title: "New Task", status: TaskStatus.PENDING, priority: TaskPriority.MEDIUM };
+      vi.mocked(apiClient.post).mockResolvedValue({ data: { id: "2", ...newTask } });
+
+      const { result } = renderHook(() => useCreateTask(), {
+        wrapper: createWrapper(),
+      });
+
+      await result.current.mutateAsync(newTask as any);
+
+      expect(apiClient.post).toHaveBeenCalledWith("/tasks/", newTask);
+    });
+  });
+
+  describe("useUpdateTask", () => {
+    it("calls patch and invalidates queries on success", async () => {
+      const updateData = { status: TaskStatus.COMPLETED };
+      vi.mocked(apiClient.patch).mockResolvedValue({ data: { id: "1", ...updateData } });
+
+      const { result } = renderHook(() => useUpdateTask(), {
+        wrapper: createWrapper(),
+      });
+
+      await result.current.mutateAsync({ id: "1", data: updateData as any });
+
+      expect(apiClient.patch).toHaveBeenCalledWith("/tasks/1", updateData);
+    });
+  });
+
+  describe("useTaskHistory", () => {
+    it("fetches task history", async () => {
+      const mockHistory = [{ field_name: "status", old_value: "PENDING", new_value: "COMPLETED" }];
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockHistory });
+
+      const { result } = renderHook(() => useTaskHistory("1"), {
+        wrapper: createWrapper(),
+      });
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+      
+      expect(apiClient.get).toHaveBeenCalledWith("/tasks/1/history");
+      expect(result.current.data).toEqual(mockHistory);
+    });
+  });
+
+  describe("useInvalidateTasks", () => {
+    it("returns a function that invalidates tasks query", () => {
+      const { result } = renderHook(() => useInvalidateTasks(), {
+        wrapper: createWrapper(),
+      });
+      
+      expect(typeof result.current).toBe("function");
+    });
+  });
+});

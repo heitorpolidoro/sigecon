@@ -111,4 +111,30 @@ describe("AuditTimeline", () => {
     expect(screen.getAllByText("None").length).toBeGreaterThan(0);
     expect(screen.getByText("New description")).toBeInTheDocument();
   });
+
+  it('formats empty string values as "Empty"', () => {
+    const mockHistory = [
+      {
+        id: "4",
+        task_id: "test-id",
+        changed_by_id: "u1",
+        user_name: "John Doe",
+        field_name: "description",
+        old_value: "Old",
+        new_value: "",
+        timestamp: "2023-10-27T13:00:00Z",
+      },
+    ];
+
+    vi.mocked(useTaskHistory).mockReturnValue({
+      data: mockHistory,
+      isLoading: false,
+      error: null,
+    } as any);
+
+    render(<AuditTimeline taskId="test-id" />);
+
+    expect(screen.getByText("Empty")).toBeInTheDocument();
+  });
 });
+
