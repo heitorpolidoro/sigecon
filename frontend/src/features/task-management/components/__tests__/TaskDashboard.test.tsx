@@ -160,6 +160,96 @@ describe("TaskDashboard", () => {
     }
   });
 
+  it("does not close overlay when clicking inside modal content", () => {
+    render(<TaskDashboard />);
+    
+    fireEvent.click(screen.getByText("+ New Task"));
+    
+    const modalContent = screen.getByText("Create New Task");
+    fireEvent.click(modalContent);
+    
+    expect(screen.getByText("Create New Task")).toBeInTheDocument();
+  });
+
+  it("resets other modes when handleCreateNewTask is called", () => {
+    render(<TaskDashboard />);
+    
+    // Select a task first
+    fireEvent.click(screen.getByText("Task 1"));
+    expect(screen.getByText("Close")).toBeInTheDocument(); // Details view
+    
+    // Now click New Task
+    fireEvent.click(screen.getByText("+ New Task"));
+    expect(screen.getByText("Create New Task")).toBeInTheDocument();
+    expect(screen.queryByText("Close")).not.toBeInTheDocument(); // Details view should be gone
+  });
+
+  it("resets other modes when handleTaskClick is called", () => {
+    render(<TaskDashboard />);
+    
+    // Open create modal
+    fireEvent.click(screen.getByText("+ New Task"));
+    expect(screen.getByText("Create New Task")).toBeInTheDocument();
+    
+    // Click on a task in the list
+    fireEvent.click(screen.getByText("Task 1"));
+    expect(screen.getByText("Close")).toBeInTheDocument(); // Details view
+    expect(screen.queryByText("Create New Task")).not.toBeInTheDocument(); // Create form should be gone
+  });
+
+  it("handles empty or undefined tasks from useTasks", () => {
+    (useTasks as any).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: false,
+      error: null,
+    });
+    
+    render(<TaskDashboard />);
+    // When tasks is undefined, TaskList shouldn't render
+    expect(screen.queryByRole("list")).not.toBeInTheDocument();
+    // The component should still render header and filters
+    expect(screen.getByText("Task Dashboard")).toBeInTheDocument();
+  });
+
+  it("allows setting individual filters to null (All)", () => {
+    render(<TaskDashboard />);
+    
+    const statusSelect = screen.getByDisplayValue("All Statuses");
+    fireEvent.change(statusSelect, { target: { value: TaskStatus.COMPLETED } });
+    expect(useTasks).toHaveBeenLastCalledWith(expect.objectContaining({ status: TaskStatus.COMPLETED }));
+
+    // Change back to All
+    fireEvent.change(statusSelect, { target: { value: "" } });
+    expect(useTasks).toHaveBeenLastCalledWith(expect.objectContaining({ status: null }));
+    
+    const prioritySelect = screen.getByDisplayValue("All Priorities");
+    fireEvent.change(prioritySelect, { target: { value: TaskPriority.HIGH } });
+    expect(useTasks).toHaveBeenLastCalledWith(expect.objectContaining({ priority: TaskPriority.HIGH }));
+
+    // Change back to All
+    fireEvent.change(prioritySelect, { target: { value: "" } });
+    expect(useTasks).toHaveBeenLastCalledWith(expect.objectContaining({ priority: null }));
+  });
+
+  it("closes overlay after successful update in edit mode", () => {
+    const mockUpdateMutate = vi.fn((data, options) => {
+      if (options?.onSuccess) options.onSuccess();
+    });
+    (useUpdateTask as any).mockReturnValue({ mutate: mockUpdateMutate, isPending: false });
+
+    render(<TaskDashboard />);
+    
+    fireEvent.click(screen.getByText("Task 1"));
+    fireEvent.click(screen.getByText("Edit Task"));
+    
+    const updateBtn = screen.getByRole("button", { name: "Update Task" });
+    fireEvent.click(updateBtn);
+    
+    expect(screen.queryByText("Update Task")).not.toBeInTheDocument();
+    expect(screen.queryByText("Close")).not.toBeInTheDocument();
+  });
+
   it("renders TaskList when tasks data is present", () => {
     (useTasks as any).mockReturnValue({
       data: mockTasks,

@@ -4,6 +4,15 @@ import TaskDetailsView from "../TaskDetailsView";
 import { TaskPriority, TaskStatus } from "../../types";
 import { useUpdateTask, useTaskHistory } from "../../hooks/useTasks";
 
+// Mock the CSS module
+vi.mock("../TaskDetailsView.module.css", () => ({
+  default: {
+    status_pending: "status_pending",
+    priority_medium: "priority_medium",
+    badge: "badge",
+  },
+}));
+
 // Mock the hooks
 vi.mock("../../hooks/useTasks", () => ({
   useUpdateTask: vi.fn(),
@@ -183,6 +192,76 @@ describe("TaskDetailsView", () => {
       />
     );
     expect(screen.getAllByText("UNKNOWN").length).toBeGreaterThan(0);
+  });
+
+  it("renders 'No description provided.' when description is empty or null", () => {
+    const { rerender } = render(
+      <TaskDetailsView
+        task={{ ...mockTask, description: "" } as any}
+        onEdit={mockOnEdit}
+        onClose={mockOnClose}
+      />
+    );
+    expect(screen.getByText("No description provided.")).toBeInTheDocument();
+
+    rerender(
+      <TaskDetailsView
+        task={{ ...mockTask, description: null } as any}
+        onEdit={mockOnEdit}
+        onClose={mockOnClose}
+      />
+    );
+    expect(screen.getByText("No description provided.")).toBeInTheDocument();
+  });
+
+  it("disables all status buttons when updateTaskMutation.isPending is true", () => {
+    vi.mocked(useUpdateTask).mockReturnValue({
+      mutate: mockUpdateMutate,
+      isPending: true,
+    } as any);
+
+    render(
+      <TaskDetailsView
+        task={mockTask as any}
+        onEdit={mockOnEdit}
+        onClose={mockOnClose}
+      />
+    );
+
+    const statusNames = ["pending", "in progress", "completed", "canceled"];
+    statusNames.forEach((name) => {
+      const button = screen.getByRole("button", { name: new RegExp(name, "i") });
+      expect(button).toBeDisabled();
+    });
+  });
+
+  it("formatDate handles all falsy values", () => {
+    const { rerender } = render(
+      <TaskDetailsView
+        task={{ ...mockTask, due_date: null } as any}
+        onEdit={mockOnEdit}
+        onClose={mockOnClose}
+      />
+    );
+    expect(screen.getAllByText("Not set").length).toBeGreaterThan(0);
+
+    rerender(
+      <TaskDetailsView
+        task={{ ...mockTask, due_date: undefined } as any}
+        onEdit={mockOnEdit}
+        onClose={mockOnClose}
+      />
+    );
+    expect(screen.getAllByText("Not set").length).toBeGreaterThan(0);
+
+    rerender(
+      <TaskDetailsView
+        task={{ ...mockTask, due_date: "" } as any}
+        onEdit={mockOnEdit}
+        onClose={mockOnClose}
+      />
+    );
+    expect(screen.getAllByText("Not set").length).toBeGreaterThan(0);
   });
 });
 

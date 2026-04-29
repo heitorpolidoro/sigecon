@@ -57,10 +57,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
     (Object.keys(defaultValues) as Array<keyof typeof defaultValues>).forEach(
       (key) => {
         const value = task ? task[key as keyof TaskRead] : defaultValues[key];
-        initial[key] = transforms[key] ? transforms[key](value) : value;
+        initial[key] = transforms[key](value);
       },
-    );
-    return initial;
+    );    return initial;
   };
 
   const [formData, setFormData] = useState(getInitialState());
