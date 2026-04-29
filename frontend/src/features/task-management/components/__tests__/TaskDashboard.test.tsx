@@ -160,15 +160,51 @@ describe("TaskDashboard", () => {
     }
   });
 
-  it("does not close overlay when clicking inside modal content", () => {
+  it("closes overlay when Enter or Space is pressed on overlay", () => {
     render(<TaskDashboard />);
     
     fireEvent.click(screen.getByText("+ New Task"));
     
-    const modalContent = screen.getByText("Create New Task");
-    fireEvent.click(modalContent);
+    const overlay = screen.getByLabelText("Close modal");
     
+    fireEvent.keyDown(overlay, { key: "Enter" });
+    expect(screen.queryByText("Create New Task")).not.toBeInTheDocument();
+    
+    fireEvent.click(screen.getByText("+ New Task"));
+    const overlay2 = screen.getByLabelText("Close modal");
+    fireEvent.keyDown(overlay2, { key: " " });
+    expect(screen.queryByText("Create New Task")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("+ New Task"));
+    const overlay3 = screen.getByLabelText("Close modal");
+    fireEvent.keyDown(overlay3, { key: "Escape" }); // Should NOT close with this handler (though it might be good practice)
     expect(screen.getByText("Create New Task")).toBeInTheDocument();
+  });
+
+  it("stops propagation on modal content for onClick and onKeyDown in all modal types", () => {
+    render(<TaskDashboard />);
+    
+    // 1. Create Modal
+    fireEvent.click(screen.getByText("+ New Task"));
+    const createModalContent = screen.getByRole("document");
+    fireEvent.click(createModalContent);
+    fireEvent.keyDown(createModalContent, { key: "Enter" });
+    expect(screen.getByText("Create New Task")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("Cancel"));
+
+    // 2. Details Modal
+    fireEvent.click(screen.getByText("Task 1"));
+    const detailsModalContent = screen.getByRole("document");
+    fireEvent.click(detailsModalContent);
+    fireEvent.keyDown(detailsModalContent, { key: "Enter" });
+    expect(screen.getByText("Close")).toBeInTheDocument();
+
+    // 3. Edit Modal
+    fireEvent.click(screen.getByText("Edit Task"));
+    const editModalContent = screen.getByRole("document");
+    fireEvent.click(editModalContent);
+    fireEvent.keyDown(editModalContent, { key: "Enter" });
+    expect(screen.getByText("Update Task")).toBeInTheDocument();
   });
 
   it("resets other modes when handleCreateNewTask is called", () => {

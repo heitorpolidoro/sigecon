@@ -41,12 +41,20 @@ describe("TaskCard", () => {
     expect(screen.queryByText(/Due:/)).not.toBeInTheDocument();
   });
 
-  it("calls onClick when clicked", () => {
+  it("calls onClick when Enter or Space is pressed", () => {
     const onClick = vi.fn();
     render(<TaskCard task={mockTask} onClick={onClick} />);
     
-    fireEvent.click(screen.getByText("Test Task"));
+    const card = screen.getByRole("button");
+    
+    fireEvent.keyDown(card, { key: "Enter" });
     expect(onClick).toHaveBeenCalledTimes(1);
+    
+    fireEvent.keyDown(card, { key: " " });
+    expect(onClick).toHaveBeenCalledTimes(2);
+    
+    fireEvent.keyDown(card, { key: "Tab" }); // Should NOT call onClick
+    expect(onClick).toHaveBeenCalledTimes(2);
   });
 
   it("applies correct CSS classes for different statuses", () => {
