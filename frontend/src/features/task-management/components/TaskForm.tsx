@@ -122,6 +122,12 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
     }
   };
 
+  const submitButtonText = isLoading
+    ? "Saving..."
+    : isEditing
+      ? "Update Task"
+      : "Create Task";
+
   return (
     <div className={styles.formContainer}>
       <h2 className={styles.title}>
@@ -263,11 +269,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
             className={styles.submitButton}
             disabled={isLoading}
           >
-            {isLoading
-              ? "Saving..."
-              : isEditing
-                ? "Update Task"
-                : "Create Task"}
+            {submitButtonText}
           </button>
         </div>
       </form>
