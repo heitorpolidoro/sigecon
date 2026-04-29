@@ -1,8 +1,8 @@
-import React from 'react';
-import type { TaskRead } from '../types';
-import { TaskStatus, TaskPriority } from '../types';
-import TaskCard from './TaskCard';
-import styles from './TaskList.module.css';
+import React from "react";
+import type { TaskRead } from "../types";
+import { TaskStatus, TaskPriority } from "../types";
+import TaskCard from "./TaskCard";
+import styles from "./TaskList.module.css";
 
 interface TaskListProps {
   /** Array of tasks to display. */
@@ -19,21 +19,34 @@ interface TaskListProps {
     priority?: TaskPriority | null;
     assigned_to_id?: string | null;
   };
+  /** Callback triggered when a task card is clicked. */
+  onTaskClick?: (taskId: string) => void;
 }
 
 /**
  * Component to display a list of task cards with loading and error states.
- * 
+ *
  * @param props - Component props containing tasks, loading state, and filters.
  * @returns A list of task cards or a status message.
  */
-const TaskList: React.FC<TaskListProps> = ({ tasks, isLoading, isError, error, filters }) => {
+const TaskList: React.FC<TaskListProps> = ({
+  tasks,
+  isLoading,
+  isError,
+  error,
+  filters,
+  onTaskClick,
+}) => {
   if (isLoading) {
     return <div className={styles.message}>Loading tasks...</div>;
   }
 
   if (isError) {
-    return <div className={styles.message}>Error loading tasks: {error?.message}</div>;
+    return (
+      <div className={styles.message}>
+        Error loading tasks: {error?.message}
+      </div>
+    );
   }
 
   if (tasks.length === 0) {
@@ -41,7 +54,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, isLoading, isError, error, f
   }
 
   // Filtrar tarefas localmente (embora o backend também filtre, esta é uma camada de segurança e UX)
-  const filteredTasks = tasks.filter(task => {
+  const filteredTasks = tasks.filter((task) => {
     let matches = true;
     if (filters.status && task.status !== filters.status) {
       matches = false;
@@ -49,20 +62,29 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, isLoading, isError, error, f
     if (filters.priority && task.priority !== filters.priority) {
       matches = false;
     }
-    if (filters.assigned_to_id && task.assigned_to_id !== filters.assigned_to_id) {
+    if (
+      filters.assigned_to_id &&
+      task.assigned_to_id !== filters.assigned_to_id
+    ) {
       matches = false;
     }
     return matches;
   });
-  
+
   if (filteredTasks.length === 0) {
-    return <div className={styles.message}>No tasks match the current filters.</div>;
+    return (
+      <div className={styles.message}>No tasks match the current filters.</div>
+    );
   }
 
   return (
     <div className={styles.taskList}>
       {filteredTasks.map((task) => (
-        <TaskCard key={task.id} task={task} />
+        <TaskCard
+          key={task.id}
+          task={task}
+          onClick={() => onTaskClick?.(task.id)}
+        />
       ))}
     </div>
   );
