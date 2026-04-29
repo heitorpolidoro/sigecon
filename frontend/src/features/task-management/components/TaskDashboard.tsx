@@ -88,6 +88,15 @@ const TaskDashboard: React.FC = () => {
     setIsEditing(false);
   };
 
+  /**
+   * Handles keyboard events for the overlay to close it when Enter or Space is pressed.
+   */
+  const handleOverlayKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      handleCloseOverlay();
+    }
+  };
+
   return (
     <div className={styles.dashboardContainer}>
       <div className={styles.header}>
@@ -145,10 +154,20 @@ const TaskDashboard: React.FC = () => {
 
       {/* Overlays / Modals */}
       {isCreating && (
-        <div className={styles.modalOverlay} onClick={handleCloseOverlay}>
+        <div
+          className={styles.modalOverlay}
+          onClick={handleCloseOverlay}
+          onKeyDown={handleOverlayKeyDown}
+          tabIndex={0}
+          role="button"
+          aria-label="Close modal"
+        >
           <div
             className={styles.modalContent}
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            role="document"
+            tabIndex={-1}
           >
             <TaskForm
               onCancel={handleCloseOverlay}
@@ -159,10 +178,20 @@ const TaskDashboard: React.FC = () => {
       )}
 
       {selectedTask && !isEditing && (
-        <div className={styles.modalOverlay} onClick={handleCloseOverlay}>
+        <div
+          className={styles.modalOverlay}
+          onClick={handleCloseOverlay}
+          onKeyDown={handleOverlayKeyDown}
+          tabIndex={0}
+          role="button"
+          aria-label="Close modal"
+        >
           <div
             className={styles.modalContent}
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            role="document"
+            tabIndex={-1}
           >
             <TaskDetailsView
               task={selectedTask}
@@ -174,10 +203,20 @@ const TaskDashboard: React.FC = () => {
       )}
 
       {selectedTask && isEditing && (
-        <div className={styles.modalOverlay} onClick={handleCloseOverlay}>
+        <div
+          className={styles.modalOverlay}
+          onClick={handleCloseOverlay}
+          onKeyDown={handleOverlayKeyDown}
+          tabIndex={0}
+          role="button"
+          aria-label="Close modal"
+        >
           <div
             className={styles.modalContent}
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+            role="document"
+            tabIndex={-1}
           >
             <TaskForm
               task={selectedTask}
