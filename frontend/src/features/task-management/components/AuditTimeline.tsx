@@ -40,7 +40,7 @@ const AuditTimeline: React.FC<AuditTimelineProps> = ({ taskId }) => {
    * @returns The formatted field name.
    */
   const formatFieldName = (name: string) => {
-    return name.replace(/_/g, " ");
+    return name.replaceAll("_", " ");
   };
 
   /**
