@@ -134,6 +134,7 @@ describe("useTasks hooks", () => {
       });
       
       expect(typeof result.current).toBe("function");
+      result.current();
     });
   });
 });
