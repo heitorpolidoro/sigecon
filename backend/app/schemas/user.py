@@ -14,7 +14,7 @@ class UserBase(BaseModel):
     username: str
     email: EmailStr
     full_name: str
-    role: UserRole = UserRole.FUNCIONARIO
+    role: UserRole = UserRole.DIRETOR
 
 
 class UserCreate(UserBase):
@@ -52,3 +52,10 @@ class UserRead(UserBase):
     is_active: bool
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class UserUpdate(BaseModel):
+    """Schema for updating user data."""
+
+    role: UserRole | None = None
+    is_active: bool | None = None
