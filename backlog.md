@@ -19,6 +19,8 @@ Este documento consolida as sugestões de melhoria contínua, dívidas técnicas
 ## 4. Qualidade & Testes (QA)
 - [x] **Expansão da Suíte de Testes:** Adicionar testes automatizados para os filtros da listagem de tarefas (verificar se o filtro por status retorna apenas as tarefas corretas).
 - [x] **Testes de Integração:** Criar um teste E2E ponta-a-ponta validando o fluxo: "Login -> Criar Tarefa -> Listar Tarefa -> Atualizar Tarefa -> Ler Histórico".
+- [ ] **Resolução de Warnings de Recursos:** Investigar e corrigir os avisos de `ResourceWarning: unclosed database` durante a execução dos testes, garantindo o fechamento correto das conexões e engines do banco de dados em cada fixture.
+- [ ] **Restauração de Cobertura Frontend:** Incrementar os testes unitários e de integração para as novas páginas de Administração de Usuários, visando restaurar o threshold de 100% de cobertura global no frontend.
 
 ## 5. Segurança & DevSecOps
 - [x] **Validação de Senhas:** Implementar regras de complexidade de senha no registro de usuários (ex: mínimo de 8 caracteres, letras, números e símbolos) via validadores do Pydantic.
