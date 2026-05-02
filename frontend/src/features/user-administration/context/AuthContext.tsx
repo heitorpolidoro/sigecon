@@ -1,9 +1,15 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import apiClient from '../../../api/client';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import apiClient from "../../../api/client";
 
 export const UserRole = {
-  ADMINISTRADOR: 'ADMINISTRADOR',
-  DIRETOR: 'DIRETOR',
+  ADMINISTRADOR: "ADMINISTRADOR",
+  DIRETOR: "DIRETOR",
 } as const;
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
@@ -27,17 +33,19 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchUser = useCallback(async () => {
     try {
-      const response = await apiClient.get<User>('/auth/me');
+      const response = await apiClient.get<User>("/auth/me");
       setUser(response.data);
     } catch (error) {
-      console.error('Failed to fetch user', error);
-      localStorage.removeItem('accessToken');
+      console.error("Failed to fetch user", error);
+      localStorage.removeItem("accessToken");
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -45,7 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem("accessToken");
     if (token) {
       fetchUser();
     } else {
@@ -54,18 +62,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [fetchUser]);
 
   const login = async (token: string) => {
-    localStorage.setItem('accessToken', token);
+    localStorage.setItem("accessToken", token);
     setIsLoading(true);
     await fetchUser();
   };
 
   const logout = () => {
-    localStorage.removeItem('accessToken');
+    localStorage.removeItem("accessToken");
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated: !!user, isLoading, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -74,7 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

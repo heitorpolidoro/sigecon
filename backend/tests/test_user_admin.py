@@ -1,8 +1,7 @@
-from fastapi.testclient import TestClient
-from sqlmodel import Session, select
-
 from app.models.enums import UserRole
 from app.models.user import User
+from fastapi.testclient import TestClient
+from sqlmodel import Session, select
 
 
 def get_token(client, username, password):
@@ -11,12 +10,13 @@ def get_token(client, username, password):
     )
     return response.json()["access_token"]
 
+
 def test_signup(client: TestClient, session: Session):
     signup_data = {
         "username": "newuser",
         "email": "newuser@test.com",
         "full_name": "New User",
-        "password": "Password123!"
+        "password": "Password123!",
     }
     response = client.post("/api/v1/auth/signup", json=signup_data)
     assert response.status_code == 200
@@ -30,25 +30,27 @@ def test_signup(client: TestClient, session: Session):
     assert user is not None
     assert user.is_active is False
 
+
 def test_signup_duplicate_username(client: TestClient, normal_user):
     signup_data = {
         "username": normal_user.username,
         "email": "another@test.com",
         "full_name": "Duplicate User",
-        "password": "Password123!"
+        "password": "Password123!",
     }
     response = client.post("/api/v1/auth/signup", json=signup_data)
     assert response.status_code == 400
     assert "username already exists" in response.json()["detail"]
 
+
 def test_me_endpoint(client: TestClient, admin_user):
     token = get_token(client, "admin", "test_admin_password")
     response = client.get(
-        "/api/v1/auth/me",
-        headers={"Authorization": f"Bearer {token}"}
+        "/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     assert response.json()["username"] == "admin"
+
 
 def test_list_users_restricted_to_admin(client: TestClient, admin_user, normal_user):
     admin_token = get_token(client, "admin", "test_admin_password")
@@ -56,18 +58,17 @@ def test_list_users_restricted_to_admin(client: TestClient, admin_user, normal_u
 
     # Admin can list
     response = client.get(
-        "/api/v1/users/",
-        headers={"Authorization": f"Bearer {admin_token}"}
+        "/api/v1/users/", headers={"Authorization": f"Bearer {admin_token}"}
     )
     assert response.status_code == 200
     assert len(response.json()) >= 2
 
     # Director (normal user) cannot list
     response = client.get(
-        "/api/v1/users/",
-        headers={"Authorization": f"Bearer {user_token}"}
+        "/api/v1/users/", headers={"Authorization": f"Bearer {user_token}"}
     )
     assert response.status_code == 403
+
 
 def test_update_user_status_and_role(client: TestClient, admin_user, session: Session):
     # Create an inactive user
@@ -77,7 +78,7 @@ def test_update_user_status_and_role(client: TestClient, admin_user, session: Se
         full_name="Pending User",
         hashed_password="...",
         is_active=False,
-        role=UserRole.DIRETOR
+        role=UserRole.DIRETOR,
     )
     session.add(new_user)
     session.commit()
@@ -89,7 +90,7 @@ def test_update_user_status_and_role(client: TestClient, admin_user, session: Se
     response = client.patch(
         f"/api/v1/users/{new_user.id}",
         headers={"Authorization": f"Bearer {admin_token}"},
-        json={"is_active": True}
+        json={"is_active": True},
     )
     assert response.status_code == 200
     assert response.json()["is_active"] is True
@@ -98,10 +99,11 @@ def test_update_user_status_and_role(client: TestClient, admin_user, session: Se
     response = client.patch(
         f"/api/v1/users/{new_user.id}",
         headers={"Authorization": f"Bearer {admin_token}"},
-        json={"role": UserRole.ADMINISTRADOR}
+        json={"role": UserRole.ADMINISTRADOR},
     )
     assert response.status_code == 200
     assert response.json()["role"] == UserRole.ADMINISTRADOR
+
 
 def test_admin_cannot_deactivate_self(client: TestClient, admin_user):
     admin_token = get_token(client, "admin", "test_admin_password")
@@ -109,10 +111,11 @@ def test_admin_cannot_deactivate_self(client: TestClient, admin_user):
     response = client.patch(
         f"/api/v1/users/{admin_user.id}",
         headers={"Authorization": f"Bearer {admin_token}"},
-        json={"is_active": False}
+        json={"is_active": False},
     )
     assert response.status_code == 400
     assert "Administrators cannot deactivate themselves" in response.json()["detail"]
+
 
 def test_admin_cannot_change_own_role(client: TestClient, admin_user):
     admin_token = get_token(client, "admin", "test_admin_password")
@@ -120,7 +123,7 @@ def test_admin_cannot_change_own_role(client: TestClient, admin_user):
     response = client.patch(
         f"/api/v1/users/{admin_user.id}",
         headers={"Authorization": f"Bearer {admin_token}"},
-        json={"role": UserRole.DIRETOR}
+        json={"role": UserRole.DIRETOR},
     )
     assert response.status_code == 400
     assert "Administrators cannot change their own role" in response.json()["detail"]

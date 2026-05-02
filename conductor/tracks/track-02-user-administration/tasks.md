@@ -5,6 +5,7 @@ Este documento decompõe o plano de implementação do Track 02 em tarefas granu
 ## 1. Backend (FastAPI, SQLModel)
 
 ### [x] Task 1.1: Extended User Schemas & Signup Endpoint
+
 - **Description:** Implement `UserUpdate` schema and `POST /api/v1/auth/signup` endpoint.
 - **Definition of Done:**
   - `UserUpdate` schema includes `role` and `is_active`.
@@ -12,6 +13,7 @@ Este documento decompõe o plano de implementação do Track 02 em tarefas granu
   - Unit test for signup validation and default values.
 
 ### [x] Task 1.2: User Management Endpoints (Admin Only)
+
 - **Description:** Create `GET /api/v1/users/` and `PATCH /api/v1/users/{id}` endpoints.
 - **Definition of Done:**
   - `GET /api/v1/users/` returns all users, protected by `get_current_active_admin`.
@@ -20,6 +22,7 @@ Este documento decompõe o plano de implementação do Track 02 em tarefas granu
   - Integration tests for RBAC on these endpoints.
 
 ### [x] Task 1.3: User Profile Endpoint
+
 - **Description:** Implement `GET /api/v1/auth/me`.
 - **Definition of Done:**
   - Endpoint returns the current authenticated user's data.
@@ -28,6 +31,7 @@ Este documento decompõe o plano de implementação do Track 02 em tarefas granu
 ## 2. Frontend (React, React Router, Context API)
 
 ### [x] Task 2.1: Navigation & Auth Context Setup
+
 - **Description:** Install `react-router-dom` and implement `AuthContext` for global user state.
 - **Definition of Done:**
   - App uses `BrowserRouter` for routing.
@@ -35,6 +39,7 @@ Este documento decompõe o plano de implementação do Track 02 em tarefas granu
   - Token is stored/retrieved from `localStorage`.
 
 ### [x] Task 2.2: Login & Signup Pages
+
 - **Description:** Implement the UI and logic for `/login` and `/signup`.
 - **Definition of Done:**
   - Login page handles "Inactive user" error with a clear message.
@@ -42,6 +47,7 @@ Este documento decompõe o plano de implementação do Track 02 em tarefas granu
   - Basic validation for passwords (match, length).
 
 ### [x] Task 2.3: Admin Dashboard (User Management UI)
+
 - **Description:** Create the `/admin/users` page for Directors.
 - **Definition of Done:**
   - Table showing users with status and role.
@@ -49,6 +55,7 @@ Este documento decompõe o plano de implementação do Track 02 em tarefas granu
   - Page is protected by a `ProtectedRoute` (only ADMINISTRADOR can enter).
 
 ### [x] Task 2.4: Integration & UX Polish
+
 - **Description:** Add logout button, admin links in navigation, and handle token expiration.
 - **Definition of Done:**
   - "Admin" link only visible to Directors.
@@ -57,6 +64,7 @@ Este documento decompõe o plano de implementação do Track 02 em tarefas granu
 ## 3. Quality Assurance
 
 ### [x] Task 3.1: Security & RBAC Validation
+
 - **Description:** Comprehensive tests for user isolation and admin privileges.
 - **Definition of Done:**
   - Test: Director cannot list users.

@@ -1,13 +1,12 @@
-from fastapi import FastAPI, Request, status
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from slowapi.errors import RateLimitExceeded
-
 from app.api.v1.api import api_router
 from app.core.config import settings
 from app.core.exception_handlers import domain_exception_handler
 from app.core.exceptions import DomainError
 from app.core.limiter import limiter
+from fastapi import FastAPI, Request, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from slowapi.errors import RateLimitExceeded
 
 
 def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:  # noqa: ARG001
@@ -27,6 +26,7 @@ app.add_exception_handler(DomainError, domain_exception_handler)
 raw_origins = settings.BACKEND_CORS_ORIGINS
 if isinstance(raw_origins, str):
     import json
+
     try:
         origins = json.loads(raw_origins)
     except json.JSONDecodeError:
