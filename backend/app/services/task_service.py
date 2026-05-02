@@ -3,12 +3,11 @@
 from typing import TYPE_CHECKING
 from uuid import UUID
 
-from sqlmodel import Session, select
-
 from app.core.exceptions import ForbiddenError
 from app.models.enums import UserRole
 from app.models.task import Task, TaskHistory, get_utc_now
 from app.schemas.task import TaskCreate, TaskUpdate
+from sqlmodel import Session, select
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -53,17 +52,6 @@ class TaskService:
         Raises:
             ForbiddenError: If the user lacks permission to update fields.
         """
-        # RBAC Validation
-        if current_user.role != UserRole.DIRETOR:
-            if db_task.assigned_to_id != current_user.id:
-                raise ForbiddenError
-
-            # Field restriction for Employee
-            update_data = task_in.model_dump(exclude_unset=True)
-            allowed_fields = {"status"}
-            if not set(update_data.keys()).issubset(allowed_fields):
-                raise ForbiddenError("Employees can only update task status")
-
         update_data = task_in.model_dump(exclude_unset=True)
 
         for key, value in update_data.items():
