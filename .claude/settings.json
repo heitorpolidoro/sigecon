@@ -19,7 +19,15 @@
       "Bash(cd * && npm run build *)",
       "Bash(cd * && npm run build)",
       "Bash(cd * && npm run lint *)",
-      "Bash(cd * && npm test *)"
+      "Bash(cd * && npm test *)",
+      "Bash(git merge *)",
+      "Bash(git push *)",
+      "Bash(git fetch *)",
+      "Bash(git pull *)",
+      "Bash(git rebase *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(uv run pytest *)"
     ]
   }
 }
