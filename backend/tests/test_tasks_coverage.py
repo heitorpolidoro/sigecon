@@ -1,6 +1,10 @@
 import uuid
 
 import pytest
+from app.core.security import get_password_hash
+from app.models.enums import TaskPriority, TaskStatus, UserRole
+from app.models.task import Task
+from app.models.user import User
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
@@ -15,6 +19,7 @@ def get_token(client, username, password):
         "/api/v1/auth/login", data={"username": username, "password": password}
     )
     return response.json()["access_token"]
+
 
 @pytest.fixture(name="setup_data")
 def setup_data_fixture(session: Session):
@@ -67,16 +72,16 @@ def setup_data_fixture(session: Session):
         "dir1": director1,
         "dir2": director2,
         "task1": task1,
-        "task2": task2
+        "task2": task2,
     }
+
 
 def test_list_tasks_filters(client: TestClient, session: Session, setup_data):
     token = get_token(client, "admin_cov", "pass")
 
     # Filter by status
     response = client.get(
-        "/api/v1/tasks/?status=PENDING",
-        headers={"Authorization": f"Bearer {token}"}
+        "/api/v1/tasks/?status=PENDING", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
     assert len(response.json()) == 1
@@ -108,15 +113,13 @@ def test_delete_task_workflow(client: TestClient, session: Session, setup_data):
 
     # Delete task
     response = client.delete(
-        f"/api/v1/tasks/{task_id}",
-        headers={"Authorization": f"Bearer {token}"}
+        f"/api/v1/tasks/{task_id}", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 204
 
     # Try to delete again (404)
     response = client.delete(
-        f"/api/v1/tasks/{task_id}",
-        headers={"Authorization": f"Bearer {token}"}
+        f"/api/v1/tasks/{task_id}", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 404
 
@@ -124,14 +127,13 @@ def test_delete_task_workflow(client: TestClient, session: Session, setup_data):
     response = client.patch(
         f"/api/v1/tasks/{task_id}",
         headers={"Authorization": f"Bearer {token}"},
-        json={"title": "New Title"}
+        json={"title": "New Title"},
     )
     assert response.status_code == 404
 
     # Try to get history of deleted task (404)
     response = client.get(
-        f"/api/v1/tasks/{task_id}/history",
-        headers={"Authorization": f"Bearer {token}"}
+        f"/api/v1/tasks/{task_id}/history", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 404
 
@@ -141,6 +143,6 @@ def test_history_not_found(client: TestClient, session: Session, setup_data):
 
     response = client.get(
         f"/api/v1/tasks/{random_id}/history",
-        headers={"Authorization": f"Bearer {token}"}
+        headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 404

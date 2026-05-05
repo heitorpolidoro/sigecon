@@ -1,19 +1,19 @@
 """
 Authentication and authorization dependencies for the API.
 """
+
 import uuid
 from typing import Annotated
-
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
-from pydantic import ValidationError
-from sqlmodel import Session
 
 from app.core.config import settings
 from app.db import get_session
 from app.models.enums import UserRole
 from app.models.user import User
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from pydantic import ValidationError
+from sqlmodel import Session
 
 reusable_oauth2 = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 

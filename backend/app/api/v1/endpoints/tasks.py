@@ -14,6 +14,8 @@ from app.models.task import Task
 from app.models.user import User
 from app.schemas.task import TaskCreate, TaskHistoryRead, TaskRead, TaskUpdate
 from app.services.task_service import TaskService
+from fastapi import APIRouter, Depends, Query, status
+from sqlmodel import Session, select
 
 router = APIRouter()
 
