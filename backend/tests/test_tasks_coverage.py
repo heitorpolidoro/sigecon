@@ -8,11 +8,6 @@ from app.models.user import User
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
-from app.core.security import get_password_hash
-from app.models.enums import TaskPriority, TaskStatus, UserRole
-from app.models.task import Task
-from app.models.user import User
-
 
 def get_token(client, username, password):
     response = client.post(
@@ -55,14 +50,14 @@ def setup_data_fixture(session: Session):
         status=TaskStatus.PENDING,
         priority=TaskPriority.LOW,
         assigned_to_id=director1.id,
-        created_by_id=admin.id
+        created_by_id=admin.id,
     )
     task2 = Task(
         title="Task 2",
         status=TaskStatus.IN_PROGRESS,
         priority=TaskPriority.MEDIUM,
         assigned_to_id=director2.id,
-        created_by_id=admin.id
+        created_by_id=admin.id,
     )
     session.add_all([task1, task2])
     session.commit()
@@ -87,12 +82,12 @@ def test_list_tasks_filters(client: TestClient, session: Session, setup_data):
     assert len(response.json()) == 1
     assert response.json()[0]["title"] == "Task 1"
 
+
 def test_list_tasks_visibility(client: TestClient, session: Session, setup_data):
     # ADMINISTRADOR sees all tasks
     admin_token = get_token(client, "admin_cov", "pass")
     response = client.get(
-        "/api/v1/tasks/",
-        headers={"Authorization": f"Bearer {admin_token}"}
+        "/api/v1/tasks/", headers={"Authorization": f"Bearer {admin_token}"}
     )
     assert response.status_code == 200
     assert len(response.json()) == 2
@@ -100,12 +95,12 @@ def test_list_tasks_visibility(client: TestClient, session: Session, setup_data)
     # DIRETOR only sees tasks assigned to them (dir1 is assigned task1 only)
     dir_token = get_token(client, "dir1_cov", "pass")
     response = client.get(
-        "/api/v1/tasks/",
-        headers={"Authorization": f"Bearer {dir_token}"}
+        "/api/v1/tasks/", headers={"Authorization": f"Bearer {dir_token}"}
     )
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert response.json()[0]["title"] == "Task 1"
+
 
 def test_delete_task_workflow(client: TestClient, session: Session, setup_data):
     token = get_token(client, "admin_cov", "pass")
@@ -136,6 +131,7 @@ def test_delete_task_workflow(client: TestClient, session: Session, setup_data):
         f"/api/v1/tasks/{task_id}/history", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 404
+
 
 def test_history_not_found(client: TestClient, session: Session, setup_data):
     token = get_token(client, "admin_cov", "pass")

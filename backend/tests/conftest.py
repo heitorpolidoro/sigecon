@@ -28,6 +28,7 @@ def session_fixture():
 @pytest.fixture(name="client")
 def client_fixture(session: Session):
     """Provide a FastAPI test client that uses the test session."""
+
     def get_session_override():
         """Override the DB session dependency with the test session."""
         return session

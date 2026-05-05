@@ -22,7 +22,6 @@ class TaskCreate(TaskBase):
     """Schema for creating a new task."""
 
 
-
 class TaskUpdate(BaseModel):
     """Schema for updating an existing task. All fields are optional."""
 

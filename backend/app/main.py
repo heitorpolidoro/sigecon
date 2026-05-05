@@ -26,6 +26,7 @@ app.add_exception_handler(DomainError, domain_exception_handler)
 raw_origins = settings.BACKEND_CORS_ORIGINS
 if isinstance(raw_origins, str):
     import json
+
     try:
         origins = json.loads(raw_origins)
     except json.JSONDecodeError:

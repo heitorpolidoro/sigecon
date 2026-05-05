@@ -1,13 +1,13 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import * as AuthHook from '../context/AuthContext';
-import { UserRole } from '../context/AuthContext';
+import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import { MemoryRouter } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import * as AuthHook from "../context/AuthContext";
+import { UserRole } from "../context/AuthContext";
 
-describe('Navbar', () => {
-  it('renders nothing when not authenticated', () => {
-    vi.spyOn(AuthHook, 'useAuth').mockReturnValue({
+describe("Navbar", () => {
+  it("renders nothing when not authenticated", () => {
+    vi.spyOn(AuthHook, "useAuth").mockReturnValue({
       isAuthenticated: false,
       isLoading: false,
       user: null,
@@ -18,21 +18,21 @@ describe('Navbar', () => {
     const { container } = render(
       <MemoryRouter>
         <Navbar />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders navbar with brand and basic links when authenticated as DIRETOR', () => {
-    vi.spyOn(AuthHook, 'useAuth').mockReturnValue({
+  it("renders navbar with brand and basic links when authenticated as DIRETOR", () => {
+    vi.spyOn(AuthHook, "useAuth").mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
       user: {
-        id: '1',
-        username: 'testuser',
-        email: 'test@example.com',
-        full_name: 'Test User',
+        id: "1",
+        username: "testuser",
+        email: "test@example.com",
+        full_name: "Test User",
         role: UserRole.DIRETOR,
         is_active: true,
       },
@@ -41,27 +41,27 @@ describe('Navbar', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/dashboard']}>
+      <MemoryRouter initialEntries={["/dashboard"]}>
         <Navbar />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
-    expect(screen.getByText('Sigecon')).toBeDefined();
-    expect(screen.getByText('Tarefas')).toBeDefined();
-    expect(screen.getByText('Sair')).toBeDefined();
+    expect(screen.getByText("Sigecon")).toBeDefined();
+    expect(screen.getByText("Tarefas")).toBeDefined();
+    expect(screen.getByText("Sair")).toBeDefined();
     expect(screen.getByText(/Test User/)).toBeDefined();
-    expect(screen.queryByText('Administração')).toBeNull();
+    expect(screen.queryByText("Administração")).toBeNull();
   });
 
-  it('renders admin link when user is ADMINISTRADOR', () => {
-    vi.spyOn(AuthHook, 'useAuth').mockReturnValue({
+  it("renders admin link when user is ADMINISTRADOR", () => {
+    vi.spyOn(AuthHook, "useAuth").mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
       user: {
-        id: '1',
-        username: 'adminuser',
-        email: 'admin@example.com',
-        full_name: 'Admin User',
+        id: "1",
+        username: "adminuser",
+        email: "admin@example.com",
+        full_name: "Admin User",
         role: UserRole.ADMINISTRADOR,
         is_active: true,
       },
@@ -70,23 +70,23 @@ describe('Navbar', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/dashboard']}>
+      <MemoryRouter initialEntries={["/dashboard"]}>
         <Navbar />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
-    expect(screen.getByText('Administração')).toBeDefined();
+    expect(screen.getByText("Administração")).toBeDefined();
   });
 
-  it('applies active class to dashboard link when on /dashboard', () => {
-    vi.spyOn(AuthHook, 'useAuth').mockReturnValue({
+  it("applies active class to dashboard link when on /dashboard", () => {
+    vi.spyOn(AuthHook, "useAuth").mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
       user: {
-        id: '1',
-        username: 'testuser',
-        email: 'test@example.com',
-        full_name: 'Test User',
+        id: "1",
+        username: "testuser",
+        email: "test@example.com",
+        full_name: "Test User",
         role: UserRole.DIRETOR,
         is_active: true,
       },
@@ -95,24 +95,24 @@ describe('Navbar', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/dashboard']}>
+      <MemoryRouter initialEntries={["/dashboard"]}>
         <Navbar />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
-    const tarefasLink = screen.getByText('Tarefas');
-    expect(tarefasLink.className).toContain('active');
+    const tarefasLink = screen.getByText("Tarefas");
+    expect(tarefasLink.className).toContain("active");
   });
 
-  it('applies active class to admin link when on /admin/users', () => {
-    vi.spyOn(AuthHook, 'useAuth').mockReturnValue({
+  it("applies active class to admin link when on /admin/users", () => {
+    vi.spyOn(AuthHook, "useAuth").mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
       user: {
-        id: '1',
-        username: 'adminuser',
-        email: 'admin@example.com',
-        full_name: 'Admin User',
+        id: "1",
+        username: "adminuser",
+        email: "admin@example.com",
+        full_name: "Admin User",
         role: UserRole.ADMINISTRADOR,
         is_active: true,
       },
@@ -121,25 +121,25 @@ describe('Navbar', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/admin/users']}>
+      <MemoryRouter initialEntries={["/admin/users"]}>
         <Navbar />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
-    const adminLink = screen.getByText('Administração');
-    expect(adminLink.className).toContain('active');
+    const adminLink = screen.getByText("Administração");
+    expect(adminLink.className).toContain("active");
   });
 
-  it('calls logout when Sair button is clicked', () => {
+  it("calls logout when Sair button is clicked", () => {
     const mockLogout = vi.fn();
-    vi.spyOn(AuthHook, 'useAuth').mockReturnValue({
+    vi.spyOn(AuthHook, "useAuth").mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
       user: {
-        id: '1',
-        username: 'testuser',
-        email: 'test@example.com',
-        full_name: 'Test User',
+        id: "1",
+        username: "testuser",
+        email: "test@example.com",
+        full_name: "Test User",
         role: UserRole.DIRETOR,
         is_active: true,
       },
@@ -150,10 +150,10 @@ describe('Navbar', () => {
     render(
       <MemoryRouter>
         <Navbar />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
-    fireEvent.click(screen.getByText('Sair'));
+    fireEvent.click(screen.getByText("Sair"));
     expect(mockLogout).toHaveBeenCalledOnce();
   });
 });

@@ -62,7 +62,7 @@ def test_get_current_user_inactive(client, session):
         full_name="Inactive User",
         hashed_password="...",
         role=UserRole.DIRETOR,
-        is_active=False
+        is_active=False,
     )
     session.add(inactive_user)
     session.commit()
@@ -84,7 +84,7 @@ def test_login_inactive_user(client, session):
         full_name="Inactive Login",
         hashed_password=security.get_password_hash(password),
         role=UserRole.DIRETOR,
-        is_active=False
+        is_active=False,
     )
     session.add(inactive_user)
     session.commit()

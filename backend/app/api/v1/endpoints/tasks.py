@@ -3,9 +3,6 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query, status
-from sqlmodel import Session, select
-
 from app.api import deps as api_deps
 from app.core.exceptions import ForbiddenError, TaskNotFoundError
 from app.db import get_session
@@ -142,7 +139,10 @@ def get_task_history(
     if not db_task or db_task.is_deleted:
         raise TaskNotFoundError(task_id)
 
-    if current_user.role == UserRole.DIRETOR and db_task.assigned_to_id != current_user.id:
+    if (
+        current_user.role == UserRole.DIRETOR
+        and db_task.assigned_to_id != current_user.id
+    ):
         raise ForbiddenError()
 
     return TaskService.get_history(session=session, task_id=task_id)

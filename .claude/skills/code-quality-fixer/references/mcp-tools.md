@@ -21,11 +21,13 @@ This reference documents the available MCP tools for SonarCloud and DeepSource a
 ## Usage Patterns
 
 ### Full Assessment
+
 1. Check Quality Gate/Repo Health.
 2. List top issues (limit 10-20).
 3. Group issues by file to minimize context switching.
 
 ### Issue Resolution
+
 1. Read the file containing the issue.
 2. Analyze the specific lines and surrounding context.
 3. Apply the fix following project-specific standards.
