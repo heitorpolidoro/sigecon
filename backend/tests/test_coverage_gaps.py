@@ -12,7 +12,6 @@ from app.models.user import User
 
 @pytest.fixture
 def director_token(session, admin_user):
-    from app.core import security
     return security.create_access_token(admin_user.id)
 
 

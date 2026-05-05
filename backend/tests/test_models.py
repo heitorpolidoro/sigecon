@@ -6,6 +6,7 @@ from app.models.user import User
 
 
 def test_user_model_creation():
+    """Test that a User model is created with correct field defaults."""
     user = User(
         username="testuser",
         email="test@test.com",
@@ -19,6 +20,7 @@ def test_user_model_creation():
 
 
 def test_task_model_defaults():
+    """Test that a Task model applies the correct status/priority defaults."""
     task = Task(
         title="New Task",
         created_by_id=uuid4(),
@@ -29,6 +31,7 @@ def test_task_model_defaults():
 
 
 def test_task_history_model():
+    """Test that a TaskHistory record stores field-change values correctly."""
     history = TaskHistory(
         task_id=uuid4(),
         changed_by_id=uuid4(),

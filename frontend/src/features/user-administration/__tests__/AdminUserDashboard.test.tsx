@@ -220,8 +220,6 @@ describe('AdminUserDashboard', () => {
     ];
     (apiClient.get as any).mockResolvedValue({ data: usersWithCurrentUser });
 
-    const mockAlert = vi.spyOn(window, 'alert').mockImplementation(() => {});
-
     render(<AdminUserDashboard />, { wrapper: createWrapper() });
 
     await waitFor(() => {
@@ -231,10 +229,10 @@ describe('AdminUserDashboard', () => {
     const desativarButtons = screen.getAllByText('Desativar');
     fireEvent.click(desativarButtons[0]);
 
-    expect(mockAlert).toHaveBeenCalledWith('Você não pode desativar sua própria conta.');
+    await waitFor(() => {
+      expect(screen.getByText('Você não pode desativar sua própria conta.')).toBeDefined();
+    });
     expect(apiClient.patch).not.toHaveBeenCalled();
-
-    mockAlert.mockRestore();
   });
 
   it('prevents current user from changing their own role', async () => {
@@ -243,8 +241,6 @@ describe('AdminUserDashboard', () => {
       ...mockUsers,
     ];
     (apiClient.get as any).mockResolvedValue({ data: usersWithCurrentUser });
-
-    const mockAlert = vi.spyOn(window, 'alert').mockImplementation(() => {});
 
     render(<AdminUserDashboard />, { wrapper: createWrapper() });
 
@@ -255,10 +251,10 @@ describe('AdminUserDashboard', () => {
     const mudarButtons = screen.getAllByText(/Mudar p\//i);
     fireEvent.click(mudarButtons[0]);
 
-    expect(mockAlert).toHaveBeenCalledWith('Você não pode alterar seu próprio cargo.');
+    await waitFor(() => {
+      expect(screen.getByText('Você não pode alterar seu próprio cargo.')).toBeDefined();
+    });
     expect(apiClient.patch).not.toHaveBeenCalled();
-
-    mockAlert.mockRestore();
   });
 
   it('shows alert on mutation error', async () => {
@@ -267,8 +263,6 @@ describe('AdminUserDashboard', () => {
       response: { data: { detail: 'Permission denied' } },
     });
 
-    const mockAlert = vi.spyOn(window, 'alert').mockImplementation(() => {});
-
     render(<AdminUserDashboard />, { wrapper: createWrapper() });
 
     await waitFor(() => {
@@ -279,18 +273,14 @@ describe('AdminUserDashboard', () => {
     fireEvent.click(desativarButtons[0]);
 
     await waitFor(() => {
-      expect(mockAlert).toHaveBeenCalledWith('Permission denied');
+      expect(screen.getByText('Permission denied')).toBeDefined();
     });
-
-    mockAlert.mockRestore();
   });
 
   it('shows generic alert when mutation error has no detail', async () => {
     (apiClient.get as any).mockResolvedValue({ data: mockUsers });
     (apiClient.patch as any).mockRejectedValue(new Error('Network error'));
 
-    const mockAlert = vi.spyOn(window, 'alert').mockImplementation(() => {});
-
     render(<AdminUserDashboard />, { wrapper: createWrapper() });
 
     await waitFor(() => {
@@ -301,10 +291,8 @@ describe('AdminUserDashboard', () => {
     fireEvent.click(desativarButtons[0]);
 
     await waitFor(() => {
-      expect(mockAlert).toHaveBeenCalledWith('Erro ao atualizar usuário');
+      expect(screen.getByText('Erro ao atualizar usuário')).toBeDefined();
     });
-
-    mockAlert.mockRestore();
   });
 
   it('calls logout when Sair button is clicked', async () => {

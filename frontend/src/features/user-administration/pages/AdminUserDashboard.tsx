@@ -8,6 +8,7 @@ import './AdminUserDashboard.css';
 
 const AdminUserDashboard: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [actionError, setActionError] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const { user: currentUser, logout } = useAuth();
 
@@ -17,7 +18,7 @@ const AdminUserDashboard: React.FC = () => {
       const params: Record<string, boolean> = {};
       if (statusFilter === 'active') params.is_active = true;
       if (statusFilter === 'inactive') params.is_active = false;
-      
+
       const response = await apiClient.get<User[]>('/users/', { params });
       return response.data;
     },
@@ -30,15 +31,16 @@ const AdminUserDashboard: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      setActionError(null);
     },
     onError: (err: Error & { response?: { data?: { detail?: string } } }) => {
-      alert(err.response?.data?.detail || 'Erro ao atualizar usuário');
+      setActionError(err.response?.data?.detail || 'Erro ao atualizar usuário');
     }
   });
 
   const handleToggleActive = (user: User) => {
     if (user.id === currentUser?.id) {
-      alert('Você não pode desativar sua própria conta.');
+      setActionError('Você não pode desativar sua própria conta.');
       return;
     }
     updateUserMutation.mutate({
@@ -49,7 +51,7 @@ const AdminUserDashboard: React.FC = () => {
 
   const handleRoleChange = (user: User) => {
     if (user.id === currentUser?.id) {
-      alert('Você não pode alterar seu próprio cargo.');
+      setActionError('Você não pode alterar seu próprio cargo.');
       return;
     }
     const newRole = user.role === UserRole.ADMINISTRADOR ? UserRole.DIRETOR : UserRole.ADMINISTRADOR;
@@ -71,6 +73,13 @@ const AdminUserDashboard: React.FC = () => {
           <button onClick={logout} className="action-btn">Sair</button>
         </div>
       </header>
+
+      {actionError && (
+        <div className="error-message" role="alert">
+          {actionError}
+          <button onClick={() => setActionError(null)} aria-label="Fechar">×</button>
+        </div>
+      )}
 
       <section className="filters">
         <div className="filter-group">

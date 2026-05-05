@@ -16,6 +16,7 @@ app.state.limiter.enabled = False
 
 @pytest.fixture(name="session")
 def session_fixture():
+    """Provide an isolated in-memory SQLite session for each test."""
     engine = create_engine(
         "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
     )
@@ -27,7 +28,9 @@ def session_fixture():
 
 @pytest.fixture(name="client")
 def client_fixture(session: Session):
+    """Provide a FastAPI test client that uses the test session."""
     def get_session_override():
+        """Override the DB session dependency with the test session."""
         return session
 
     app.dependency_overrides[get_session] = get_session_override
@@ -38,6 +41,7 @@ def client_fixture(session: Session):
 
 @pytest.fixture(name="admin_user")
 def admin_user_fixture(session: Session):
+    """Create and persist an ADMINISTRADOR user for tests."""
     user = User(
         id=uuid.uuid4(),
         username="admin",
@@ -53,6 +57,7 @@ def admin_user_fixture(session: Session):
 
 @pytest.fixture(name="normal_user")
 def normal_user_fixture(session: Session):
+    """Create and persist a DIRETOR user for tests."""
     user = User(
         id=uuid.uuid4(),
         username="user1",
