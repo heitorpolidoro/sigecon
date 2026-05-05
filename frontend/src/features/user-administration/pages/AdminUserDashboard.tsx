@@ -14,7 +14,7 @@ const AdminUserDashboard: React.FC = () => {
   const { data: users, isLoading, error } = useQuery({
     queryKey: ['users', statusFilter],
     queryFn: async () => {
-      const params: any = {};
+      const params: Record<string, boolean> = {};
       if (statusFilter === 'active') params.is_active = true;
       if (statusFilter === 'inactive') params.is_active = false;
       
@@ -31,7 +31,7 @@ const AdminUserDashboard: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
-    onError: (err: any) => {
+    onError: (err: Error & { response?: { data?: { detail?: string } } }) => {
       alert(err.response?.data?.detail || 'Erro ao atualizar usuário');
     }
   });
@@ -78,7 +78,7 @@ const AdminUserDashboard: React.FC = () => {
           <select 
             id="status" 
             value={statusFilter} 
-            onChange={(e) => setStatusFilter(e.target.value as any)}
+            onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
           >
             <option value="all">Todos</option>
             <option value="active">Ativos</option>
@@ -114,17 +114,15 @@ const AdminUserDashboard: React.FC = () => {
                   </span>
                 </td>
                 <td className="actions-cell">
-                  <button 
+                  <button
                     onClick={() => handleToggleActive(user)}
                     className={`action-btn ${user.is_active ? 'deactivate' : 'approve'}`}
-                    disabled={user.id === currentUser?.id}
                   >
                     {user.is_active ? 'Desativar' : 'Aprovar'}
                   </button>
-                  <button 
+                  <button
                     onClick={() => handleRoleChange(user)}
                     className="action-btn"
-                    disabled={user.id === currentUser?.id}
                   >
                     Mudar p/ {user.role === UserRole.ADMINISTRADOR ? 'Diretor' : 'Administrador'}
                   </button>

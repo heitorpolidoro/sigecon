@@ -83,17 +83,24 @@ def test_list_tasks_filters(client: TestClient, session: Session, setup_data):
     assert response.json()[0]["title"] == "Task 1"
 
 def test_list_tasks_visibility(client: TestClient, session: Session, setup_data):
-    # Both Admin and Director see all tasks
+    # ADMINISTRADOR sees all tasks
     admin_token = get_token(client, "admin_cov", "pass")
-    dir_token = get_token(client, "dir1_cov", "pass")
+    response = client.get(
+        "/api/v1/tasks/",
+        headers={"Authorization": f"Bearer {admin_token}"}
+    )
+    assert response.status_code == 200
+    assert len(response.json()) == 2
 
-    for token in [admin_token, dir_token]:
-        response = client.get(
-            "/api/v1/tasks/",
-            headers={"Authorization": f"Bearer {token}"}
-        )
-        assert response.status_code == 200
-        assert len(response.json()) == 2
+    # DIRETOR only sees tasks assigned to them (dir1 is assigned task1 only)
+    dir_token = get_token(client, "dir1_cov", "pass")
+    response = client.get(
+        "/api/v1/tasks/",
+        headers={"Authorization": f"Bearer {dir_token}"}
+    )
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+    assert response.json()[0]["title"] == "Task 1"
 
 def test_delete_task_workflow(client: TestClient, session: Session, setup_data):
     token = get_token(client, "admin_cov", "pass")

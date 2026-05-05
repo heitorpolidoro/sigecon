@@ -48,14 +48,13 @@ const SignupPage: React.FC = () => {
       navigate('/login', { 
         state: { message: 'Cadastro realizado com sucesso! Aguarde a aprovação de um administrador para acessar o sistema.' } 
       });
-    } catch (err: any) {
-      console.error('Signup error:', err);
-      const detail = err.response?.data?.detail;
+    } catch (err) {
+      const apiError = err as { response?: { data?: { detail?: unknown } } };
+      const detail = apiError.response?.data?.detail;
       if (typeof detail === 'string') {
         setError(detail);
       } else if (Array.isArray(detail)) {
-        // Handle FastAPI validation errors
-        const messages = detail.map((d: any) => d.msg).join(', ');
+        const messages = (detail as { msg: string }[]).map((d) => d.msg).join(', ');
         setError(`Erro de validação: ${messages}`);
       } else if (detail) {
         setError(JSON.stringify(detail));

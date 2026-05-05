@@ -291,7 +291,7 @@ describe("TaskForm", () => {
           data: { detail: "Create error" }
         }
       } as any,
-    });
+    } as any);
 
     render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
 
@@ -307,7 +307,7 @@ describe("TaskForm", () => {
           data: { detail: "Update error" }
         }
       } as any,
-    });
+    } as any);
 
     render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
 

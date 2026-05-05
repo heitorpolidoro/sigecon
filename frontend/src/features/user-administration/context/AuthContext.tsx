@@ -35,8 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await apiClient.get<User>('/auth/me');
       setUser(response.data);
-    } catch (error) {
-      console.error('Failed to fetch user', error);
+    } catch {
       localStorage.removeItem('accessToken');
       setUser(null);
     } finally {

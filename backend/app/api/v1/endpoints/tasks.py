@@ -24,7 +24,7 @@ def create_task(
     session: Annotated[Session, Depends(get_session)],
     current_user: Annotated[User, Depends(api_deps.get_current_user)],
 ):
-    """Create a new task. Only Administrators and Directors can create tasks.
+    """Create a new task. Both ADMINISTRADOR and DIRETOR can create tasks.
 
     Args:
         task_in: Task data to create.
@@ -49,7 +49,7 @@ def list_tasks(
 ):
     """List tasks with optional filters.
 
-    Administrators and Directors can see all tasks.
+    ADMINISTRADOR sees all tasks. DIRETOR sees only tasks assigned to them.
 
     Args:
         session: Database session.
@@ -63,7 +63,9 @@ def list_tasks(
     """
     statement = select(Task).where(Task.is_deleted.is_(False))
 
-    if assigned_to_id:
+    if current_user.role == UserRole.DIRETOR:
+        statement = statement.where(Task.assigned_to_id == current_user.id)
+    elif assigned_to_id:
         statement = statement.where(Task.assigned_to_id == assigned_to_id)
 
     if status:
@@ -84,8 +86,8 @@ def update_task(
 ):
     """Update an existing task.
 
-    Administrators and Directors can update any field of any task.
-    Other roles can ONLY update the status of tasks assigned to them.
+    ADMINISTRADOR can update any field of any task.
+    DIRETOR can only update the status field, and only on tasks assigned to them.
 
     Args:
         task_id: UUID of the task to update.
@@ -98,6 +100,8 @@ def update_task(
 
     Raises:
         TaskNotFoundError: If the task does not exist or is deleted.
+        ForbiddenError: If DIRETOR attempts to update non-status fields or a task
+            not assigned to them.
     """
     db_task = session.get(Task, task_id)
     if not db_task or db_task.is_deleted:
@@ -116,7 +120,8 @@ def get_task_history(
 ):
     """Get the audit history for a specific task.
 
-    Any authenticated user can see the history of tasks they have access to.
+    ADMINISTRADOR can see history of any task. DIRETOR can only see history of
+    tasks assigned to them.
 
     Args:
         task_id: UUID of the task.
@@ -128,11 +133,15 @@ def get_task_history(
 
     Raises:
         TaskNotFoundError: If the task does not exist or is deleted.
-        ForbiddenError: If the user does not have access to the task.
+        ForbiddenError: If DIRETOR tries to view history of a task not assigned
+            to them.
     """
     db_task = session.get(Task, task_id)
     if not db_task or db_task.is_deleted:
         raise TaskNotFoundError(task_id)
+
+    if current_user.role == UserRole.DIRETOR and db_task.assigned_to_id != current_user.id:
+        raise ForbiddenError()
 
     return TaskService.get_history(session=session, task_id=task_id)
 
@@ -143,7 +152,7 @@ def delete_task(
     session: Annotated[Session, Depends(get_session)],
     current_user: Annotated[User, Depends(api_deps.get_current_active_admin)],
 ):
-    """Delete a task (Soft Delete). Only Administrators can delete tasks.
+    """Delete a task (Soft Delete). Only ADMINISTRADOR can delete tasks.
 
     Args:
         task_id: UUID of the task to delete.

@@ -127,7 +127,7 @@ describe("TaskDashboard", () => {
   });
 
   it("handles successful task creation/update and closes overlay", () => {
-    const mockMutate = vi.fn((data, options) => {
+    const mockMutate = vi.fn((_data, options) => {
       if (options?.onSuccess) options.onSuccess();
     });
     (useCreateTask as any).mockReturnValue({ mutate: mockMutate, isPending: false });
@@ -269,7 +269,7 @@ describe("TaskDashboard", () => {
   });
 
   it("closes overlay after successful update in edit mode", () => {
-    const mockUpdateMutate = vi.fn((data, options) => {
+    const mockUpdateMutate = vi.fn((_data, options) => {
       if (options?.onSuccess) options.onSuccess();
     });
     (useUpdateTask as any).mockReturnValue({ mutate: mockUpdateMutate, isPending: false });

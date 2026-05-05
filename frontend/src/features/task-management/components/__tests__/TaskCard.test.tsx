@@ -67,7 +67,7 @@ describe("TaskCard", () => {
     ];
 
     statuses.forEach(({ status, expectedClass }) => {
-      const { rerender } = render(<TaskCard task={{ ...mockTask, status }} />);
+      render(<TaskCard task={{ ...mockTask, status }} />);
       const statusElement = screen.getByText(status === "UNKNOWN" ? "UNKNOWN" : status);
       expect(statusElement.className).toContain(expectedClass);
       // Clean up for next iteration if necessary, though rerender handles it

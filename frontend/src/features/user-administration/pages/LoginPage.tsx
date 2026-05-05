@@ -36,15 +36,15 @@ const LoginPage: React.FC = () => {
 
       await login(response.data.access_token);
       navigate(from, { replace: true });
-    } catch (err: any) {
-      console.error('Login error:', err);
-      const detail = err.response?.data?.detail;
+    } catch (err) {
+      const apiError = err as { response?: { data?: { detail?: unknown } } };
+      const detail = apiError.response?.data?.detail;
       if (detail === 'Inactive user') {
         setError('Sua conta está aguardando aprovação de um administrador.');
       } else if (typeof detail === 'string') {
         setError(detail);
       } else if (Array.isArray(detail)) {
-        const messages = detail.map((d: any) => d.msg).join(', ');
+        const messages = (detail as { msg: string }[]).map((d) => d.msg).join(', ');
         setError(`Erro: ${messages}`);
       } else if (detail) {
         setError(JSON.stringify(detail));

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
-import { AuthProvider, UserRole } from '../context/AuthContext';
+import { UserRole } from '../context/AuthContext';
 import * as AuthHook from '../context/AuthContext';
 
 describe('ProtectedRoute', () => {
@@ -39,7 +39,7 @@ describe('ProtectedRoute', () => {
     vi.spyOn(AuthHook, 'useAuth').mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
-      user: { id: 1, username: 'test', role: UserRole.FUNCIONARIO, is_active: true } as any,
+      user: { id: 1, username: 'test', role: UserRole.DIRETOR, is_active: true } as any,
       login: vi.fn() as any,
       logout: vi.fn(),
     });
@@ -66,7 +66,7 @@ describe('ProtectedRoute', () => {
     vi.spyOn(AuthHook, 'useAuth').mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
-      user: { id: 1, username: 'test', role: UserRole.FUNCIONARIO, is_active: true } as any,
+      user: { id: 1, username: 'test', role: UserRole.DIRETOR, is_active: true } as any,
       login: vi.fn() as any,
       logout: vi.fn(),
     });
@@ -75,13 +75,13 @@ describe('ProtectedRoute', () => {
       <MemoryRouter initialEntries={['/admin']}>
         <Routes>
           <Route path="/dashboard" element={<div>Dashboard</div>} />
-          <Route 
-            path="/admin" 
+          <Route
+            path="/admin"
             element={
-              <ProtectedRoute requiredRole={UserRole.DIRETOR}>
+              <ProtectedRoute requiredRole={UserRole.ADMINISTRADOR}>
                 <div>Admin Content</div>
               </ProtectedRoute>
-            } 
+            }
           />
         </Routes>
       </MemoryRouter>

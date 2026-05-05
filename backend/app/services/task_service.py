@@ -51,9 +51,17 @@ class TaskService:
             Task: The updated task.
 
         Raises:
-            ForbiddenError: If the user lacks permission to update fields.
+            ForbiddenError: If DIRETOR tries to update non-status fields or a task
+                not assigned to them. ADMINISTRADOR can update any field of any task.
         """
         update_data = task_in.model_dump(exclude_unset=True)
+
+        if current_user.role == UserRole.DIRETOR:
+            if db_task.assigned_to_id != current_user.id:
+                raise ForbiddenError()
+            non_status_fields = {k for k in update_data if k != "status"}
+            if non_status_fields:
+                raise ForbiddenError()
 
         for key, value in update_data.items():
             old_value = getattr(db_task, key)
