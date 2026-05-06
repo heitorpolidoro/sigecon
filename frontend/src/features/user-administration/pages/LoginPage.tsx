@@ -51,7 +51,9 @@ const LoginPage: React.FC = () => {
       } else if (Array.isArray(detail)) {
         setError(
           t("login.validationError", {
-            messages: (detail as { msg: string }[]).map((d) => d.msg).join(", "),
+            messages: (detail as { msg: string }[])
+              .map((d) => d.msg)
+              .join(", "),
           }),
         );
       } else if (detail) {

@@ -50,7 +50,9 @@ const AdminUserDashboard: React.FC = () => {
       setActionError(null);
     },
     onError: (err: Error & { response?: { data?: { detail?: string } } }) => {
-      setActionError(err.response?.data?.detail || t("admin.errorUpdatingUser"));
+      setActionError(
+        err.response?.data?.detail || t("admin.errorUpdatingUser"),
+      );
     },
   });
 
@@ -183,7 +185,9 @@ const AdminUserDashboard: React.FC = () => {
                   </td>
                   <td className="px-4 py-3">
                     <Badge variant={user.is_active ? "active" : "inactive"}>
-                      {user.is_active ? t("admin.statusActive") : t("admin.statusInactive")}
+                      {user.is_active
+                        ? t("admin.statusActive")
+                        : t("admin.statusInactive")}
                     </Badge>
                   </td>
                   <td className="px-4 py-3">
@@ -193,7 +197,9 @@ const AdminUserDashboard: React.FC = () => {
                         variant={user.is_active ? "destructive" : "success"}
                         onClick={() => handleToggleActive(user)}
                       >
-                        {user.is_active ? t("admin.deactivate") : t("admin.approve")}
+                        {user.is_active
+                          ? t("admin.deactivate")
+                          : t("admin.approve")}
                       </Button>
                       <Button
                         size="sm"

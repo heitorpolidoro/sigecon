@@ -61,7 +61,9 @@ const SignupPage: React.FC = () => {
       } else if (Array.isArray(detail)) {
         setError(
           t("signup.validationError", {
-            messages: (detail as { msg: string }[]).map((d) => d.msg).join(", "),
+            messages: (detail as { msg: string }[])
+              .map((d) => d.msg)
+              .join(", "),
           }),
         );
       } else if (detail) {
@@ -156,7 +158,9 @@ const SignupPage: React.FC = () => {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="confirm_password">{t("signup.confirmPassword")}</Label>
+              <Label htmlFor="confirm_password">
+                {t("signup.confirmPassword")}
+              </Label>
               <Input
                 id="confirm_password"
                 name="confirm_password"
