@@ -39,7 +39,9 @@ describe("TaskCard", () => {
   it("does not render due date when it is missing", () => {
     const taskWithoutDate = { ...mockTask, due_date: undefined };
     render(<TaskCard task={taskWithoutDate} />);
-    expect(screen.queryByText(/\d{1,2}\/\d{1,2}\/\d{4}/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/\d{1,2}\/\d{1,2}\/\d{4}/),
+    ).not.toBeInTheDocument();
   });
 
   it("calls onClick when Enter or Space is pressed", () => {
@@ -82,9 +84,7 @@ describe("TaskCard", () => {
     ];
 
     priorities.forEach((priority) => {
-      const { unmount } = render(
-        <TaskCard task={{ ...mockTask, priority }} />,
-      );
+      const { unmount } = render(<TaskCard task={{ ...mockTask, priority }} />);
       expect(screen.getByText(priority)).toBeInTheDocument();
       unmount();
     });

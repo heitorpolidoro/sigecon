@@ -35,7 +35,7 @@ vi.mock("react-i18next", () => ({
       t: (key: string, options?: any) => {
         const keys = key.split(".");
         let value: any = pt;
-        
+
         for (const k of keys) {
           value = value?.[k];
         }
@@ -45,7 +45,7 @@ vi.mock("react-i18next", () => ({
             value = value.replace(`{{${k}}}`, options[k]);
           });
         }
-        
+
         return value || key;
       },
       i18n: {

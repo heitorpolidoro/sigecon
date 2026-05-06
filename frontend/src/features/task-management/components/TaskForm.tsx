@@ -42,7 +42,8 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
     description: (v) => v || "",
     priority: (v) => v,
     assigned_to_id: (v) => v || "",
-    due_date: (v) => (v ? new Date(v as string).toISOString().split("T")[0] : ""),
+    due_date: (v) =>
+      v ? new Date(v as string).toISOString().split("T")[0] : "",
     status: (v) => v,
   };
 
@@ -138,8 +139,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
         <Alert variant="destructive" className="mb-4">
           <AlertDescription>
             {(serverError as { response?: { data?: { detail?: string } } })
-              .response?.data?.detail ||
-              t("tasks.form.errorSaving")}
+              .response?.data?.detail || t("tasks.form.errorSaving")}
           </AlertDescription>
         </Alert>
       )}
@@ -162,7 +162,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="description">{t("tasks.form.descriptionLabel")}</Label>
+          <Label htmlFor="description">
+            {t("tasks.form.descriptionLabel")}
+          </Label>
           <Textarea
             id="description"
             name="description"
@@ -210,7 +212,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
         )}
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="assigned_to_id">{t("tasks.form.assigneeLabel")}</Label>
+          <Label htmlFor="assigned_to_id">
+            {t("tasks.form.assigneeLabel")}
+          </Label>
           <Select
             id="assigned_to_id"
             name="assigned_to_id"

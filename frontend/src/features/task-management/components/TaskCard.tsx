@@ -79,7 +79,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
         </div>
         {task.due_date && (
           <span className="text-xs text-muted-foreground">
-            {new Date(task.due_date).toLocaleDateString(i18n.language === "pt" ? "pt-BR" : "en-US")}
+            {new Date(task.due_date).toLocaleDateString(
+              i18n.language === "pt" ? "pt-BR" : "en-US",
+            )}
           </span>
         )}
       </div>

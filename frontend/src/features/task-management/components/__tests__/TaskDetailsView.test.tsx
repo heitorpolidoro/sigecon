@@ -118,10 +118,13 @@ describe("TaskDetailsView", () => {
     });
     fireEvent.click(inProgressButton);
 
-    expect(mockUpdateMutate).toHaveBeenCalledWith(expect.objectContaining({
-      id: "1",
-      data: { status: TaskStatus.IN_PROGRESS },
-    }), expect.any(Object));
+    expect(mockUpdateMutate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: "1",
+        data: { status: TaskStatus.IN_PROGRESS },
+      }),
+      expect.any(Object),
+    );
   });
 
   it("disables the button for the current status", () => {
@@ -165,13 +168,18 @@ describe("TaskDetailsView", () => {
           task={{ ...mockTask, status } as any}
           onEdit={mockOnEdit}
           onClose={mockOnClose}
-        />
+        />,
       );
       // Mapping translation for status badge
-      const expectedText = status === TaskStatus.PENDING ? "Pendente" : 
-                           status === TaskStatus.IN_PROGRESS ? "Em andamento" :
-                           status === TaskStatus.COMPLETED ? "Concluída" : "Cancelada";
-      
+      const expectedText =
+        status === TaskStatus.PENDING
+          ? "Pendente"
+          : status === TaskStatus.IN_PROGRESS
+            ? "Em andamento"
+            : status === TaskStatus.COMPLETED
+              ? "Concluída"
+              : "Cancelada";
+
       const badge = screen.getByText(expectedText);
       expect(badge).toBeInTheDocument();
       rerender(<></>); // force cleanup for next loop
@@ -184,18 +192,22 @@ describe("TaskDetailsView", () => {
         task={{ ...mockTask, description: "" } as any}
         onEdit={mockOnEdit}
         onClose={mockOnClose}
-      />
+      />,
     );
-    expect(screen.getByText("Nenhuma descrição fornecida.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Nenhuma descrição fornecida."),
+    ).toBeInTheDocument();
 
     rerender(
       <TaskDetailsView
         task={{ ...mockTask, description: null } as any}
         onEdit={mockOnEdit}
         onClose={mockOnClose}
-      />
+      />,
     );
-    expect(screen.getByText("Nenhuma descrição fornecida.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Nenhuma descrição fornecida."),
+    ).toBeInTheDocument();
   });
 
   it("disables all status buttons when updateTaskMutation.isPending is true", () => {
@@ -209,10 +221,15 @@ describe("TaskDetailsView", () => {
         task={mockTask as any}
         onEdit={mockOnEdit}
         onClose={mockOnClose}
-      />
+      />,
     );
 
-    const statusNames = [/pendente/i, /em andamento/i, /concluída/i, /cancelada/i];
+    const statusNames = [
+      /pendente/i,
+      /em andamento/i,
+      /concluída/i,
+      /cancelada/i,
+    ];
     statusNames.forEach((name) => {
       const button = screen.getByRole("button", { name });
       expect(button).toBeDisabled();
@@ -225,7 +242,7 @@ describe("TaskDetailsView", () => {
         task={{ ...mockTask, due_date: null } as any}
         onEdit={mockOnEdit}
         onClose={mockOnClose}
-      />
+      />,
     );
     expect(screen.getAllByText("Não definido").length).toBeGreaterThan(0);
 
@@ -234,7 +251,7 @@ describe("TaskDetailsView", () => {
         task={{ ...mockTask, due_date: undefined } as any}
         onEdit={mockOnEdit}
         onClose={mockOnClose}
-      />
+      />,
     );
     expect(screen.getAllByText("Não definido").length).toBeGreaterThan(0);
 
@@ -243,7 +260,7 @@ describe("TaskDetailsView", () => {
         task={{ ...mockTask, due_date: "" } as any}
         onEdit={mockOnEdit}
         onClose={mockOnClose}
-      />
+      />,
     );
     expect(screen.getAllByText("Não definido").length).toBeGreaterThan(0);
   });

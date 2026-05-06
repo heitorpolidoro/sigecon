@@ -11,15 +11,21 @@ const badgeVariants = cva(
         secondary: "bg-secondary text-secondary-foreground",
         outline: "border border-input text-foreground",
         // Status
-        pending: "bg-[var(--status-pending-bg)] text-[var(--status-pending-fg)]",
-        in_progress: "bg-[var(--status-in-progress-bg)] text-[var(--status-in-progress-fg)]",
-        completed: "bg-[var(--status-completed-bg)] text-[var(--status-completed-fg)]",
-        canceled: "bg-[var(--status-canceled-bg)] text-[var(--status-canceled-fg)]",
+        pending:
+          "bg-[var(--status-pending-bg)] text-[var(--status-pending-fg)]",
+        in_progress:
+          "bg-[var(--status-in-progress-bg)] text-[var(--status-in-progress-fg)]",
+        completed:
+          "bg-[var(--status-completed-bg)] text-[var(--status-completed-fg)]",
+        canceled:
+          "bg-[var(--status-canceled-bg)] text-[var(--status-canceled-fg)]",
         // Priority
         low: "bg-[var(--priority-low-bg)] text-[var(--priority-low-fg)]",
-        medium: "bg-[var(--priority-medium-bg)] text-[var(--priority-medium-fg)]",
+        medium:
+          "bg-[var(--priority-medium-bg)] text-[var(--priority-medium-fg)]",
         high: "bg-[var(--priority-high-bg)] text-[var(--priority-high-fg)]",
-        urgent: "bg-[var(--priority-urgent-bg)] text-[var(--priority-urgent-fg)]",
+        urgent:
+          "bg-[var(--priority-urgent-bg)] text-[var(--priority-urgent-fg)]",
         // User status
         active: "bg-emerald-100 text-emerald-800",
         inactive: "bg-red-100 text-red-800",
@@ -32,7 +38,8 @@ const badgeVariants = cva(
 );
 
 export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends
+    React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof badgeVariants> {}
 
 function Badge({ className, variant, ...props }: BadgeProps) {

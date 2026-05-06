@@ -38,9 +38,7 @@ const AuditTimeline: React.FC<AuditTimelineProps> = ({ taskId }) => {
 
   if (error) {
     return (
-      <p className="text-sm text-destructive py-2">
-        {t("tasks.audit.error")}
-      </p>
+      <p className="text-sm text-destructive py-2">{t("tasks.audit.error")}</p>
     );
   }
 

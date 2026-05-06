@@ -50,7 +50,9 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
 
   const formatDate = (date: Date | string | null | undefined) => {
     if (!date) return t("tasks.details.notSet");
-    return new Date(date).toLocaleString(i18n.language === "pt" ? "pt-BR" : "en-US");
+    return new Date(date).toLocaleString(
+      i18n.language === "pt" ? "pt-BR" : "en-US",
+    );
   };
 
   const statusLabels: Record<string, string> = {
@@ -91,11 +93,23 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
       <section className="mb-4">
         <div className="grid grid-cols-2 gap-3">
           {[
-            { label: t("tasks.details.assignedTo"), value: task.assigned_to_id || t("tasks.details.unassigned") },
+            {
+              label: t("tasks.details.assignedTo"),
+              value: task.assigned_to_id || t("tasks.details.unassigned"),
+            },
             { label: t("tasks.details.createdBy"), value: task.created_by_id },
-            { label: t("tasks.details.dueDate"), value: formatDate(task.due_date) },
-            { label: t("tasks.details.createdAt"), value: formatDate(task.created_at) },
-            { label: t("tasks.details.updatedAt"), value: formatDate(task.updated_at) },
+            {
+              label: t("tasks.details.dueDate"),
+              value: formatDate(task.due_date),
+            },
+            {
+              label: t("tasks.details.createdAt"),
+              value: formatDate(task.created_at),
+            },
+            {
+              label: t("tasks.details.updatedAt"),
+              value: formatDate(task.updated_at),
+            },
           ].map(({ label, value }) => (
             <div key={label} className="flex flex-col">
               <span className="text-xs text-muted-foreground mb-0.5">
@@ -123,9 +137,7 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
               size="sm"
               variant={task.status === status ? "secondary" : "outline"}
               onClick={() => handleStatusChange(status)}
-              disabled={
-                task.status === status || updateTaskMutation.isPending
-              }
+              disabled={task.status === status || updateTaskMutation.isPending}
             >
               {statusLabels[status]}
             </Button>

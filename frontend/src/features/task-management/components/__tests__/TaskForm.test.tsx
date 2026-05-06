@@ -129,14 +129,13 @@ describe("TaskForm", () => {
     expect(screen.queryByText(/Título é obrigatório/i)).not.toBeInTheDocument();
   });
 
-
   it("handles null/missing description and assigned_to_id in submission", () => {
     render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
     fireEvent.change(screen.getByLabelText(/Title \*/i), {
       target: { value: "Minimal Task" },
     });
     fireEvent.click(screen.getByRole("button", { name: /Create Task/i }));
-    
+
     expect(mockCreateMutate).toHaveBeenCalledWith(
       expect.objectContaining({
         description: null,
@@ -148,7 +147,7 @@ describe("TaskForm", () => {
 
   it("submits with due date converted to Date object", () => {
     render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
-    
+
     fireEvent.change(screen.getByLabelText(/Title \*/i), {
       target: { value: "Task with Date" },
     });
@@ -164,7 +163,7 @@ describe("TaskForm", () => {
       }),
       expect.any(Object),
     );
-    
+
     const submittedDate = mockCreateMutate.mock.calls[0][0].due_date;
     expect(submittedDate.toISOString()).toContain("2023-12-25");
   });
@@ -175,8 +174,12 @@ describe("TaskForm", () => {
     const description = screen.getByLabelText(/Description/i);
     const priority = screen.getByLabelText(/Priority/i);
 
-    fireEvent.change(description, { target: { name: "description", value: "New Desc" } });
-    fireEvent.change(priority, { target: { name: "priority", value: TaskPriority.URGENT } });
+    fireEvent.change(description, {
+      target: { name: "description", value: "New Desc" },
+    });
+    fireEvent.change(priority, {
+      target: { name: "priority", value: TaskPriority.URGENT },
+    });
 
     expect(description).toHaveValue("New Desc");
     expect(priority).toHaveValue(TaskPriority.URGENT);
@@ -302,8 +305,8 @@ describe("TaskForm", () => {
       isPending: false,
       error: {
         response: {
-          data: { detail: "Create error" }
-        }
+          data: { detail: "Create error" },
+        },
       } as any,
     });
 
@@ -318,8 +321,8 @@ describe("TaskForm", () => {
       isPending: false,
       error: {
         response: {
-          data: { detail: "Update error" }
-        }
+          data: { detail: "Update error" },
+        },
       } as any,
     });
 
@@ -337,6 +340,8 @@ describe("TaskForm", () => {
 
     render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
 
-    expect(screen.getByText("An error occurred while saving the task.")).toBeInTheDocument();
+    expect(
+      screen.getByText("An error occurred while saving the task."),
+    ).toBeInTheDocument();
   });
 });

@@ -70,7 +70,7 @@ describe("AuditTimeline", () => {
     expect(screen.getByText("IN_PROGRESS")).toBeInTheDocument();
   });
 
-  it("formats null values as \"Nenhum\"", () => {
+  it('formats null values as "Nenhum"', () => {
     const mockHistory = [
       {
         id: 1,
@@ -95,7 +95,7 @@ describe("AuditTimeline", () => {
     expect(screen.getByText("New description")).toBeInTheDocument();
   });
 
-  it("formats empty string values as \"Vazio\"", () => {
+  it('formats empty string values as "Vazio"', () => {
     const mockHistory = [
       {
         id: 1,
