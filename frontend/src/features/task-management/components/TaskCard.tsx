@@ -35,7 +35,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
   const { t, i18n } = useTranslation();
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
+    if ((e.key === "Enter" || e.key === " ") && onClick) {
       e.preventDefault();
       onClick();
     }

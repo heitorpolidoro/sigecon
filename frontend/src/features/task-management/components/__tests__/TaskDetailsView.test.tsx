@@ -67,7 +67,7 @@ describe("TaskDetailsView", () => {
 
     expect(screen.getByText("Test Task")).toBeInTheDocument();
     expect(screen.getByText("Test Description")).toBeInTheDocument();
-    expect(screen.getByText("Pendente")).toBeInTheDocument();
+    expect(screen.getAllByText("Pendente").length).toBeGreaterThan(0);
     expect(screen.getByText("MEDIUM")).toBeInTheDocument();
     expect(screen.getByText("user1")).toBeInTheDocument();
     expect(screen.getByText("admin")).toBeInTheDocument();
@@ -123,7 +123,6 @@ describe("TaskDetailsView", () => {
         id: "1",
         data: { status: TaskStatus.IN_PROGRESS },
       }),
-      expect.any(Object),
     );
   });
 
@@ -180,7 +179,7 @@ describe("TaskDetailsView", () => {
               ? "Concluída"
               : "Cancelada";
 
-      const badge = screen.getByText(expectedText);
+      const badge = screen.getAllByText(expectedText)[0];
       expect(badge).toBeInTheDocument();
       rerender(<></>); // force cleanup for next loop
     });

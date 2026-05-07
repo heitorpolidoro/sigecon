@@ -101,7 +101,7 @@ describe("Navbar", () => {
     );
 
     const tarefasLink = screen.getByText("Tarefas");
-    expect(tarefasLink.className).toContain("active");
+    expect(tarefasLink.className).toContain("text-primary");
   });
 
   it("applies active class to admin link when on /admin/users", () => {
@@ -127,7 +127,7 @@ describe("Navbar", () => {
     );
 
     const adminLink = screen.getByText("Administração");
-    expect(adminLink.className).toContain("active");
+    expect(adminLink.className).toContain("text-primary");
   });
 
   it("calls logout when Sair button is clicked", () => {

@@ -17,13 +17,13 @@ router = APIRouter()
 def read_users(
     session: Annotated[Session, Depends(get_session)],
     current_user: Annotated[  # noqa: ARG001
-        User, Depends(api_deps.get_current_user)
+        User, Depends(api_deps.get_current_active_admin)
     ],
     is_active: bool | None = None,
 ) -> Any:
     """Retrieve users.
 
-    Accessible to any authenticated user.
+    Restricted to ADMINISTRATOR.
     """
     statement = select(User)
     if is_active is not None:

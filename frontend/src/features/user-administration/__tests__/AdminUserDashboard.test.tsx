@@ -197,7 +197,7 @@ describe("AdminUserDashboard", () => {
       expect(screen.getByText("User One")).toBeDefined();
     });
 
-    const administradorButton = screen.getByText("Mudar p/ Administrador");
+    const administradorButton = screen.getByText("Mudar p/ Admin");
     fireEvent.click(administradorButton);
 
     await waitFor(() => {
