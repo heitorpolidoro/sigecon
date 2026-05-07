@@ -5,10 +5,10 @@ import apiClient from "../../../api/client";
 import { UserRole, useAuth } from "../context/AuthContext";
 import type { User } from "../context/AuthContext";
 import { Link } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "../../../components/ui/badge";
+import { Button } from "../../../components/ui/button";
+import { Select } from "../../../components/ui/select";
+import { Alert, AlertDescription } from "../../../components/ui/alert";
 
 const AdminUserDashboard: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<

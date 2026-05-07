@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth, UserRole } from "../context/AuthContext";
-import { cn } from "@/lib/utils";
+import { cn } from "../../../lib/utils";
 
 const Navbar: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
