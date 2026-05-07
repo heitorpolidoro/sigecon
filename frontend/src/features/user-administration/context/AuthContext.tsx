@@ -6,9 +6,8 @@ import React, {
   useCallback,
 } from "react";
 import apiClient from "../../../api/client";
-import { User, UserRole } from "../../../types/auth";
+import { type User, UserRole } from "../../../types/auth";
 export { UserRole };
-export type { User };
 
 interface AuthContextType {
   user: User | null;
