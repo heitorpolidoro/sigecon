@@ -1,8 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import type { TaskRead } from "../types";
-import { Badge, type BadgeProps } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { Badge, type BadgeProps } from "../../../components/ui/badge";
+import { cn } from "../../../lib/utils";
 
 interface TaskCardProps {
   task: TaskRead;

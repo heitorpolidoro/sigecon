@@ -5,8 +5,8 @@ import TaskList from "./TaskList";
 import TaskForm from "./TaskForm";
 import TaskDetailsView from "./TaskDetailsView";
 import { useTasks } from "../hooks/useTasks";
-import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/select";
+import { Button } from "../../../components/ui/button";
+import { Select } from "../../../components/ui/select";
 import { Plus } from "lucide-react";
 
 const TaskDashboard: React.FC = () => {
