@@ -105,3 +105,9 @@ pnpm-debug.log*
 docker-compose.override.yml
 .scannerwork/
 test-results.xml
+
+# =========================
+# Claude Code
+# =========================
+.claude/worktrees/
+.claude/settings.local.json
