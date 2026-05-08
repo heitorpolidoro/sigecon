@@ -46,25 +46,21 @@ def get_current_user(
         except (JWTError, ValidationError):
             continue
 
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Could not validate credentials",
+    )
+
     if payload is None:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
-        )
+        raise credentials_exception
 
     try:
         user_id: str = payload.get("sub")
         if user_id is None:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Could not validate credentials",
-            )
+            raise credentials_exception
         token_data = uuid.UUID(user_id)
-    except (ValidationError, ValueError) as err:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
-        ) from err
+    except ValueError as err:
+        raise credentials_exception from err
     user = session.get(User, token_data)
     if not user:
         raise HTTPException(

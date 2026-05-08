@@ -20,7 +20,7 @@ def read_users(
         User, Depends(api_deps.get_current_active_admin)
     ],
     is_active: bool | None = None,
-) -> Any:
+) -> list[User]:
     """Retrieve users.
 
     Restricted to ADMINISTRATOR.
@@ -38,7 +38,7 @@ def update_user(
     current_user: Annotated[User, Depends(api_deps.get_current_active_admin)],
     user_id: UUID,
     user_in: UserUpdate,
-) -> Any:
+) -> User:
     """Update a user.
 
     Restricted to ADMINISTRATOR.

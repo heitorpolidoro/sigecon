@@ -1,6 +1,6 @@
 """Task service layer for business logic."""
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
 from app.core.exceptions import ForbiddenError
@@ -57,10 +57,10 @@ class TaskService:
 
         if current_user.role == UserRole.DIRECTOR:
             if db_task.assigned_to_id != current_user.id:
-                raise ForbiddenError()
+                raise ForbiddenError
             non_status_fields = {k for k in update_data if k != "status"}
             if non_status_fields:
-                raise ForbiddenError()
+                raise ForbiddenError
 
         for key, value in update_data.items():
             old_value = getattr(db_task, key)
@@ -84,7 +84,7 @@ class TaskService:
         return db_task
 
     @staticmethod
-    def get_history(session: Session, task_id: UUID) -> list[dict]:
+    def get_history(session: Session, task_id: UUID) -> list[dict[str, Any]]:
         """Retrieve the audit history for a task.
 
         Args:

@@ -201,17 +201,12 @@ describe("TaskDashboard", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Nova Tarefa/i }));
 
-    const modalContent = screen
-      .getByRole("heading", { name: "Nova Tarefa" })
-      .closest("div");
-    const overlay = modalContent?.parentElement?.parentElement;
+    const overlay = screen.getByLabelText("Fechar modal");
+    fireEvent.click(overlay);
 
-    if (overlay) {
-      fireEvent.click(overlay);
-      expect(
-        screen.queryByRole("heading", { name: "Nova Tarefa" }),
-      ).not.toBeInTheDocument();
-    }
+    expect(
+      screen.queryByRole("heading", { name: "Nova Tarefa" }),
+    ).not.toBeInTheDocument();
   });
 
   it("closes overlay when Enter or Space is pressed on overlay", () => {
@@ -239,7 +234,7 @@ describe("TaskDashboard", () => {
 
     // 1. Create Modal
     fireEvent.click(screen.getByRole("button", { name: /Nova Tarefa/i }));
-    const createModalContent = screen.getByRole("document");
+    const createModalContent = screen.getByRole("dialog");
     fireEvent.click(createModalContent);
     fireEvent.keyDown(createModalContent, { key: "Enter" });
     expect(
@@ -249,14 +244,14 @@ describe("TaskDashboard", () => {
 
     // 2. Details Modal
     fireEvent.click(screen.getByText("Task 1"));
-    const detailsModalContent = screen.getByRole("document");
+    const detailsModalContent = screen.getByRole("dialog");
     fireEvent.click(detailsModalContent);
     fireEvent.keyDown(detailsModalContent, { key: "Enter" });
     expect(screen.getByText("Fechar")).toBeInTheDocument();
 
     // 3. Edit Modal
     fireEvent.click(screen.getByText("Editar"));
-    const editModalContent = screen.getByRole("document");
+    const editModalContent = screen.getByRole("dialog");
     fireEvent.click(editModalContent);
     fireEvent.keyDown(editModalContent, { key: "Enter" });
     expect(screen.getByText("Atualizar tarefa")).toBeInTheDocument();
