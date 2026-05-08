@@ -174,4 +174,3 @@ def dev_login(
         ),
         "token_type": "bearer",
     }
-
