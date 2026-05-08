@@ -55,7 +55,9 @@ class Task(SQLModel, table=True):
 
     # Foreign Keys
     created_by_id: UUID = Field(foreign_key=USER_ID_FK, index=True)
-    assigned_to_id: UUID | None = Field(default=None, foreign_key=USER_ID_FK, index=True)
+    assigned_to_id: UUID | None = Field(
+        default=None, foreign_key=USER_ID_FK, index=True
+    )
 
     # Relationships
     creator: "User" = Relationship(
