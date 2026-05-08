@@ -19,6 +19,7 @@ vi.mock("../../../api/client", () => ({
 describe("LoginPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    (apiClient.get as any).mockResolvedValue({ data: [] });
   });
 
   it("renders login form", () => {
@@ -92,6 +93,37 @@ describe("LoginPage", () => {
           /Sua conta está aguardando aprovação de um administrador/i,
         ),
       ).toBeDefined();
+    });
+  });
+
+  it("renders dev users and handles dev login", async () => {
+    const mockDevUsers = [
+      { id: "1", username: "devadmin", is_active: true, role: "ADMINISTRATOR" },
+    ];
+    (apiClient.get as any).mockResolvedValue({ data: mockDevUsers });
+    (apiClient.post as any).mockResolvedValue({
+      data: { access_token: "dev-token" },
+    });
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/Quick Login \(Dev Mode\)/i)).toBeDefined();
+    });
+
+    const devButton = screen.getByRole("button", { name: "devadmin" });
+    fireEvent.click(devButton);
+
+    await waitFor(() => {
+      expect(apiClient.post).toHaveBeenCalledWith(
+        expect.stringContaining("/auth/dev-login?username=devadmin"),
+      );
     });
   });
 });

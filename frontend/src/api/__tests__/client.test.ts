@@ -4,6 +4,7 @@ import apiClient from "../client";
 describe("apiClient", () => {
   beforeEach(() => {
     localStorage.clear();
+    sessionStorage.clear();
     vi.clearAllMocks();
   });
 
@@ -15,6 +16,20 @@ describe("apiClient", () => {
     // acessando a lista de interceptores do axios ou simulando uma requisição.
 
     // @ts-ignore - acessando interceptores internos para teste
+    const requestInterceptor = (apiClient.interceptors.request as any)
+      .handlers[0];
+
+    const config = { headers: {} };
+    const updatedConfig = await requestInterceptor.fulfilled(config);
+
+    expect(updatedConfig.headers.Authorization).toBe(`Bearer ${token}`);
+  });
+
+  it("adds Authorization header if token exists in sessionStorage", async () => {
+    const token = "session-test-token";
+    sessionStorage.setItem("accessToken", token);
+
+    // @ts-ignore
     const requestInterceptor = (apiClient.interceptors.request as any)
       .handlers[0];
 
