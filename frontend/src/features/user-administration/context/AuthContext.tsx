@@ -46,14 +46,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [fetchUser]);
 
-  const login = useCallback(
-    async (token: string) => {
-      localStorage.setItem("accessToken", token);
-      setIsLoading(true);
-      await fetchUser();
-    },
-    [fetchUser],
-  );
+  const login = useCallback(async (token: string) => {
+    localStorage.setItem("accessToken", token);
+    setIsLoading(true);
+    await fetchUser();
+  }, [fetchUser]);
 
   const logout = useCallback(() => {
     localStorage.removeItem("accessToken");
@@ -62,10 +59,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const value = React.useMemo(
     () => ({ user, isAuthenticated: Boolean(user), isLoading, login, logout }),
-    [user, isLoading, login, logout],
+    [user, isLoading, login, logout]
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

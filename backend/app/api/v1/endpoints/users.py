@@ -1,6 +1,6 @@
 """User management API endpoints."""
 
-from typing import Annotated
+from typing import Annotated, Any
 from uuid import UUID
 
 from app.api import deps as api_deps

@@ -6,6 +6,7 @@ import {
   useCreateTask,
   useUpdateTask,
   useTaskHistory,
+  useDeleteTask,
 } from "../../hooks/useTasks";
 import { TaskStatus, TaskPriority } from "../../types";
 import * as useUsersHook from "../../../../hooks/useUsers";
@@ -16,6 +17,7 @@ vi.mock("../../hooks/useTasks", () => ({
   useCreateTask: vi.fn(),
   useUpdateTask: vi.fn(),
   useTaskHistory: vi.fn(),
+  useDeleteTask: vi.fn(),
 }));
 
 vi.mock("../../../../hooks/useUsers", () => ({
@@ -53,6 +55,10 @@ describe("TaskDashboard", () => {
       isPending: false,
     } as any);
     vi.mocked(useUpdateTask).mockReturnValue({
+      mutate: vi.fn(),
+      isPending: false,
+    } as any);
+    vi.mocked(useDeleteTask).mockReturnValue({
       mutate: vi.fn(),
       isPending: false,
     } as any);
@@ -196,8 +202,8 @@ describe("TaskDashboard", () => {
     fireEvent.click(screen.getByRole("button", { name: /Nova Tarefa/i }));
 
     const overlay = screen.getByLabelText("Fechar modal");
-
     fireEvent.click(overlay);
+
     expect(
       screen.queryByRole("heading", { name: "Nova Tarefa" }),
     ).not.toBeInTheDocument();
