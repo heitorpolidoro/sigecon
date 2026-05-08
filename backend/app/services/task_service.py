@@ -3,11 +3,12 @@
 from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
+from sqlmodel import Session, select
+
 from app.core.exceptions import ForbiddenError
 from app.models.enums import UserRole
 from app.models.task import Task, TaskHistory, get_utc_now
 from app.schemas.task import TaskCreate, TaskUpdate
-from sqlmodel import Session, select
 
 if TYPE_CHECKING:
     from app.models.user import User
@@ -82,6 +83,7 @@ class TaskService:
         session.commit()
         session.refresh(db_task)
         return db_task
+
 
     @staticmethod
     def get_history(session: Session, task_id: UUID) -> list[dict[str, Any]]:
