@@ -3,6 +3,10 @@
 from datetime import timedelta
 from typing import Annotated, Any
 
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlmodel import Session, select
+
 from app.api import deps as api_deps
 from app.core import security
 from app.core.config import settings
@@ -12,9 +16,6 @@ from app.models.enums import UserRole
 from app.models.user import User
 from app.schemas.token import Token
 from app.schemas.user import UserCreate, UserRead
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
-from fastapi.security import OAuth2PasswordRequestForm
-from sqlmodel import Session, select
 
 router = APIRouter()
 
@@ -73,7 +74,7 @@ def login_access_token(
     request: Request,  # noqa: ARG001
     session: Annotated[Session, Depends(get_session)],
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    remember_me: bool = Query(False),
+    remember_me: Annotated[bool, Query()] = False,
 ) -> dict[str, str]:
     """OAuth2 compatible token login, get an access token for future requests.
 
@@ -130,7 +131,7 @@ def get_dev_users(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Not found",
         )
-    statement = select(User).where(User.is_active == True)
+    statement = select(User).where(User.is_active)
     return session.exec(statement).all()
 
 
@@ -138,7 +139,7 @@ def get_dev_users(
 def dev_login(
     session: Annotated[Session, Depends(get_session)],
     username: str,
-    remember_me: bool = Query(False),
+    remember_me: Annotated[bool, Query()] = False,
 ) -> Any:
     """Login without password for development purposes.
 

@@ -3,6 +3,9 @@
 from typing import Annotated
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, Query, status
+from sqlmodel import Session, select
+
 from app.api import deps as api_deps
 from app.core.exceptions import ForbiddenError, TaskNotFoundError
 from app.db import get_session
@@ -11,8 +14,6 @@ from app.models.task import Task, TaskHistory
 from app.models.user import User
 from app.schemas.task import TaskCreate, TaskHistoryRead, TaskRead, TaskUpdate
 from app.services.task_service import TaskService
-from fastapi import APIRouter, Depends, Query, status
-from sqlmodel import Session, select
 
 router = APIRouter()
 
