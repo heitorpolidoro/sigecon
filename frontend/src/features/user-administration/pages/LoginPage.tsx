@@ -23,13 +23,11 @@ const LoginPage: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Only fetch dev users in development
-    if (import.meta.env.DEV) {
-      apiClient
-        .get<User[]>("/auth/dev-users")
-        .then((res) => setDevUsers(res.data))
-        .catch(() => setDevUsers([])); // Silently fail if not dev or endpoint not available
-    }
+    // Fetch dev users if available (endpoint returns 404 in production)
+    apiClient
+      .get<User[]>("/auth/dev-users")
+      .then((res) => setDevUsers(res.data))
+      .catch(() => setDevUsers([]));
   }, []);
 
   const from = location.state?.from?.pathname || "/dashboard";
@@ -173,7 +171,7 @@ const LoginPage: React.FC = () => {
           {devUsers.length > 0 && (
             <div className="mt-6 pt-6 border-t border-dashed">
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                Quick Login (Dev Mode)
+                Login Rápido (Desenvolvimento)
               </p>
               <div className="flex flex-wrap gap-2">
                 {devUsers.map((u) => (

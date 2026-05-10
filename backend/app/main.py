@@ -22,6 +22,9 @@ def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse
 def get_origins() -> list[str]:
     """Parse and return CORS origins from settings."""
     raw_origins = settings.BACKEND_CORS_ORIGINS
+    if not raw_origins:
+        return []
+
     if isinstance(raw_origins, str):
         import json
 
@@ -31,11 +34,6 @@ def get_origins() -> list[str]:
             origins = [o.strip() for o in raw_origins.split(",")]
     else:
         origins = [str(o) for o in raw_origins]
-
-    # Ensure frontend dev server is included
-    frontend_dev = "http://localhost:5175"
-    if frontend_dev not in [o.strip("/") for o in origins]:
-        origins.append(frontend_dev)
 
     return origins
 

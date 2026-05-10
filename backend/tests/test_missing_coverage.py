@@ -227,7 +227,6 @@ def test_get_origins_json_string():
         mock_settings.BACKEND_CORS_ORIGINS = '["http://test.com"]'
         origins = get_origins()
         assert "http://test.com" in origins
-        assert "http://localhost:5175" in origins
 
 
 def test_get_origins_comma_string():
@@ -238,17 +237,15 @@ def test_get_origins_comma_string():
         origins = get_origins()
         assert "http://test1.com" in origins
         assert "http://test2.com" in origins
-        assert "http://localhost:5175" in origins
 
 
 def test_get_origins_list_without_dev():
-    """Test get_origins with a list that doesn't include the dev origin."""
+    """Test get_origins with a list."""
     from app.main import get_origins
     with patch("app.main.settings") as mock_settings:
         mock_settings.BACKEND_CORS_ORIGINS = ["http://test.com"]
         origins = get_origins()
         assert "http://test.com" in origins
-        assert "http://localhost:5175" in origins
 
 
 def test_get_origins_list_with_dev():

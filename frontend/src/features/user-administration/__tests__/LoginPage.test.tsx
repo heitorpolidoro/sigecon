@@ -118,7 +118,7 @@ describe("LoginPage", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Quick Login \(Dev Mode\)/i)).toBeDefined();
+      expect(screen.getByText(/Login Rápido \(Desenvolvimento\)/i)).toBeDefined();
     });
 
     const devButton = screen.getByRole("button", { name: "devadmin" });
