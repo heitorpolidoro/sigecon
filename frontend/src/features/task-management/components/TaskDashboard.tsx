@@ -90,7 +90,10 @@ const TaskDashboard: React.FC = () => {
           <Select
             value={filters.status ?? ""}
             onChange={(e) =>
-              handleFilterChange("status", (e.target.value as TaskStatus) || null)
+              handleFilterChange(
+                "status",
+                (e.target.value as TaskStatus) || null,
+              )
             }
             className="w-40"
           >

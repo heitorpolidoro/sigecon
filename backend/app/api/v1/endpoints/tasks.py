@@ -38,12 +38,14 @@ def create_task(
     )
     # Add names for response
     creator = session.get(User, db_task.created_by_id)
-    assignee = session.get(User, db_task.assigned_to_id) if db_task.assigned_to_id else None
-    
+    assignee = (
+        session.get(User, db_task.assigned_to_id) if db_task.assigned_to_id else None
+    )
+
     task_data = db_task.model_dump()
     task_data["created_by_name"] = creator.full_name if creator else None
     task_data["assigned_to_name"] = assignee.full_name if assignee else None
-    
+
     return TaskRead.model_validate(task_data)
 
 
@@ -135,15 +137,19 @@ def update_task(
     updated_task = TaskService.update_task(
         session=session, db_task=db_task, task_in=task_in, current_user=current_user
     )
-    
+
     # Add names for response
     creator = session.get(User, updated_task.created_by_id)
-    assignee = session.get(User, updated_task.assigned_to_id) if updated_task.assigned_to_id else None
-    
+    assignee = (
+        session.get(User, updated_task.assigned_to_id)
+        if updated_task.assigned_to_id
+        else None
+    )
+
     task_data = updated_task.model_dump()
     task_data["created_by_name"] = creator.full_name if creator else None
     task_data["assigned_to_name"] = assignee.full_name if assignee else None
-        
+
     return TaskRead.model_validate(task_data)
 
 

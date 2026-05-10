@@ -78,15 +78,24 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
               disabled={updateTaskMutation.isPending}
               className={cn(
                 "appearance-none pl-3 pr-8 py-1 rounded-full text-xs font-bold uppercase tracking-wide border-none cursor-pointer focus:ring-2 focus:ring-ring outline-none",
-                task.status === "PENDING" && "bg-[var(--status-pending-bg)] text-[var(--status-pending-fg)]",
-                task.status === "IN_PROGRESS" && "bg-[var(--status-in-progress-bg)] text-[var(--status-in-progress-fg)]",
-                task.status === "BLOCKED" && "bg-[var(--status-blocked-bg)] text-[var(--status-blocked-fg)]",
-                task.status === "COMPLETED" && "bg-[var(--status-completed-bg)] text-[var(--status-completed-fg)]",
-                task.status === "CANCELED" && "bg-[var(--status-canceled-bg)] text-[var(--status-canceled-fg)]"
+                task.status === "PENDING" &&
+                  "bg-[var(--status-pending-bg)] text-[var(--status-pending-fg)]",
+                task.status === "IN_PROGRESS" &&
+                  "bg-[var(--status-in-progress-bg)] text-[var(--status-in-progress-fg)]",
+                task.status === "BLOCKED" &&
+                  "bg-[var(--status-blocked-bg)] text-[var(--status-blocked-fg)]",
+                task.status === "COMPLETED" &&
+                  "bg-[var(--status-completed-bg)] text-[var(--status-completed-fg)]",
+                task.status === "CANCELED" &&
+                  "bg-[var(--status-canceled-bg)] text-[var(--status-canceled-fg)]",
               )}
             >
               {Object.entries(statusLabels).map(([value, label]) => (
-                <option key={value} value={value} className="bg-background text-foreground">
+                <option
+                  key={value}
+                  value={value}
+                  className="bg-background text-foreground"
+                >
                   {label}
                 </option>
               ))}
@@ -123,7 +132,10 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
               label: t("tasks.details.assignedTo"),
               value: task.assigned_to_name || t("tasks.details.unassigned"),
             },
-            { label: t("tasks.details.createdBy"), value: task.created_by_name || task.created_by_id },
+            {
+              label: t("tasks.details.createdBy"),
+              value: task.created_by_name || task.created_by_id,
+            },
             {
               label: t("tasks.details.dueDate"),
               value: formatDate(task.due_date),

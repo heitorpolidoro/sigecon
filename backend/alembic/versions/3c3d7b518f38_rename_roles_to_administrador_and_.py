@@ -22,9 +22,12 @@ def upgrade() -> None:
     """Upgrade schema."""
     # Use a separate connection to run the ALTER TYPE command outside of the main migration transaction
     from sqlalchemy import create_engine
+
     engine = create_engine(op.get_context().config.get_main_option("sqlalchemy.url"))
     with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
-        conn.execute(sa.text("ALTER TYPE userrole ADD VALUE IF NOT EXISTS 'ADMINISTRADOR'"))
+        conn.execute(
+            sa.text("ALTER TYPE userrole ADD VALUE IF NOT EXISTS 'ADMINISTRADOR'")
+        )
 
     # Data migration
     op.execute("UPDATE \"user\" SET role = 'ADMINISTRADOR' WHERE role = 'DIRETOR'")

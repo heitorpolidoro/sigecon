@@ -1,11 +1,13 @@
 import uuid
 from datetime import datetime, timedelta
+
 from app.core.config import settings
 from app.core.security import get_password_hash
-from app.models.enums import UserRole, TaskStatus, TaskPriority
-from app.models.user import User
+from app.models.enums import TaskPriority, TaskStatus, UserRole
 from app.models.task import Task
+from app.models.user import User
 from sqlmodel import Session, create_engine, select
+
 
 def seed_dev():
     engine = create_engine(settings.database_url)
@@ -14,6 +16,7 @@ def seed_dev():
 
         # 1. Limpar banco para garantir estado limpo (Apenas Dev)
         from sqlalchemy import text
+
         session.execute(text("TRUNCATE TABLE task CASCADE;"))
         session.execute(text('TRUNCATE TABLE "user" CASCADE;'))
         session.commit()
@@ -44,9 +47,9 @@ def seed_dev():
                 "username": "diretor2",
                 "email": "diretor2@sigecon.com",
                 "full_name": "Diretor Financeiro",
-            }
+            },
         ]
-        
+
         diretores = []
         for d_data in diretores_data:
             user = User(
@@ -72,7 +75,7 @@ def seed_dev():
                 "status": TaskStatus.IN_PROGRESS,
                 "priority": TaskPriority.HIGH,
                 "assigned_to_id": diretores[0].id,
-                "due_date": datetime.now() + timedelta(days=5)
+                "due_date": datetime.now() + timedelta(days=5),
             },
             {
                 "title": "Relatório Trimestral",
@@ -80,7 +83,7 @@ def seed_dev():
                 "status": TaskStatus.PENDING,
                 "priority": TaskPriority.MEDIUM,
                 "assigned_to_id": diretores[1].id,
-                "due_date": datetime.now() + timedelta(days=10)
+                "due_date": datetime.now() + timedelta(days=10),
             },
             {
                 "title": "Treinamento de Equipe",
@@ -88,7 +91,7 @@ def seed_dev():
                 "status": TaskStatus.COMPLETED,
                 "priority": TaskPriority.LOW,
                 "assigned_to_id": diretores[0].id,
-                "due_date": datetime.now() - timedelta(days=2)
+                "due_date": datetime.now() - timedelta(days=2),
             },
             {
                 "title": "Revisão de Segurança",
@@ -96,7 +99,7 @@ def seed_dev():
                 "status": TaskStatus.PENDING,
                 "priority": TaskPriority.URGENT,
                 "assigned_to_id": diretores[1].id,
-                "due_date": datetime.now() + timedelta(days=1)
+                "due_date": datetime.now() + timedelta(days=1),
             },
             {
                 "title": "Implementação do Kanban",
@@ -104,7 +107,7 @@ def seed_dev():
                 "status": TaskStatus.COMPLETED,
                 "priority": TaskPriority.HIGH,
                 "assigned_to_id": diretores[0].id,
-                "due_date": datetime.now()
+                "due_date": datetime.now(),
             },
             {
                 "title": "Ajuste de Budget",
@@ -112,7 +115,7 @@ def seed_dev():
                 "status": TaskStatus.CANCELED,
                 "priority": TaskPriority.LOW,
                 "assigned_to_id": diretores[1].id,
-                "due_date": None
+                "due_date": None,
             },
             {
                 "title": "Dependência de Terceiros",
@@ -120,8 +123,8 @@ def seed_dev():
                 "status": TaskStatus.BLOCKED,
                 "priority": TaskPriority.HIGH,
                 "assigned_to_id": diretores[0].id,
-                "due_date": datetime.now() + timedelta(days=3)
-            }
+                "due_date": datetime.now() + timedelta(days=3),
+            },
         ]
 
         for t_data in tasks_data:
@@ -132,13 +135,14 @@ def seed_dev():
                 priority=t_data["priority"],
                 assigned_to_id=t_data["assigned_to_id"],
                 created_by_id=admin.id,
-                due_date=t_data["due_date"]
+                due_date=t_data["due_date"],
             )
             session.add(task)
-        
+
         session.commit()
         print("✅ Tarefas de exemplo criadas.")
         print("🚀 Seed concluído com sucesso!")
+
 
 if __name__ == "__main__":
     seed_dev()

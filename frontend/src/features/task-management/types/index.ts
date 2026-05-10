@@ -1,7 +1,12 @@
 /**
  * Represents the possible statuses of a task.
  */
-export type TaskStatus = "PENDING" | "IN_PROGRESS" | "BLOCKED" | "COMPLETED" | "CANCELED";
+export type TaskStatus =
+  | "PENDING"
+  | "IN_PROGRESS"
+  | "BLOCKED"
+  | "COMPLETED"
+  | "CANCELED";
 
 /**
  * Constants for task statuses.

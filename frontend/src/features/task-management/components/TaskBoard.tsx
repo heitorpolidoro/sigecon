@@ -47,7 +47,7 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
     // Note: status filter is handled differently in board view - usually we show all columns
     // but if a specific status is selected, maybe we should highlight it or only show that column?
     // Standard Kanban boards usually show all columns, and filters apply to content.
-    // However, if the user explicitly selected a status in the dashboard dropdown, 
+    // However, if the user explicitly selected a status in the dashboard dropdown,
     // we should respect it.
     if (filters.status && task.status !== filters.status) return false;
     if (filters.priority && task.priority !== filters.priority) return false;
@@ -59,7 +59,12 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
     return true;
   });
 
-  const columns: { status: TaskStatus; label: string; colorClass: string; headerColorClass: string }[] = [
+  const columns: {
+    status: TaskStatus;
+    label: string;
+    colorClass: string;
+    headerColorClass: string;
+  }[] = [
     {
       status: TaskStatus.PENDING,
       label: t("tasks.details.statusPending"),
@@ -93,21 +98,25 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
   ];
 
   // If a status filter is active, only show that column (optional, but consistent with TaskList)
-  const visibleColumns = filters.status 
-    ? columns.filter(col => col.status === filters.status)
+  const visibleColumns = filters.status
+    ? columns.filter((col) => col.status === filters.status)
     : columns;
 
   return (
     <div className="flex flex-col md:flex-row gap-6 overflow-x-auto pb-6 mt-4 min-h-[600px] items-start">
       {visibleColumns.map((column) => {
-        const columnTasks = filteredTasks.filter((task) => task.status === column.status);
+        const columnTasks = filteredTasks.filter(
+          (task) => task.status === column.status,
+        );
 
         return (
           <div
             key={column.status}
             className={`flex-1 min-w-[300px] w-full md:max-w-xs rounded-xl border border-border/50 ${column.colorClass} flex flex-col shadow-sm`}
           >
-            <div className={`p-4 border-b border-border/50 border-t-4 ${column.headerColorClass} rounded-t-xl flex items-center justify-between bg-card/50`}>
+            <div
+              className={`p-4 border-b border-border/50 border-t-4 ${column.headerColorClass} rounded-t-xl flex items-center justify-between bg-card/50`}
+            >
               <h3 className="font-bold text-sm uppercase tracking-wider text-foreground/80">
                 {column.label}
               </h3>
