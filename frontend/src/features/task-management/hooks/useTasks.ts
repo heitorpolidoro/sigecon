@@ -133,6 +133,21 @@ export const useTaskHistory = (taskId: string) => {
 };
 
 /**
+ * Hook to delete a task.
+ *
+ * @returns React Query mutation result.
+ */
+export const useDeleteTask = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => apiClient.delete(`/tasks/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+};
+
+/**
  * Hook to get a function that invalidates the tasks query.
  *
  * @returns A function to invalidate tasks.

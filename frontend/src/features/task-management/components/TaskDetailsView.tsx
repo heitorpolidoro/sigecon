@@ -5,6 +5,7 @@ import { useUpdateTask } from "../hooks/useTasks";
 import AuditTimeline from "./AuditTimeline";
 import { Badge, type BadgeProps } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
+import { cn } from "../../../lib/utils";
 
 interface TaskDetailsViewProps {
   task: TaskRead;
@@ -18,6 +19,7 @@ function statusVariant(status: string): BadgeVariant {
   const map: Record<string, BadgeVariant> = {
     PENDING: "pending",
     IN_PROGRESS: "in_progress",
+    BLOCKED: "blocked",
     COMPLETED: "completed",
     CANCELED: "canceled",
   };
@@ -56,6 +58,7 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
   const statusLabels: Record<string, string> = {
     PENDING: t("tasks.details.statusPending"),
     IN_PROGRESS: t("tasks.details.statusInProgress"),
+    BLOCKED: t("tasks.details.statusBlocked"),
     COMPLETED: t("tasks.details.statusCompleted"),
     CANCELED: t("tasks.details.statusCanceled"),
   };
@@ -64,13 +67,47 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
     <div className="p-6">
       {/* Header */}
       <div className="flex flex-col gap-3 pb-4 border-b mb-4">
-        <h2 className="text-xl font-semibold text-foreground leading-snug">
-          {task.title}
-        </h2>
+        <div className="flex items-start justify-between gap-4">
+          <h2 className="text-xl font-semibold text-foreground leading-snug">
+            {task.title}
+          </h2>
+          <div className="relative group shrink-0">
+            <select
+              value={task.status}
+              onChange={(e) => handleStatusChange(e.target.value as TaskStatus)}
+              disabled={updateTaskMutation.isPending}
+              className={cn(
+                "appearance-none pl-3 pr-8 py-1 rounded-full text-xs font-bold uppercase tracking-wide border-none cursor-pointer focus:ring-2 focus:ring-ring outline-none",
+                task.status === "PENDING" &&
+                  "bg-[var(--status-pending-bg)] text-[var(--status-pending-fg)]",
+                task.status === "IN_PROGRESS" &&
+                  "bg-[var(--status-in-progress-bg)] text-[var(--status-in-progress-fg)]",
+                task.status === "BLOCKED" &&
+                  "bg-[var(--status-blocked-bg)] text-[var(--status-blocked-fg)]",
+                task.status === "COMPLETED" &&
+                  "bg-[var(--status-completed-bg)] text-[var(--status-completed-fg)]",
+                task.status === "CANCELED" &&
+                  "bg-[var(--status-canceled-bg)] text-[var(--status-canceled-fg)]",
+              )}
+            >
+              {Object.entries(statusLabels).map(([value, label]) => (
+                <option
+                  key={value}
+                  value={value}
+                  className="bg-background text-foreground"
+                >
+                  {label}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none opacity-60">
+              <svg className="size-3 fill-current" viewBox="0 0 20 20">
+                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+              </svg>
+            </div>
+          </div>
+        </div>
         <div className="flex gap-2 flex-wrap">
-          <Badge variant={statusVariant(task.status)}>
-            {statusLabels[task.status]}
-          </Badge>
           <Badge variant={priorityVariant(task.priority)}>
             {task.priority}
           </Badge>
@@ -93,9 +130,12 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
           {[
             {
               label: t("tasks.details.assignedTo"),
-              value: task.assigned_to_id || t("tasks.details.unassigned"),
+              value: task.assigned_to_name || t("tasks.details.unassigned"),
             },
-            { label: t("tasks.details.createdBy"), value: task.created_by_id },
+            {
+              label: t("tasks.details.createdBy"),
+              value: task.created_by_name || task.created_by_id,
+            },
             {
               label: t("tasks.details.dueDate"),
               value: formatDate(task.due_date),
@@ -117,28 +157,6 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
                 {value}
               </span>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Quick status actions */}
-      <section className="rounded-lg bg-muted/40 p-3 mb-4">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-          {t("tasks.details.changeStatus")}
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {(
-            ["PENDING", "IN_PROGRESS", "COMPLETED", "CANCELED"] as TaskStatus[]
-          ).map((status) => (
-            <Button
-              key={status}
-              size="sm"
-              variant={task.status === status ? "secondary" : "outline"}
-              onClick={() => handleStatusChange(status)}
-              disabled={task.status === status || updateTaskMutation.isPending}
-            >
-              {statusLabels[status]}
-            </Button>
           ))}
         </div>
       </section>

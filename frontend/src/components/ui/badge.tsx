@@ -15,6 +15,8 @@ const badgeVariants = cva(
           "bg-[var(--status-pending-bg)] text-[var(--status-pending-fg)]",
         in_progress:
           "bg-[var(--status-in-progress-bg)] text-[var(--status-in-progress-fg)]",
+        blocked:
+          "bg-[var(--status-blocked-bg)] text-[var(--status-blocked-fg)]",
         completed:
           "bg-[var(--status-completed-bg)] text-[var(--status-completed-fg)]",
         canceled:

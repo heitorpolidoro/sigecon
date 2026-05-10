@@ -40,6 +40,8 @@ class TaskRead(TaskBase):
     created_at: datetime
     updated_at: datetime
     created_by_id: UUID
+    created_by_name: str | None = None
+    assigned_to_name: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 

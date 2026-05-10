@@ -8,6 +8,7 @@ class TaskStatus(StrEnum):
 
     PENDING = "PENDING"
     IN_PROGRESS = "IN_PROGRESS"
+    BLOCKED = "BLOCKED"
     COMPLETED = "COMPLETED"
     CANCELED = "CANCELED"
 
