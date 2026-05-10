@@ -72,7 +72,7 @@
 }
 
 .auth-button:disabled {
-  background-color: #6c757d;
+  background-color: #545b62;
   color: #ffffff;
   cursor: not-allowed;
 }

@@ -3,17 +3,14 @@ import { useTranslation } from "react-i18next";
 import type { TaskRead } from "../types";
 import { TaskStatus, TaskPriority } from "../types";
 import TaskCard from "./TaskCard";
+import { useTaskFiltering, type TaskFilters } from "../hooks/useTaskFiltering";
 
 interface TaskListProps {
   tasks: TaskRead[];
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
-  filters: {
-    status?: TaskStatus | null;
-    priority?: TaskPriority | null;
-    assigned_to_id?: string | null;
-  };
+  filters: TaskFilters;
   onTaskClick?: (taskId: string) => void;
 }
 
@@ -26,6 +23,7 @@ const TaskList: React.FC<TaskListProps> = ({
   onTaskClick,
 }) => {
   const { t } = useTranslation();
+  const filteredTasks = useTaskFiltering(tasks, filters);
 
   if (isLoading) {
     return (
@@ -50,17 +48,6 @@ const TaskList: React.FC<TaskListProps> = ({
       </p>
     );
   }
-
-  const filteredTasks = tasks.filter((task) => {
-    if (filters.status && task.status !== filters.status) return false;
-    if (filters.priority && task.priority !== filters.priority) return false;
-    if (
-      filters.assigned_to_id &&
-      task.assigned_to_id !== filters.assigned_to_id
-    )
-      return false;
-    return true;
-  });
 
   if (filteredTasks.length === 0) {
     return (

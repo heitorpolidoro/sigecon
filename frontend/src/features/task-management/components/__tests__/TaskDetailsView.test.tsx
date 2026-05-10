@@ -4,6 +4,7 @@ import TaskDetailsView from "../TaskDetailsView";
 import { TaskPriority, TaskStatus } from "../../types";
 import { useUpdateTask, useTaskHistory } from "../../hooks/useTasks";
 import { useUsers } from "../../../../hooks/useUsers";
+import { useTranslation } from "react-i18next";
 
 // Mock the hooks
 vi.mock("../../hooks/useTasks", () => ({
@@ -244,5 +245,25 @@ describe("TaskDetailsView", () => {
       />,
     );
     expect(screen.getAllByText("Não definido").length).toBeGreaterThan(0);
+  });
+
+  it("handles unknown status and priority with default variants", () => {
+    const strangeTask = {
+      ...mockTask,
+      status: "UNKNOWN_STATUS",
+      priority: "UNKNOWN_PRIORITY",
+    };
+
+    render(
+      <TaskDetailsView
+        task={strangeTask as any}
+        onEdit={mockOnEdit}
+        onClose={mockOnClose}
+      />,
+    );
+
+    // Should render with the raw string because of translation fallback or direct map
+    expect(screen.getByText("UNKNOWN_STATUS")).toBeInTheDocument();
+    expect(screen.getByText("UNKNOWN_PRIORITY")).toBeInTheDocument();
   });
 });

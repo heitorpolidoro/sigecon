@@ -29,31 +29,32 @@ Object.defineProperty(globalThis, "localStorage", {
 });
 
 // Mock simplificado e robusto para react-i18next usando PT como base para os testes
+const tMock = (key: string, options?: any) => {
+  const keys = key.split(".");
+  const ptData = (pt as any).default || pt;
+  let value: any = ptData;
+
+  for (const k of keys) {
+    value = value?.[k];
+  }
+
+  if (typeof value === "string" && options) {
+    Object.keys(options).forEach((k) => {
+      value = value.replace(`{{${k}}}`, options[k]);
+    });
+  }
+
+  return value || key;
+};
+
 vi.mock("react-i18next", () => ({
-  useTranslation: () => {
-    return {
-      t: (key: string, options?: any) => {
-        const keys = key.split(".");
-        let value: any = pt;
-
-        for (const k of keys) {
-          value = value?.[k];
-        }
-
-        if (typeof value === "string" && options) {
-          Object.keys(options).forEach((k) => {
-            value = value.replace(`{{${k}}}`, options[k]);
-          });
-        }
-
-        return value || key;
-      },
-      i18n: {
-        language: "pt",
-        changeLanguage: vi.fn(),
-      },
-    };
-  },
+  useTranslation: vi.fn(() => ({
+    t: tMock,
+    i18n: {
+      language: "pt",
+      changeLanguage: vi.fn(),
+    },
+  })),
   initReactI18next: {
     type: "3rdParty",
     init: vi.fn(),

@@ -19,6 +19,27 @@ def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse
     )
 
 
+def get_origins() -> list[str]:
+    """Parse and return CORS origins from settings."""
+    raw_origins = settings.BACKEND_CORS_ORIGINS
+    if isinstance(raw_origins, str):
+        import json
+
+        try:
+            origins = json.loads(raw_origins)
+        except json.JSONDecodeError:
+            origins = [o.strip() for o in raw_origins.split(",")]
+    else:
+        origins = [str(o) for o in raw_origins]
+
+    # Ensure frontend dev server is included
+    frontend_dev = "http://localhost:5175"
+    if frontend_dev not in [o.strip("/") for o in origins]:
+        origins.append(frontend_dev)
+
+    return origins
+
+
 app = FastAPI(title=settings.PROJECT_NAME)
 
 app.state.limiter = limiter
@@ -26,21 +47,7 @@ app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 app.add_exception_handler(DomainError, domain_exception_handler)
 
 # CORS Configuration
-raw_origins = settings.BACKEND_CORS_ORIGINS
-if isinstance(raw_origins, str):
-    import json
-
-    try:
-        origins = json.loads(raw_origins)
-    except json.JSONDecodeError:
-        origins = [o.strip() for o in raw_origins.split(",")]
-else:
-    origins = [str(o) for o in raw_origins]
-
-# Ensure frontend dev server is included
-frontend_dev = "http://localhost:5175"
-if frontend_dev not in [o.strip("/") for o in origins]:
-    origins.append(frontend_dev)
+origins = get_origins()
 
 # In development, ensure we have a working list of origins
 if settings.ENVIRONMENT == "development":

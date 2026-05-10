@@ -134,3 +134,28 @@ class TaskService:
         session.add(history)
         session.add(db_task)
         session.commit()
+
+    @staticmethod
+    def get_task_with_names(session: Session, db_task: Task) -> Any:
+        """Enrich a task with creator and assignee names for response.
+
+        Args:
+            session: Database session.
+            db_task: The task model instance.
+
+        Returns:
+            TaskRead: The task data with names included.
+        """
+        from app.models.user import User
+        from app.schemas.task import TaskRead
+
+        creator = session.get(User, db_task.created_by_id)
+        assignee = (
+            session.get(User, db_task.assigned_to_id) if db_task.assigned_to_id else None
+        )
+
+        task_data = db_task.model_dump()
+        task_data["created_by_name"] = creator.full_name if creator else None
+        task_data["assigned_to_name"] = assignee.full_name if assignee else None
+
+        return TaskRead.model_validate(task_data)

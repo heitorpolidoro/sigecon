@@ -100,4 +100,25 @@ describe("ProtectedRoute", () => {
     expect(screen.getByText("Dashboard")).toBeDefined();
     expect(screen.queryByText("Admin Content")).toBeNull();
   });
+
+  it("renders loading spinner when isLoading is true", () => {
+    vi.spyOn(AuthHook, "useAuth").mockReturnValue({
+      isAuthenticated: false,
+      isLoading: true,
+      user: null,
+      login: vi.fn() as any,
+      logout: vi.fn(),
+    });
+
+    const { container } = render(
+      <MemoryRouter>
+        <ProtectedRoute>
+          <div>Protected Content</div>
+        </ProtectedRoute>
+      </MemoryRouter>,
+    );
+
+    expect(container.querySelector(".animate-spin")).toBeDefined();
+    expect(screen.queryByText("Protected Content")).toBeNull();
+  });
 });

@@ -7,7 +7,8 @@ import {
   useCreateTask, 
   useUpdateTask, 
   useTaskHistory, 
-  useInvalidateTasks 
+  useInvalidateTasks,
+  useDeleteTask
 } from "../useTasks";
 import apiClient from "../../../../api/client";
 import { TaskStatus, TaskPriority } from "../../types";
@@ -18,6 +19,7 @@ vi.mock("../../../../api/client", () => ({
     get: vi.fn(),
     post: vi.fn(),
     patch: vi.fn(),
+    delete: vi.fn(),
   },
 }));
 
@@ -135,6 +137,20 @@ describe("useTasks hooks", () => {
       
       expect(typeof result.current).toBe("function");
       result.current();
+    });
+  });
+
+  describe("useDeleteTask", () => {
+    it("calls delete and invalidates queries on success", async () => {
+      vi.mocked(apiClient.delete).mockResolvedValue({ data: { success: true } });
+
+      const { result } = renderHook(() => useDeleteTask(), {
+        wrapper: createWrapper(),
+      });
+
+      await result.current.mutateAsync("1");
+
+      expect(apiClient.delete).toHaveBeenCalledWith("/tasks/1");
     });
   });
 });

@@ -15,17 +15,6 @@ interface TaskDetailsViewProps {
 
 type BadgeVariant = BadgeProps["variant"];
 
-function statusVariant(status: string): BadgeVariant {
-  const map: Record<string, BadgeVariant> = {
-    PENDING: "pending",
-    IN_PROGRESS: "in_progress",
-    BLOCKED: "blocked",
-    COMPLETED: "completed",
-    CANCELED: "canceled",
-  };
-  return map[status] ?? "default";
-}
-
 function priorityVariant(priority: string): BadgeVariant {
   const map: Record<string, BadgeVariant> = {
     LOW: "low",
@@ -62,6 +51,10 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
     COMPLETED: t("tasks.details.statusCompleted"),
     CANCELED: t("tasks.details.statusCanceled"),
   };
+
+  if (task.status && !statusLabels[task.status]) {
+    statusLabels[task.status] = task.status;
+  }
 
   return (
     <div className="p-6">

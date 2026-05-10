@@ -22,7 +22,7 @@ def create_task(
     task_in: TaskCreate,
     session: Annotated[Session, Depends(get_session)],
     current_user: Annotated[User, Depends(api_deps.get_current_user)],
-) -> Task:
+) -> TaskRead:
     """Create a new task. Both ADMINISTRATOR and DIRECTOR can create tasks.
 
     Args:
@@ -31,22 +31,12 @@ def create_task(
         current_user: The current authenticated user.
 
     Returns:
-        Task: The created task.
+        TaskRead: The created task.
     """
     db_task = TaskService.create_task(
         session=session, task_in=task_in, created_by_id=current_user.id
     )
-    # Add names for response
-    creator = session.get(User, db_task.created_by_id)
-    assignee = (
-        session.get(User, db_task.assigned_to_id) if db_task.assigned_to_id else None
-    )
-
-    task_data = db_task.model_dump()
-    task_data["created_by_name"] = creator.full_name if creator else None
-    task_data["assigned_to_name"] = assignee.full_name if assignee else None
-
-    return TaskRead.model_validate(task_data)
+    return TaskService.get_task_with_names(session=session, db_task=db_task)
 
 
 @router.get("/", response_model=list[TaskRead])
@@ -56,7 +46,7 @@ def list_tasks(
     status: Annotated[TaskStatus | None, Query()] = None,
     priority: Annotated[TaskPriority | None, Query()] = None,
     assigned_to_id: Annotated[UUID | None, Query()] = None,
-) -> list[Task]:
+) -> list[TaskRead]:
     """List tasks with optional filters.
 
     ADMINISTRATOR sees all tasks. DIRECTOR sees only tasks assigned to them.
@@ -69,18 +59,18 @@ def list_tasks(
         assigned_to_id: Filter by the user assigned to the task.
 
     Returns:
-        list[Task]: List of tasks matching the criteria.
+        list[TaskRead]: List of tasks matching the criteria.
     """
     from sqlalchemy.orm import aliased
 
-    Creator = aliased(User)
-    Assignee = aliased(User)
+    creator_alias = aliased(User)
+    assignee_alias = aliased(User)
 
     statement = (
-        select(Task, Creator.full_name, Assignee.full_name)
+        select(Task, creator_alias.full_name, assignee_alias.full_name)
         .where(Task.is_deleted.is_(False))
-        .join(Creator, Task.created_by_id == Creator.id, isouter=True)
-        .join(Assignee, Task.assigned_to_id == Assignee.id, isouter=True)
+        .join(creator_alias, Task.created_by_id == creator_alias.id, isouter=True)
+        .join(assignee_alias, Task.assigned_to_id == assignee_alias.id, isouter=True)
     )
 
     if current_user.role == UserRole.DIRECTOR:
@@ -110,7 +100,7 @@ def update_task(
     task_in: TaskUpdate,
     session: Annotated[Session, Depends(get_session)],
     current_user: Annotated[User, Depends(api_deps.get_current_user)],
-) -> Task:
+) -> TaskRead:
     """Update an existing task.
 
     ADMINISTRATOR can update any field of any task.
@@ -123,7 +113,7 @@ def update_task(
         current_user: The current authenticated user.
 
     Returns:
-        Task: The updated task.
+        TaskRead: The updated task.
 
     Raises:
         TaskNotFoundError: If the task does not exist or is deleted.
@@ -138,19 +128,7 @@ def update_task(
         session=session, db_task=db_task, task_in=task_in, current_user=current_user
     )
 
-    # Add names for response
-    creator = session.get(User, updated_task.created_by_id)
-    assignee = (
-        session.get(User, updated_task.assigned_to_id)
-        if updated_task.assigned_to_id
-        else None
-    )
-
-    task_data = updated_task.model_dump()
-    task_data["created_by_name"] = creator.full_name if creator else None
-    task_data["assigned_to_name"] = assignee.full_name if assignee else None
-
-    return TaskRead.model_validate(task_data)
+    return TaskService.get_task_with_names(session=session, db_task=updated_task)
 
 
 @router.get("/{task_id}/history", response_model=list[TaskHistoryRead])

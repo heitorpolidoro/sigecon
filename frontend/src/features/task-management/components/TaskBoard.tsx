@@ -3,17 +3,14 @@ import { useTranslation } from "react-i18next";
 import type { TaskRead } from "../types";
 import { TaskStatus, TaskPriority } from "../types";
 import TaskCard from "./TaskCard";
+import { useTaskFiltering, type TaskFilters } from "../hooks/useTaskFiltering";
 
 interface TaskBoardProps {
   tasks: TaskRead[];
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
-  filters: {
-    status?: TaskStatus | null;
-    priority?: TaskPriority | null;
-    assigned_to_id?: string | null;
-  };
+  filters: TaskFilters;
   onTaskClick?: (taskId: string) => void;
 }
 
@@ -26,6 +23,7 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
   onTaskClick,
 }) => {
   const { t } = useTranslation();
+  const filteredTasks = useTaskFiltering(tasks, filters);
 
   if (isLoading) {
     return (
@@ -42,22 +40,6 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
       </p>
     );
   }
-
-  const filteredTasks = tasks.filter((task) => {
-    // Note: status filter is handled differently in board view - usually we show all columns
-    // but if a specific status is selected, maybe we should highlight it or only show that column?
-    // Standard Kanban boards usually show all columns, and filters apply to content.
-    // However, if the user explicitly selected a status in the dashboard dropdown,
-    // we should respect it.
-    if (filters.status && task.status !== filters.status) return false;
-    if (filters.priority && task.priority !== filters.priority) return false;
-    if (
-      filters.assigned_to_id &&
-      task.assigned_to_id !== filters.assigned_to_id
-    )
-      return false;
-    return true;
-  });
 
   const columns: {
     status: TaskStatus;

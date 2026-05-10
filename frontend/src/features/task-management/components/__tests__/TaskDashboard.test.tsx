@@ -306,6 +306,19 @@ describe("TaskDashboard", () => {
     ).toBeInTheDocument();
   });
 
+  it("covers tasks fallback in board view", () => {
+    vi.mocked(useTasks).mockReturnValue({
+      data: null,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as any);
+
+    render(<TaskDashboard />);
+    // Board view is default, it should hit tasks={tasks || []} on line 160
+    expect(screen.queryByText("Task 1")).not.toBeInTheDocument();
+  });
+
   it("allows setting individual filters to null (All)", () => {
     render(<TaskDashboard />);
 
@@ -364,6 +377,31 @@ describe("TaskDashboard", () => {
     } as any);
     render(<TaskDashboard />);
     expect(screen.getByText("Task 1")).toBeInTheDocument();
+  });
+
+  it("toggles between board and list view", () => {
+    render(<TaskDashboard />);
+
+    // Default is board view
+    expect(screen.getByTitle("Quadro")).toHaveClass(
+      "bg-secondary",
+    );
+    expect(screen.getByTitle("Lista")).not.toHaveClass("bg-secondary");
+
+    // Click list view
+    fireEvent.click(screen.getByTitle("Lista"));
+    expect(screen.getByTitle("Lista")).toHaveClass(
+      "bg-secondary",
+    );
+    expect(screen.getByTitle("Quadro")).not.toHaveClass(
+      "bg-secondary",
+    );
+
+    // Click board view back
+    fireEvent.click(screen.getByTitle("Quadro"));
+    expect(screen.getByTitle("Quadro")).toHaveClass(
+      "bg-secondary",
+    );
   });
 
   it("handles loading and error states from useTasks", () => {

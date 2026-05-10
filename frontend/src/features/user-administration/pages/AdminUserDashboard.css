@@ -117,12 +117,12 @@
 }
 
 .action-btn.deactivate {
-  border-color: #bd2130;
-  color: #bd2130;
+  border-color: #a71d2a;
+  color: #a71d2a;
 }
 
 .action-btn.deactivate:hover {
-  background-color: #dc3545;
+  background-color: #c82333;
   color: white;
 }
 

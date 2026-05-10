@@ -330,4 +330,33 @@ describe("AdminUserDashboard", () => {
     fireEvent.click(screen.getByText("Sair"));
     expect(mockLogout).toHaveBeenCalledOnce();
   });
+
+  it("closes the error alert when close button is clicked", async () => {
+    const usersWithCurrentUser = [{ ...mockCurrentUser }, ...mockUsers];
+    (apiClient.get as any).mockResolvedValue({ data: usersWithCurrentUser });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("Admin User")).toBeDefined();
+    });
+
+    // Trigger an error
+    const desativarButtons = screen.getAllByText("Desativar");
+    fireEvent.click(desativarButtons[0]);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Você não pode desativar sua própria conta."),
+      ).toBeDefined();
+    });
+
+    // Click close
+    const closeButton = screen.getByLabelText("Fechar");
+    fireEvent.click(closeButton);
+
+    expect(
+      screen.queryByText("Você não pode desativar sua própria conta."),
+    ).toBeNull();
+  });
 });

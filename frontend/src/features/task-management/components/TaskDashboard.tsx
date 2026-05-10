@@ -184,9 +184,9 @@ const TaskDashboard: React.FC = () => {
             onKeyDown={handleOverlayKeyDown}
             aria-label={t("tasks.dashboard.closeModal")}
           />
-          <div
-            className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl bg-card shadow-2xl z-10"
-            role="dialog"
+          <dialog
+            className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl bg-card shadow-2xl z-10 block border-none p-0"
+            open
             aria-modal="true"
           >
             {isCreating && (
@@ -209,7 +209,7 @@ const TaskDashboard: React.FC = () => {
                 onSuccess={handleCloseOverlay}
               />
             )}
-          </div>
+          </dialog>
         </div>
       )}
     </div>

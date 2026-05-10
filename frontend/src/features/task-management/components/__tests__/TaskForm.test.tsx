@@ -344,4 +344,22 @@ describe("TaskForm", () => {
       screen.getByText("Ocorreu um erro ao salvar a tarefa."),
     ).toBeInTheDocument();
   });
+
+  it("renders user options correctly, including fallback to username", () => {
+    vi.mocked(useUsers).mockReturnValue({
+      data: [
+        { id: "user-1", full_name: "Full Name", username: "user1" },
+        { id: "user-2", full_name: "", username: "user2_only" },
+      ],
+      isLoading: false,
+    } as any);
+
+    render(<TaskForm onSuccess={mockOnSuccess} onCancel={mockOnCancel} />);
+
+    const select = screen.getByLabelText(/Atribuído a/i);
+    const options = Array.from(select.querySelectorAll("option"));
+
+    expect(options.find((o) => o.textContent === "Full Name")).toBeInTheDocument();
+    expect(options.find((o) => o.textContent === "user2_only")).toBeInTheDocument();
+  });
 });

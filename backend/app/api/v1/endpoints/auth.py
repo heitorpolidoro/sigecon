@@ -1,7 +1,7 @@
 """Authentication API endpoints."""
 
 from datetime import timedelta
-from typing import Annotated, Any
+from typing import Annotated
 
 from app.api import deps as api_deps
 from app.core import security
@@ -49,9 +49,9 @@ def signup(
         email=user_in.email,
         full_name=user_in.full_name,
         hashed_password=security.get_password_hash(user_in.password),
-        role=UserRole.DIRECTOR,  # Force role
-        # Wait for approval
-        is_active=False,
+        # Force role
+        role=UserRole.DIRECTOR,
+        is_active=False,  # Wait for approval
     )
     session.add(db_obj)
     session.commit()
@@ -117,7 +117,7 @@ def login_access_token(
 @router.get("/dev-users", response_model=list[UserRead])
 def get_dev_users(
     session: Annotated[Session, Depends(get_session)],
-) -> Any:
+) -> list[User]:
     """Get all active users for development login bypass.
 
     Only available when ENVIRONMENT is 'development'.
@@ -128,7 +128,7 @@ def get_dev_users(
             detail="Not found",
         )
     statement = select(User).where(User.is_active)
-    return session.exec(statement).all()
+    return session.exec(statement).all()  # type: ignore
 
 
 @router.post("/dev-login", response_model=Token)
@@ -136,7 +136,7 @@ def dev_login(
     session: Annotated[Session, Depends(get_session)],
     username: str,
     remember_me: Annotated[bool, Query()] = False,
-) -> Any:
+) -> dict[str, str]:
     """Login without password for development purposes.
 
     Only available when ENVIRONMENT is 'development'.

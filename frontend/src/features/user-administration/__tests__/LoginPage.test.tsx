@@ -134,4 +134,131 @@ describe("LoginPage", () => {
       );
     });
   });
+
+  it("shows error message when detail is a list (validation error)", async () => {
+    (apiClient.post as unknown as ReturnType<typeof vi.fn>).mockRejectedValue({
+      response: {
+        data: {
+          detail: [{ msg: "Error 1" }, { msg: "Error 2" }],
+        },
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    fireEvent.change(screen.getByLabelText(/Usuário/i), {
+      target: { value: "user" },
+    });
+    fireEvent.change(screen.getByLabelText(/Senha/i), {
+      target: { value: "pass" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Entrar/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Erro: Error 1, Error 2/i)).toBeDefined();
+    });
+  });
+
+  it("shows error message when detail is an object", async () => {
+    (apiClient.post as unknown as ReturnType<typeof vi.fn>).mockRejectedValue({
+      response: {
+        data: { detail: { some: "error" } },
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    fireEvent.change(screen.getByLabelText(/Usuário/i), {
+      target: { value: "user" },
+    });
+    fireEvent.change(screen.getByLabelText(/Senha/i), {
+      target: { value: "pass" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Entrar/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/\{"some":"error"\}/)).toBeDefined();
+    });
+  });
+
+  it("shows generic error message when no detail is provided", async () => {
+    (apiClient.post as unknown as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new Error("Network Error"),
+    );
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    fireEvent.change(screen.getByLabelText(/Usuário/i), {
+      target: { value: "user" },
+    });
+    fireEvent.change(screen.getByLabelText(/Senha/i), {
+      target: { value: "pass" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Entrar/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Ocorreu um erro ao tentar fazer login. Verifique suas credenciais./i),
+      ).toBeDefined();
+    });
+  });
+
+  it("handles dev login failure", async () => {
+    const mockDevUsers = [
+      { id: "1", username: "devadmin", is_active: true, role: "ADMINISTRATOR" },
+    ];
+    (apiClient.get as any).mockResolvedValue({ data: mockDevUsers });
+    (apiClient.post as any).mockRejectedValue(new Error("Dev login failed"));
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => expect(screen.getByText(/devadmin/i)).toBeDefined());
+    fireEvent.click(screen.getByRole("button", { name: "devadmin" }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Dev login failed/i)).toBeDefined();
+    });
+  });
+
+  it("handles failed dev users fetch silently", async () => {
+    (apiClient.get as unknown as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new Error("Fetch failed"),
+    );
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Quick Login \(Dev Mode\)/i)).toBeNull();
+    });
+  });
 });

@@ -1,7 +1,12 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import TaskCard from "../TaskCard";
 import { TaskStatus, TaskPriority } from "../../types";
+import { useTranslation } from "react-i18next";
+
+vi.mock("react-i18next", () => ({
+  useTranslation: vi.fn(),
+}));
 
 const mockTask = {
   id: "1",
@@ -18,6 +23,22 @@ const mockTask = {
 };
 
 describe("TaskCard", () => {
+  beforeEach(() => {
+    vi.mocked(useTranslation).mockReturnValue({
+      t: (s: string) => {
+        const map: Record<string, string> = {
+          "tasks.details.statusPending": "Pendente",
+          "tasks.details.statusInProgress": "Em andamento",
+          "tasks.details.statusCompleted": "Concluída",
+          "tasks.details.statusCanceled": "Cancelada",
+          "tasks.card.noDescription": "Sem descrição",
+        };
+        return map[s] || s;
+      },
+      i18n: { language: "pt" },
+    } as any);
+  });
+
   it("renders task basic details correctly", () => {
     render(<TaskCard task={mockTask} />);
 
@@ -88,5 +109,45 @@ describe("TaskCard", () => {
       expect(screen.getByText(priority)).toBeInTheDocument();
       unmount();
     });
+  });
+
+  it("renders assigned user initials when assigned_to_name is provided", () => {
+    const taskWithAssignee = {
+      ...mockTask,
+      assigned_to_name: "John Doe Senior",
+    };
+    render(<TaskCard task={taskWithAssignee} />);
+
+    // Initials should be "JD" (first letters of first two words, up to 2 chars)
+    // Wait, the logic is: split(" ").map(n => n[0]).join("").substring(0, 2)
+    // "John Doe Senior" -> ["John", "Doe", "Senior"] -> ["J", "D", "S"] -> "JDS" -> "JD"
+    expect(screen.getByText("JD")).toBeInTheDocument();
+    expect(screen.getByTitle("John Doe Senior")).toBeInTheDocument();
+  });
+
+  it("handles unknown status and priority with default variants", () => {
+    const strangeTask = {
+      ...mockTask,
+      status: "UNKNOWN_STATUS" as any,
+      priority: "UNKNOWN_PRIORITY" as any,
+    };
+
+    render(<TaskCard task={strangeTask} />);
+
+    expect(screen.getByText("UNKNOWN_STATUS")).toBeInTheDocument();
+    expect(screen.getByText("UNKNOWN_PRIORITY")).toBeInTheDocument();
+  });
+
+  it("renders due date in US format when language is en", () => {
+    vi.mocked(useTranslation).mockReturnValue({
+      t: (s: string) => s,
+      i18n: { language: "en" },
+    } as any);
+
+    render(<TaskCard task={mockTask} />);
+
+    // In US format it might be MM/DD/YYYY or M/D/YYYY
+    // 12/31/2023
+    expect(screen.getByText("12/31/2023")).toBeInTheDocument();
   });
 });

@@ -89,7 +89,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
     e.preventDefault();
     if (!validate()) return;
 
-    const commonData = {
+    const commonData: TaskCreate = {
       title: formData.title as string,
       description: (formData.description as string) || null,
       priority: formData.priority as TaskPriority,
@@ -109,7 +109,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
         { onSuccess },
       );
     } else {
-      createTaskMutation.mutate(commonData as TaskCreate, { onSuccess });
+      createTaskMutation.mutate(commonData, { onSuccess });
     }
   };
 
