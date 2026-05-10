@@ -81,5 +81,6 @@ ignore = [
 omit = [
     "app/seed.py",
     "app/seed_visual.py",
+    "app/seed_dev.py",
     "app/db.py"
 ]

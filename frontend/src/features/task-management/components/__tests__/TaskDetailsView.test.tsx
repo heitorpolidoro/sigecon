@@ -27,7 +27,9 @@ describe("TaskDetailsView", () => {
     priority: TaskPriority.MEDIUM,
     status: TaskStatus.PENDING,
     assigned_to_id: "user1",
+    assigned_to_name: "user1",
     created_by_id: "admin",
+    created_by_name: "admin",
     due_date: "2023-12-31T23:59:59Z",
     created_at: "2023-01-01T10:00:00Z",
     updated_at: "2023-01-01T10:00:00Z",
@@ -104,7 +106,7 @@ describe("TaskDetailsView", () => {
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it("triggers updateTask mutation when quick action status buttons are clicked", () => {
+  it("triggers updateTask mutation when status select is changed", () => {
     render(
       <TaskDetailsView
         task={mockTask as any}
@@ -113,10 +115,8 @@ describe("TaskDetailsView", () => {
       />,
     );
 
-    const inProgressButton = screen.getByRole("button", {
-      name: /Em andamento/i,
-    });
-    fireEvent.click(inProgressButton);
+    const statusSelect = screen.getByRole("combobox");
+    fireEvent.change(statusSelect, { target: { value: TaskStatus.IN_PROGRESS } });
 
     expect(mockUpdateMutate).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -126,23 +126,11 @@ describe("TaskDetailsView", () => {
     );
   });
 
-  it("disables the button for the current status", () => {
-    render(
-      <TaskDetailsView
-        task={mockTask as any}
-        onEdit={mockOnEdit}
-        onClose={mockOnClose}
-      />,
-    );
-
-    const pendingButton = screen.getByRole("button", { name: /Pendente/i });
-    expect(pendingButton).toBeDisabled();
-  });
-
   it("renders 'Não atribuído' and 'Não definido' when metadata is missing", () => {
     const incompleteTask = {
       ...mockTask,
       assigned_to_id: null,
+      assigned_to_name: null,
       due_date: null,
     };
 
@@ -175,9 +163,11 @@ describe("TaskDetailsView", () => {
           ? "Pendente"
           : status === TaskStatus.IN_PROGRESS
             ? "Em andamento"
-            : status === TaskStatus.COMPLETED
-              ? "Concluída"
-              : "Cancelada";
+            : status === TaskStatus.BLOCKED
+              ? "Bloqueada"
+              : status === TaskStatus.COMPLETED
+                ? "Concluída"
+                : "Cancelada";
 
       const badge = screen.getAllByText(expectedText)[0];
       expect(badge).toBeInTheDocument();
@@ -209,7 +199,7 @@ describe("TaskDetailsView", () => {
     ).toBeInTheDocument();
   });
 
-  it("disables all status buttons when updateTaskMutation.isPending is true", () => {
+  it("disables status select when updateTaskMutation.isPending is true", () => {
     vi.mocked(useUpdateTask).mockReturnValue({
       mutate: mockUpdateMutate,
       isPending: true,
@@ -223,16 +213,8 @@ describe("TaskDetailsView", () => {
       />,
     );
 
-    const statusNames = [
-      /pendente/i,
-      /em andamento/i,
-      /concluída/i,
-      /cancelada/i,
-    ];
-    statusNames.forEach((name) => {
-      const button = screen.getByRole("button", { name });
-      expect(button).toBeDisabled();
-    });
+    const statusSelect = screen.getByRole("combobox");
+    expect(statusSelect).toBeDisabled();
   });
 
   it("formatDate handles all falsy values", () => {
