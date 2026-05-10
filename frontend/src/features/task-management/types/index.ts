@@ -1,7 +1,7 @@
 /**
  * Represents the possible statuses of a task.
  */
-export type TaskStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELED";
+export type TaskStatus = "PENDING" | "IN_PROGRESS" | "BLOCKED" | "COMPLETED" | "CANCELED";
 
 /**
  * Constants for task statuses.
@@ -9,6 +9,7 @@ export type TaskStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELED";
 export const TaskStatus = {
   PENDING: "PENDING" as TaskStatus,
   IN_PROGRESS: "IN_PROGRESS" as TaskStatus,
+  BLOCKED: "BLOCKED" as TaskStatus,
   COMPLETED: "COMPLETED" as TaskStatus,
   CANCELED: "CANCELED" as TaskStatus,
 };
@@ -80,6 +81,10 @@ export interface TaskRead extends TaskBase {
   updated_at: Date | string;
   /** The UUID of the user who created the task. */
   created_by_id: string;
+  /** The name of the user who created the task. */
+  created_by_name?: string | null;
+  /** The name of the user assigned to the task. */
+  assigned_to_name?: string | null;
 }
 
 /**

@@ -20,15 +20,13 @@ depends_on: str | Sequence[str] | None = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    # ALTER TYPE ADD VALUE cannot run inside a transaction in PostgreSQL
-    connection = op.get_bind()
-    connection.execution_options(isolation_level="AUTOCOMMIT").execute(
-        sa.text("ALTER TYPE userrole ADD VALUE IF NOT EXISTS 'ADMINISTRADOR'")
-    )
+    # Use a separate connection to run the ALTER TYPE command outside of the main migration transaction
+    from sqlalchemy import create_engine
+    engine = create_engine(op.get_context().config.get_main_option("sqlalchemy.url"))
+    with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as conn:
+        conn.execute(sa.text("ALTER TYPE userrole ADD VALUE IF NOT EXISTS 'ADMINISTRADOR'"))
 
-    # Data migration can run in a normal transaction
-    # Antigo DIRETOR -> ADMINISTRADOR
-    # Antigo FUNCIONARIO -> DIRETOR
+    # Data migration
     op.execute("UPDATE \"user\" SET role = 'ADMINISTRADOR' WHERE role = 'DIRETOR'")
     op.execute("UPDATE \"user\" SET role = 'DIRETOR' WHERE role = 'FUNCIONARIO'")
 

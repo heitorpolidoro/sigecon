@@ -33,9 +33,18 @@ def create_task(
     Returns:
         Task: The created task.
     """
-    return TaskService.create_task(
+    db_task = TaskService.create_task(
         session=session, task_in=task_in, created_by_id=current_user.id
     )
+    # Add names for response
+    creator = session.get(User, db_task.created_by_id)
+    assignee = session.get(User, db_task.assigned_to_id) if db_task.assigned_to_id else None
+    
+    task_data = db_task.model_dump()
+    task_data["created_by_name"] = creator.full_name if creator else None
+    task_data["assigned_to_name"] = assignee.full_name if assignee else None
+    
+    return TaskRead.model_validate(task_data)
 
 
 @router.get("/", response_model=list[TaskRead])
@@ -60,7 +69,17 @@ def list_tasks(
     Returns:
         list[Task]: List of tasks matching the criteria.
     """
-    statement = select(Task).where(Task.is_deleted.is_(False))
+    from sqlalchemy.orm import aliased
+
+    Creator = aliased(User)
+    Assignee = aliased(User)
+
+    statement = (
+        select(Task, Creator.full_name, Assignee.full_name)
+        .where(Task.is_deleted.is_(False))
+        .join(Creator, Task.created_by_id == Creator.id, isouter=True)
+        .join(Assignee, Task.assigned_to_id == Assignee.id, isouter=True)
+    )
 
     if current_user.role == UserRole.DIRECTOR:
         statement = statement.where(Task.assigned_to_id == current_user.id)
@@ -73,7 +92,14 @@ def list_tasks(
     if priority:
         statement = statement.where(Task.priority == priority)
 
-    return session.exec(statement).all()
+    results = session.exec(statement).all()
+    tasks = []
+    for db_task, creator_name, assignee_name in results:
+        task_data = db_task.model_dump()
+        task_data["created_by_name"] = creator_name
+        task_data["assigned_to_name"] = assignee_name
+        tasks.append(TaskRead.model_validate(task_data))
+    return tasks
 
 
 @router.patch("/{task_id}", response_model=TaskRead)
@@ -106,9 +132,19 @@ def update_task(
     if not db_task or db_task.is_deleted:
         raise TaskNotFoundError(task_id)
 
-    return TaskService.update_task(
+    updated_task = TaskService.update_task(
         session=session, db_task=db_task, task_in=task_in, current_user=current_user
     )
+    
+    # Add names for response
+    creator = session.get(User, updated_task.created_by_id)
+    assignee = session.get(User, updated_task.assigned_to_id) if updated_task.assigned_to_id else None
+    
+    task_data = updated_task.model_dump()
+    task_data["created_by_name"] = creator.full_name if creator else None
+    task_data["assigned_to_name"] = assignee.full_name if assignee else None
+        
+    return TaskRead.model_validate(task_data)
 
 
 @router.get("/{task_id}/history", response_model=list[TaskHistoryRead])

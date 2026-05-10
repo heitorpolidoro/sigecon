@@ -75,7 +75,9 @@
       "allStatuses": "All statuses",
       "allPriorities": "All priorities",
       "clearFilters": "Clear filters",
-      "closeModal": "Close modal"
+      "closeModal": "Close modal",
+      "viewList": "List",
+      "viewBoard": "Board"
     },
     "list": {
       "loading": "Loading tasks...",
@@ -119,6 +121,7 @@
       "changeStatus": "Change Status",
       "statusPending": "Pending",
       "statusInProgress": "In progress",
+      "statusBlocked": "Blocked",
       "statusCompleted": "Completed",
       "statusCanceled": "Canceled",
       "close": "Close",

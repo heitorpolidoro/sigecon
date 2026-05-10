@@ -15,6 +15,7 @@ function statusVariant(status: string): BadgeVariant {
   const map: Record<string, BadgeVariant> = {
     PENDING: "pending",
     IN_PROGRESS: "in_progress",
+    BLOCKED: "blocked",
     COMPLETED: "completed",
     CANCELED: "canceled",
   };
@@ -63,9 +64,24 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
       <h3 className="font-semibold text-base mb-1 text-foreground leading-snug">
         {task.title}
       </h3>
-      <p className="text-sm text-muted-foreground mb-3 line-clamp-2 leading-relaxed">
-        {task.description || t("tasks.card.noDescription")}
-      </p>
+      <div className="flex items-center gap-2 mb-3">
+        <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed flex-1">
+          {task.description || t("tasks.card.noDescription")}
+        </p>
+        {task.assigned_to_name && (
+          <div
+            className="size-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold border border-primary/20 shrink-0"
+            title={task.assigned_to_name}
+          >
+            {task.assigned_to_name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .substring(0, 2)
+              .toUpperCase()}
+          </div>
+        )}
+      </div>
       <div className="flex items-center justify-between">
         <div className="flex gap-2 flex-wrap">
           <Badge variant={statusVariant(task.status)}>
