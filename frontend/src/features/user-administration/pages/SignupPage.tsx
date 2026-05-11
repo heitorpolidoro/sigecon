@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import apiClient from "../../../api/client";
+import { parseApiError } from "../../../api/errors";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
@@ -54,23 +55,10 @@ const SignupPage: React.FC = () => {
         state: { message: t("signup.success") },
       });
     } catch (err) {
-      const apiError = err as { response?: { data?: { detail?: unknown } } };
-      const detail = apiError.response?.data?.detail;
-      if (typeof detail === "string") {
-        setError(detail);
-      } else if (Array.isArray(detail)) {
-        setError(
-          t("signup.validationError", {
-            messages: (detail as { msg: string }[])
-              .map((d) => d.msg)
-              .join(", "),
-          }),
-        );
-      } else if (detail) {
-        setError(JSON.stringify(detail));
-      } else {
-        setError(t("signup.genericError"));
-      }
+      setError(parseApiError(err, t, {
+        validationError: "signup.validationError",
+        genericError: "signup.genericError",
+      }));
     } finally {
       setIsLoading(false);
     }

@@ -3,6 +3,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../../../api/client";
+import { parseApiError } from "../../../api/errors";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
@@ -75,20 +76,11 @@ const LoginPage: React.FC = () => {
       const detail = apiError.response?.data?.detail;
       if (detail === "Inactive user") {
         setError(t("login.pendingApproval"));
-      } else if (typeof detail === "string") {
-        setError(detail);
-      } else if (Array.isArray(detail)) {
-        setError(
-          t("login.validationError", {
-            messages: (detail as { msg: string }[])
-              .map((d) => d.msg)
-              .join(", "),
-          }),
-        );
-      } else if (detail) {
-        setError(JSON.stringify(detail));
       } else {
-        setError(t("login.genericError"));
+        setError(parseApiError(err, t, {
+          validationError: "login.validationError",
+          genericError: "login.genericError",
+        }));
       }
     } finally {
       setIsLoading(false);
