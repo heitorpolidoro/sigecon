@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { BadgeProps } from "../../../components/ui/badge";
+import type { BadgeProps } from "../../../components/ui/badge";
 
 export type BadgeVariant = BadgeProps["variant"];
 
