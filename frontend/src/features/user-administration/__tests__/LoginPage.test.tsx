@@ -262,6 +262,18 @@ describe("LoginPage", () => {
     });
   });
 
+  it("renders success message when navigated with state.message", () => {
+    render(
+      <MemoryRouter initialEntries={[{ pathname: "/login", state: { message: "Conta criada com sucesso!" } }]}>
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText("Conta criada com sucesso!")).toBeInTheDocument();
+  });
+
   it("handles successful login and remember me", async () => {
     (apiClient.post as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
       data: { access_token: "test-token" },

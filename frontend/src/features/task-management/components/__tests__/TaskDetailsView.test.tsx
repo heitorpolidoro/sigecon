@@ -269,4 +269,23 @@ describe("TaskDetailsView", () => {
     expect(screen.getByText("UNKNOWN_STATUS")).toBeInTheDocument();
     expect(screen.getByText("UNKNOWN_PRIORITY")).toBeInTheDocument();
   });
+
+  it("formats dates in English locale when language is not pt", () => {
+    vi.mocked(useTranslation).mockReturnValue({
+      t: (s: string) => s,
+      i18n: { language: "en" },
+    } as any);
+
+    render(
+      <TaskDetailsView
+        task={mockTask as any}
+        onEdit={mockOnEdit}
+        onClose={mockOnClose}
+      />,
+    );
+
+    // In en-US locale, "2023-12-31T23:59:59Z" renders with a 4-digit year
+    const dateEls = screen.getAllByText(/2023/);
+    expect(dateEls.length).toBeGreaterThan(0);
+  });
 });

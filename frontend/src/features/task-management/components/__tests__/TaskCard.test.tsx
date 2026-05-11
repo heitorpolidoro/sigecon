@@ -168,4 +168,13 @@ describe("TaskCard", () => {
 
     expect(screen.queryByText("General")).not.toBeInTheDocument();
   });
+
+  it("renders category color dot with fallback when category_color is null", () => {
+    const taskWithoutColor = { ...mockTask, category_name: "General", category_color: null };
+    render(<TaskCard task={taskWithoutColor as any} />);
+    expect(screen.getByText("General")).toBeInTheDocument();
+    const dot = document.querySelector('[style*="background-color"]') as HTMLElement | null;
+    expect(dot).toBeTruthy();
+    expect(dot?.style.backgroundColor).toBe("rgb(128, 128, 128)");
+  });
 });

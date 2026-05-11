@@ -198,4 +198,25 @@ describe("AuditTimeline", () => {
 
     expect(screen.getAllByText("Nenhum").length).toBeGreaterThan(0);
   });
+
+  it("formatFieldName handles empty string field_name gracefully", () => {
+    vi.mocked(useTaskHistory).mockReturnValue({
+      data: [
+        {
+          id: 1,
+          task_id: "test-id",
+          user_id: "user-1",
+          user_name: "John Doe",
+          field_name: "",
+          old_value: "old",
+          new_value: "new",
+          timestamp: "2023-10-27T10:00:00Z",
+        },
+      ],
+      isLoading: false,
+    } as any);
+
+    render(<AuditTimeline taskId="test-id" />);
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
+  });
 });
