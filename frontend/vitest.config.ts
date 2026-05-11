@@ -20,6 +20,7 @@ export default mergeConfig(
         exclude: [
           "src/main.tsx",
           "src/vite-env.d.ts",
+          "src/test/**",
           "**/*.test.tsx",
           "**/*.test.ts",
         ],

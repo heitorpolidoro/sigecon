@@ -47,12 +47,6 @@ app.add_exception_handler(DomainError, domain_exception_handler)
 # CORS Configuration
 origins = get_origins()
 
-# In development, ensure we have a working list of origins
-if settings.ENVIRONMENT == "development":
-    # allow_origins cannot be ["*"] when allow_credentials is True.
-    # The necessary development origins are already included in the 'origins' list.
-    pass
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
