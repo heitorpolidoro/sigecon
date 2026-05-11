@@ -87,7 +87,7 @@ def list_tasks(
 
     if priority:
         statement = statement.where(Task.priority == priority)
-    
+
     if category_id:
         statement = statement.where(Task.category_id == category_id)
 

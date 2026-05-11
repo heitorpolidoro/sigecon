@@ -51,7 +51,7 @@ def update_category(
     db_category = session.get(Category, category_id)
     if not db_category:
         raise HTTPException(status_code=404, detail="Category not found")
-    
+
     return CategoryService.update_category(
         session=session, db_category=db_category, category_in=category_in
     )
@@ -68,5 +68,5 @@ def delete_category(
     db_category = session.get(Category, category_id)
     if not db_category:
         raise HTTPException(status_code=404, detail="Category not found")
-    
+
     CategoryService.delete_category(session=session, db_category=db_category)

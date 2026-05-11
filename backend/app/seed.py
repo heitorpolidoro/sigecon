@@ -16,7 +16,7 @@ def seed_db():
         if not admin:
             statement = select(User).where(User.username == "admin")
             admin = session.exec(statement).first()
-        
+
         if not admin:
             admin = User(
                 id=admin_id,
