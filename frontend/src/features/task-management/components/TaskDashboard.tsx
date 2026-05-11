@@ -10,6 +10,7 @@ import { useCategories } from "../hooks/useCategories";
 import { Button } from "../../../components/ui/button";
 import { Select } from "../../../components/ui/select";
 import { Plus, LayoutGrid, List } from "lucide-react";
+import { getStatusLabel } from "../utils/taskUtils";
 
 const TaskDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -64,16 +65,6 @@ const TaskDashboard: React.FC = () => {
 
   const showModal = isCreating || !!selectedTask;
 
-  const getStatusLabel = (status: string) => {
-    const map: Record<string, string> = {
-      PENDING: t("tasks.details.statusPending"),
-      IN_PROGRESS: t("tasks.details.statusInProgress"),
-      COMPLETED: t("tasks.details.statusCompleted"),
-      CANCELED: t("tasks.details.statusCanceled"),
-    };
-    return map[status] || status;
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
       {/* Header */}
@@ -103,7 +94,7 @@ const TaskDashboard: React.FC = () => {
             <option value="">{t("tasks.dashboard.allStatuses")}</option>
             {Object.values(TaskStatus).map((s) => (
               <option key={s} value={s}>
-                {getStatusLabel(s)}
+                {getStatusLabel(s, t)}
               </option>
             ))}
           </Select>

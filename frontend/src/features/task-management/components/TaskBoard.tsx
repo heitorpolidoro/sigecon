@@ -4,6 +4,7 @@ import type { TaskRead } from "../types";
 import { TaskStatus, TaskPriority } from "../types";
 import TaskCard from "./TaskCard";
 import { useTaskFiltering, type TaskFilters } from "../hooks/useTaskFiltering";
+import { getStatusLabel } from "../utils/taskUtils";
 
 interface TaskBoardProps {
   tasks: TaskRead[];
@@ -49,31 +50,31 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
   }[] = [
     {
       status: TaskStatus.PENDING,
-      label: t("tasks.details.statusPending"),
+      label: getStatusLabel(TaskStatus.PENDING, t),
       colorClass: "bg-slate-50/50 dark:bg-slate-900/20",
       headerColorClass: "border-t-slate-400",
     },
     {
       status: TaskStatus.IN_PROGRESS,
-      label: t("tasks.details.statusInProgress"),
+      label: getStatusLabel(TaskStatus.IN_PROGRESS, t),
       colorClass: "bg-blue-50/50 dark:bg-blue-900/20",
       headerColorClass: "border-t-blue-400",
     },
     {
       status: TaskStatus.BLOCKED,
-      label: t("tasks.details.statusBlocked"),
+      label: getStatusLabel(TaskStatus.BLOCKED, t),
       colorClass: "bg-amber-50/50 dark:bg-amber-900/20",
       headerColorClass: "border-t-amber-500",
     },
     {
       status: TaskStatus.COMPLETED,
-      label: t("tasks.details.statusCompleted"),
+      label: getStatusLabel(TaskStatus.COMPLETED, t),
       colorClass: "bg-green-50/50 dark:bg-green-900/20",
       headerColorClass: "border-t-green-400",
     },
     {
       status: TaskStatus.CANCELED,
-      label: t("tasks.details.statusCanceled"),
+      label: getStatusLabel(TaskStatus.CANCELED, t),
       colorClass: "bg-red-50/50 dark:bg-red-900/20",
       headerColorClass: "border-t-red-400",
     },

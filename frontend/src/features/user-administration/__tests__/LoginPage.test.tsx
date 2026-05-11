@@ -261,4 +261,38 @@ describe("LoginPage", () => {
       expect(screen.queryByText(/Quick Login \(Dev Mode\)/i)).toBeNull();
     });
   });
+
+  it("handles successful login and remember me", async () => {
+    (apiClient.post as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
+      data: { access_token: "test-token" },
+    });
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    const rememberMe = screen.getByLabelText(/Mantenha-me conectado/i);
+    fireEvent.click(rememberMe);
+    expect(rememberMe).toBeChecked();
+
+    fireEvent.change(screen.getByLabelText(/Usuário/i), {
+      target: { value: "user" },
+    });
+    fireEvent.change(screen.getByLabelText(/Senha/i), {
+      target: { value: "pass" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Entrar/i }));
+
+    await waitFor(() => {
+      expect(apiClient.post).toHaveBeenCalledWith(
+        "/auth/login?remember_me=true",
+        expect.any(FormData),
+        expect.any(Object),
+      );
+    });
+  });
 });

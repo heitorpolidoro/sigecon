@@ -1,35 +1,13 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import type { TaskRead } from "../types";
-import { Badge, type BadgeProps } from "../../../components/ui/badge";
+import { Badge } from "../../../components/ui/badge";
 import { cn } from "../../../lib/utils";
+import { getStatusLabel, statusVariant, priorityVariant } from "../utils/taskUtils";
 
 interface TaskCardProps {
   task: TaskRead;
   onClick?: () => void;
-}
-
-type BadgeVariant = BadgeProps["variant"];
-
-function statusVariant(status: string): BadgeVariant {
-  const map: Record<string, BadgeVariant> = {
-    PENDING: "pending",
-    IN_PROGRESS: "in_progress",
-    BLOCKED: "blocked",
-    COMPLETED: "completed",
-    CANCELED: "canceled",
-  };
-  return map[status] ?? "default";
-}
-
-function priorityVariant(priority: string): BadgeVariant {
-  const map: Record<string, BadgeVariant> = {
-    LOW: "low",
-    MEDIUM: "medium",
-    HIGH: "high",
-    URGENT: "urgent",
-  };
-  return map[priority] ?? "default";
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
@@ -40,16 +18,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
       e.preventDefault();
       onClick();
     }
-  };
-
-  const getStatusLabel = (status: string) => {
-    const map: Record<string, string> = {
-      PENDING: t("tasks.details.statusPending"),
-      IN_PROGRESS: t("tasks.details.statusInProgress"),
-      COMPLETED: t("tasks.details.statusCompleted"),
-      CANCELED: t("tasks.details.statusCanceled"),
-    };
-    return map[status] || status;
   };
 
   return (
@@ -94,7 +62,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
       <div className="flex items-center justify-between">
         <div className="flex gap-2 flex-wrap">
           <Badge variant={statusVariant(task.status)}>
-            {getStatusLabel(task.status)}
+            {getStatusLabel(task.status, t)}
           </Badge>
           <Badge variant={priorityVariant(task.priority)}>
             {task.priority}
@@ -111,5 +79,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
     </button>
   );
 };
+
 
 export default TaskCard;

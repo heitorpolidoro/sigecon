@@ -11,6 +11,7 @@ import { Textarea } from "../../../components/ui/textarea";
 import { Select } from "../../../components/ui/select";
 import { Label } from "../../../components/ui/label";
 import { Alert, AlertDescription } from "../../../components/ui/alert";
+import { getStatusLabel } from "../utils/taskUtils";
 
 interface TaskFormProps {
   task?: TaskRead;
@@ -127,16 +128,6 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
     submitText = t("tasks.form.submitEdit");
   }
 
-  const getStatusLabel = (status: string) => {
-    const map: Record<string, string> = {
-      PENDING: t("tasks.details.statusPending"),
-      IN_PROGRESS: t("tasks.details.statusInProgress"),
-      COMPLETED: t("tasks.details.statusCompleted"),
-      CANCELED: t("tasks.details.statusCanceled"),
-    };
-    return map[status] || status;
-  };
-
   return (
     <div className="p-6">
       <h2 className="text-xl font-semibold text-foreground mb-5">
@@ -234,7 +225,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ task, onSuccess, onCancel }) => {
             >
               {Object.values(TaskStatus).map((s) => (
                 <option key={s} value={s}>
-                  {getStatusLabel(s)}
+                  {getStatusLabel(s, t)}
                 </option>
               ))}
             </Select>

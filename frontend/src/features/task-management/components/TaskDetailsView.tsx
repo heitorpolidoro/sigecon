@@ -6,23 +6,12 @@ import AuditTimeline from "./AuditTimeline";
 import { Badge, type BadgeProps } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { cn } from "../../../lib/utils";
+import { getStatusLabel, priorityVariant } from "../utils/taskUtils";
 
 interface TaskDetailsViewProps {
   task: TaskRead;
   onEdit: () => void;
   onClose: () => void;
-}
-
-type BadgeVariant = BadgeProps["variant"];
-
-function priorityVariant(priority: string): BadgeVariant {
-  const map: Record<string, BadgeVariant> = {
-    LOW: "low",
-    MEDIUM: "medium",
-    HIGH: "high",
-    URGENT: "urgent",
-  };
-  return map[priority] ?? "default";
 }
 
 const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
@@ -44,17 +33,8 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
     );
   };
 
-  const statusLabels: Record<string, string> = {
-    PENDING: t("tasks.details.statusPending"),
-    IN_PROGRESS: t("tasks.details.statusInProgress"),
-    BLOCKED: t("tasks.details.statusBlocked"),
-    COMPLETED: t("tasks.details.statusCompleted"),
-    CANCELED: t("tasks.details.statusCanceled"),
-  };
-
-  if (task.status && !statusLabels[task.status]) {
-    statusLabels[task.status] = task.status;
-  }
+  const statuses = ["PENDING", "IN_PROGRESS", "BLOCKED", "COMPLETED", "CANCELED"];
+  const displayStatuses = statuses.includes(task.status) ? statuses : [task.status, ...statuses];
 
   return (
     <div className="p-6">
@@ -83,13 +63,13 @@ const TaskDetailsView: React.FC<TaskDetailsViewProps> = ({
                   "bg-[var(--status-canceled-bg)] text-[var(--status-canceled-fg)]",
               )}
             >
-              {Object.entries(statusLabels).map(([value, label]) => (
+              {displayStatuses.map((status) => (
                 <option
-                  key={value}
-                  value={value}
+                  key={status}
+                  value={status}
                   className="bg-background text-foreground"
                 >
-                  {label}
+                  {getStatusLabel(status, t)}
                 </option>
               ))}
             </select>

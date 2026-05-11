@@ -466,4 +466,38 @@ describe("TaskDashboard", () => {
       screen.getByText(/Erro ao carregar tarefas: Fetch error/i),
     ).toBeInTheDocument();
   });
+
+  it("covers tasks fallback in list view", () => {
+    vi.mocked(useTasks).mockReturnValue({
+      data: null,
+      isLoading: false,
+      isError: false,
+      error: null,
+    } as any);
+
+    render(<TaskDashboard />);
+    fireEvent.click(screen.getByTitle("Lista"));
+    expect(screen.queryByText("Task 1")).not.toBeInTheDocument();
+  });
+
+  it("handles overlay key down for Enter and Space", () => {
+    render(<TaskDashboard />);
+
+    fireEvent.click(screen.getByRole("button", { name: /Nova Tarefa/i }));
+    const overlay = screen.getByLabelText("Fechar modal");
+
+    fireEvent.keyDown(overlay, { key: "Enter" });
+    expect(screen.queryByRole("heading", { name: "Nova Tarefa" })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Nova Tarefa/i }));
+    const overlay2 = screen.getByLabelText("Fechar modal");
+    fireEvent.keyDown(overlay2, { key: " " });
+    expect(screen.queryByRole("heading", { name: "Nova Tarefa" })).not.toBeInTheDocument();
+
+    // Test other key
+    fireEvent.click(screen.getByRole("button", { name: /Nova Tarefa/i }));
+    const overlay3 = screen.getByLabelText("Fechar modal");
+    fireEvent.keyDown(overlay3, { key: "Escape" });
+    expect(screen.getByRole("heading", { name: "Nova Tarefa" })).toBeInTheDocument();
+  });
 });
