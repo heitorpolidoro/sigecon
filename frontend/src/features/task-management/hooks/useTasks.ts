@@ -61,6 +61,7 @@ export const useTasks = (options: FetchTasksOptions) => {
   return useQuery<TaskRead[], Error>({
     queryKey: ["tasks", options],
     queryFn: () => fetchTasks(options),
+    retry: 1, // Fail faster to show the connection error message
   });
 };
 

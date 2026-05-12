@@ -1,5 +1,5 @@
-import uuid
 import importlib
+import uuid
 from unittest.mock import patch
 
 import pytest
@@ -108,7 +108,9 @@ def test_dev_login_inactive_user(client, session):
         assert "Inactive user" in response.json()["detail"]
 
 
-def test_get_task_history_director_success(client, session, normal_user, default_category):
+def test_get_task_history_director_success(
+    client, session, normal_user, default_category
+):
     """Test DIRECTOR viewing history of a task not assigned to them (allowed now)."""
     # Create a task assigned to someone else
     other_user_id = uuid.uuid4()
@@ -217,6 +219,7 @@ def test_security_get_token_expiration_remember_me():
 def test_get_origins_json_string():
     """Test get_origins with a JSON string."""
     from app.main import get_origins
+
     with patch("app.main.settings") as mock_settings:
         mock_settings.BACKEND_CORS_ORIGINS = '["http://test.com"]'
         origins = get_origins()
@@ -226,6 +229,7 @@ def test_get_origins_json_string():
 def test_get_origins_comma_string():
     """Test get_origins with a comma-separated string."""
     from app.main import get_origins
+
     with patch("app.main.settings") as mock_settings:
         mock_settings.BACKEND_CORS_ORIGINS = "http://test1.com, http://test2.com"
         origins = get_origins()
@@ -236,6 +240,7 @@ def test_get_origins_comma_string():
 def test_get_origins_list_without_dev():
     """Test get_origins with a list."""
     from app.main import get_origins
+
     with patch("app.main.settings") as mock_settings:
         mock_settings.BACKEND_CORS_ORIGINS = ["http://test.com"]
         origins = get_origins()
@@ -245,8 +250,12 @@ def test_get_origins_list_without_dev():
 def test_get_origins_list_with_dev():
     """Test get_origins with a list that already includes the dev origin."""
     from app.main import get_origins
+
     with patch("app.main.settings") as mock_settings:
-        mock_settings.BACKEND_CORS_ORIGINS = ["http://localhost:5175", "http://test.com"]
+        mock_settings.BACKEND_CORS_ORIGINS = [
+            "http://localhost:5175",
+            "http://test.com",
+        ]
         origins = get_origins()
         assert "http://test.com" in origins
         assert "http://localhost:5175" in origins
@@ -256,6 +265,6 @@ def test_get_origins_list_with_dev():
 
 def test_health_check(client):
     """Test health check endpoint."""
-    response = client.get("/health")
+    response = client.get("/api/v1/health")
     assert response.status_code == 200
     assert response.json() == {"status": "healthy"}
