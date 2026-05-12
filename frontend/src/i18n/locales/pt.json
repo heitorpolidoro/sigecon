@@ -79,7 +79,7 @@
       "viewList": "Lista",
       "viewBoard": "Quadro",
       "allCategories": "Todas as categorias",
-      "connectionError": "Não foi possível conectar ao servidor. Verifique se o backend está rodando."
+      "connectionError": "Não foi possível conectar ao servidor"
     },
     "list": {
       "loading": "Carregando tarefas...",

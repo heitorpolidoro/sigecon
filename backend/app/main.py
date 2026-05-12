@@ -62,9 +62,3 @@ app.include_router(api_router, prefix="/api/v1")
 def read_root() -> dict[str, str]:
     """Root endpoint."""
     return {"message": "Welcome to SIGECON API"}
-
-
-@app.get("/health")
-def health_check() -> dict[str, str]:
-    """Health check endpoint."""
-    return {"status": "healthy"}
