@@ -61,7 +61,7 @@ class Task(SQLModel, table=True):
     assigned_to_id: UUID | None = Field(
         default=None, foreign_key=USER_ID_FK, index=True
     )
-    category_id: UUID = Field(foreign_key=CATEGORY_ID_FK, index=True)
+    category_id: UUID | None = Field(default=None, foreign_key=CATEGORY_ID_FK, index=True)
 
     # Relationships
     creator: "User" = Relationship(

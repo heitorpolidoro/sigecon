@@ -1,7 +1,6 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: sigecon_db_alt
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -15,7 +14,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: sigecon_backend_alt
     volumes:
       - ./backend:/app
     environment:
@@ -35,7 +33,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: sigecon_frontend_alt
     ports:
       - "3000:5173"
     volumes:

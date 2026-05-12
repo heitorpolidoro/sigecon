@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from app.core.config import settings
 from app.core.security import get_password_hash
+from app.models.category import Category
 from app.models.enums import TaskPriority, TaskStatus, UserRole
 from app.models.task import Task
 from app.models.user import User
@@ -19,9 +20,30 @@ def seed_dev():
 
         session.execute(text("TRUNCATE TABLE task CASCADE;"))
         session.execute(text('TRUNCATE TABLE "user" CASCADE;'))
+        session.execute(text("TRUNCATE TABLE category CASCADE;"))
         session.commit()
 
-        # 2. Criar Administrador
+        # 2. Criar Categorias
+        categories_data = [
+            {"name": "Jurídico", "color": "#dc2626"},
+            {"name": "Financeiro", "color": "#16a34a"},
+            {"name": "TI", "color": "#2563eb"},
+            {"name": "RH", "color": "#9333ea"},
+            {"name": "Operacional", "color": "#ea580c"},
+        ]
+        
+        categories = {}
+        for c_data in categories_data:
+            cat = Category(name=c_data["name"], color=c_data["color"])
+            session.add(cat)
+            categories[c_data["name"]] = cat
+        
+        session.commit()
+        for name, cat in categories.items():
+            session.refresh(cat)
+        print(f"✅ {len(categories)} categorias criadas.")
+
+        # 3. Criar Administrador
         admin = User(
             id=uuid.UUID("00000000-0000-0000-0000-000000000000"),
             username="admin",
@@ -34,7 +56,7 @@ def seed_dev():
         session.add(admin)
         print("✅ Usuário Admin criado.")
 
-        # 3. Criar Diretores
+        # 4. Criar Diretores
         diretores_data = [
             {
                 "id": uuid.UUID("11111111-1111-1111-1111-111111111111"),
@@ -67,7 +89,7 @@ def seed_dev():
 
         session.commit()
 
-        # 4. Criar Tarefas de Exemplo
+        # 5. Criar Tarefas de Exemplo
         tasks_data = [
             {
                 "title": "Migração de Servidor",
@@ -76,6 +98,7 @@ def seed_dev():
                 "priority": TaskPriority.HIGH,
                 "assigned_to_id": diretores[0].id,
                 "due_date": datetime.now() + timedelta(days=5),
+                "category_id": categories["TI"].id,
             },
             {
                 "title": "Relatório Trimestral",
@@ -84,6 +107,7 @@ def seed_dev():
                 "priority": TaskPriority.MEDIUM,
                 "assigned_to_id": diretores[1].id,
                 "due_date": datetime.now() + timedelta(days=10),
+                "category_id": categories["Financeiro"].id,
             },
             {
                 "title": "Treinamento de Equipe",
@@ -92,6 +116,7 @@ def seed_dev():
                 "priority": TaskPriority.LOW,
                 "assigned_to_id": diretores[0].id,
                 "due_date": datetime.now() - timedelta(days=2),
+                "category_id": categories["RH"].id,
             },
             {
                 "title": "Revisão de Segurança",
@@ -100,6 +125,7 @@ def seed_dev():
                 "priority": TaskPriority.URGENT,
                 "assigned_to_id": diretores[1].id,
                 "due_date": datetime.now() + timedelta(days=1),
+                "category_id": categories["TI"].id,
             },
             {
                 "title": "Implementação do Kanban",
@@ -108,6 +134,7 @@ def seed_dev():
                 "priority": TaskPriority.HIGH,
                 "assigned_to_id": diretores[0].id,
                 "due_date": datetime.now(),
+                "category_id": categories["TI"].id,
             },
             {
                 "title": "Ajuste de Budget",
@@ -116,6 +143,7 @@ def seed_dev():
                 "priority": TaskPriority.LOW,
                 "assigned_to_id": diretores[1].id,
                 "due_date": None,
+                "category_id": categories["Financeiro"].id,
             },
             {
                 "title": "Dependência de Terceiros",
@@ -124,6 +152,25 @@ def seed_dev():
                 "priority": TaskPriority.HIGH,
                 "assigned_to_id": diretores[0].id,
                 "due_date": datetime.now() + timedelta(days=3),
+                "category_id": categories["Operacional"].id,
+            },
+            {
+                "title": "Revisão de Contrato",
+                "description": "Verificar cláusulas de rescisão do contrato de aluguel.",
+                "status": TaskStatus.PENDING,
+                "priority": TaskPriority.HIGH,
+                "assigned_to_id": diretores[1].id,
+                "due_date": datetime.now() + timedelta(days=7),
+                "category_id": categories["Jurídico"].id,
+            },
+            {
+                "title": "Tarefa sem Categoria",
+                "description": "Esta tarefa não possui categoria atribuída.",
+                "status": TaskStatus.PENDING,
+                "priority": TaskPriority.LOW,
+                "assigned_to_id": diretores[0].id,
+                "due_date": None,
+                "category_id": None,
             },
         ]
 
@@ -136,6 +183,7 @@ def seed_dev():
                 assigned_to_id=t_data["assigned_to_id"],
                 created_by_id=admin.id,
                 due_date=t_data["due_date"],
+                category_id=t_data.get("category_id"),
             )
             session.add(task)
 
