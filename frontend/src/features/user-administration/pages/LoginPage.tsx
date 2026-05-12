@@ -27,8 +27,12 @@ const LoginPage: React.FC = () => {
     // Fetch dev users if available (endpoint returns 404 in production)
     apiClient
       .get<User[]>("/auth/dev-users")
-      .then((res) => setDevUsers(res.data))
-      .catch(() => setDevUsers([]));
+      .then((res) => {
+        setDevUsers(res.data);
+      })
+      .catch(() => {
+        setDevUsers([]);
+      });
   }, []);
 
   const from = location.state?.from?.pathname || "/dashboard";
