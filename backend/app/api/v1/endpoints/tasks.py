@@ -77,9 +77,7 @@ def list_tasks(
         .join(Category, Task.category_id == Category.id, isouter=True)
     )
 
-    if current_user.role == UserRole.DIRECTOR:
-        statement = statement.where(Task.assigned_to_id == current_user.id)
-    elif assigned_to_id:
+    if assigned_to_id:
         statement = statement.where(Task.assigned_to_id == assigned_to_id)
 
     if status:
@@ -167,12 +165,6 @@ def get_task_history(
     db_task = session.get(Task, task_id)
     if not db_task or db_task.is_deleted:
         raise TaskNotFoundError(task_id)
-
-    if (
-        current_user.role == UserRole.DIRECTOR
-        and db_task.assigned_to_id != current_user.id
-    ):
-        raise ForbiddenError
 
     return TaskService.get_history(session=session, task_id=task_id)
 

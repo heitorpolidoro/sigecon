@@ -38,7 +38,7 @@ class TaskService:
     def update_task(
         session: Session, db_task: Task, task_in: TaskUpdate, current_user: "User"
     ) -> Task:
-        """Update a task with RBAC and audit logging.
+        """Update a task with audit logging.
 
         Args:
             session: Database session.
@@ -48,19 +48,8 @@ class TaskService:
 
         Returns:
             Task: The updated task.
-
-        Raises:
-            ForbiddenError: If DIRECTOR tries to update non-status fields or a task
-                not assigned to them. ADMINISTRATOR can update any field of any task.
         """
         update_data = task_in.model_dump(exclude_unset=True)
-
-        if current_user.role == UserRole.DIRECTOR:
-            if db_task.assigned_to_id != current_user.id:
-                raise ForbiddenError
-            non_status_fields = {k for k in update_data if k != "status"}
-            if non_status_fields:
-                raise ForbiddenError
 
         for key, value in update_data.items():
             old_value = getattr(db_task, key)

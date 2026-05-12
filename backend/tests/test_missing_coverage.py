@@ -108,8 +108,8 @@ def test_dev_login_inactive_user(client, session):
         assert "Inactive user" in response.json()["detail"]
 
 
-def test_get_task_history_rbac_failure(client, session, normal_user, default_category):
-    """Test DIRECTOR trying to view history of a task not assigned to them."""
+def test_get_task_history_director_success(client, session, normal_user, default_category):
+    """Test DIRECTOR viewing history of a task not assigned to them (allowed now)."""
     # Create a task assigned to someone else
     other_user_id = uuid.uuid4()
     task = Task(
@@ -128,7 +128,7 @@ def test_get_task_history_rbac_failure(client, session, normal_user, default_cat
         f"/api/v1/tasks/{task.id}/history",
         headers={"Authorization": f"Bearer {token}"},
     )
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    assert response.status_code == status.HTTP_200_OK
 
 
 def test_read_users_filter_active(client, admin_user):
@@ -178,8 +178,8 @@ def test_update_self_admin_change_role_fail(client, admin_user):
     assert "cannot change their own role" in response.json()["detail"]
 
 
-def test_update_task_service_rbac_failures(session, normal_user, default_category):
-    """Test TaskService.update_task RBAC failures directly."""
+def test_update_task_service_director_success(session, normal_user, default_category):
+    """Test TaskService.update_task allowing DIRECTOR to update any task/field."""
     task = Task(
         title="Task",
         description="...",
@@ -189,31 +189,23 @@ def test_update_task_service_rbac_failures(session, normal_user, default_categor
     )
     from app.schemas.task import TaskUpdate
 
-    # Test updating task not assigned to them
-    with pytest.raises(Exception) as excinfo:
-        TaskService.update_task(
-            session=session,
-            db_task=task,
-            task_in=TaskUpdate(status=TaskStatus.COMPLETED),
-            current_user=normal_user,
-        )
-    # The actual exception might be ForbiddenError or wrapped
-    assert "ForbiddenError" in str(excinfo.type) or "Not enough privileges" in str(
-        excinfo.value
+    # Test updating task not assigned to them (allowed now)
+    updated_task = TaskService.update_task(
+        session=session,
+        db_task=task,
+        task_in=TaskUpdate(status=TaskStatus.COMPLETED),
+        current_user=normal_user,
     )
+    assert updated_task.status == TaskStatus.COMPLETED
 
-    # Test updating non-status field
-    task.assigned_to_id = normal_user.id
-    with pytest.raises(Exception) as excinfo:
-        TaskService.update_task(
-            session=session,
-            db_task=task,
-            task_in=TaskUpdate(title="New Title"),
-            current_user=normal_user,
-        )
-    assert "ForbiddenError" in str(excinfo.type) or "Not enough privileges" in str(
-        excinfo.value
+    # Test updating non-status field (allowed now)
+    updated_task = TaskService.update_task(
+        session=session,
+        db_task=task,
+        task_in=TaskUpdate(title="New Title"),
+        current_user=normal_user,
     )
+    assert updated_task.title == "New Title"
 
 
 def test_security_get_token_expiration_remember_me():

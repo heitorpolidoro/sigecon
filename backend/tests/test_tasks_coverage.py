@@ -101,14 +101,13 @@ def test_list_tasks_visibility(client: TestClient, session: Session, setup_data)
     assert response.status_code == 200
     assert len(response.json()) == 2
 
-    # DIRECTOR only sees tasks assigned to them (dir1 is assigned task1 only)
+    # DIRECTOR sees all tasks now (no role-based filtering)
     dir_token = get_token(client, "dir1_cov", "pass")
     response = client.get(
         "/api/v1/tasks/", headers={"Authorization": f"Bearer {dir_token}"}
     )
     assert response.status_code == 200
-    assert len(response.json()) == 1
-    assert response.json()[0]["title"] == "Task 1"
+    assert len(response.json()) == 2
 
 
 def test_delete_task_workflow(client: TestClient, session: Session, setup_data):
