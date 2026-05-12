@@ -16,7 +16,7 @@ class TaskBase(BaseModel):
     priority: TaskPriority = TaskPriority.MEDIUM
     due_date: datetime | None = None
     assigned_to_id: UUID | None = None
-    category_id: UUID
+    category_id: UUID | None = None
 
 
 class TaskCreate(TaskBase):
