@@ -15,11 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SECRET_KEY: "test-secret-key-for-ci"
-      DB_HOST: "localhost"
-      DB_PORT: "5432"
-      DB_USER: "postgres"
-      DB_PASSWORD: "password"
-      DB_NAME: "sigecon"
+      POSTGRES_URL: "postgresql://postgres:password@localhost/sigecon"
     
     steps:
     - name: Checkout code
