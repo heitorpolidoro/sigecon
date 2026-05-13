@@ -81,33 +81,6 @@ jobs:
         name: frontend-coverage
         path: frontend/coverage/lcov.info
 
-  migrate:
-    name: Run DB Migrations
-    needs: [backend]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    env:
-      POSTGRES_URL: ${{ secrets.POSTGRES_URL_NON_POOLING }}
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v6
-
-    - name: Set up uv
-      uses: astral-sh/setup-uv@v8.0.0
-      with:
-        enable-cache: false
-        pyproject-file: backend/pyproject.toml
-
-    - name: Set up Python 3.13
-      run: uv python install 3.13
-
-    - name: Install dependencies
-      run: cd backend && uv sync --all-groups
-
-    - name: Run migrations
-      run: cd backend && uv run alembic upgrade head
-
   sonarcloud:
     name: SonarCloud Scan
     needs: [backend, frontend]

@@ -10,6 +10,8 @@ const apiClient = axios.create({
   },
 });
 
+const BYPASS_TOKEN = import.meta.env.VITE_BYPASS_TOKEN;
+
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token =
@@ -17,6 +19,9 @@ apiClient.interceptors.request.use(
       localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (BYPASS_TOKEN) {
+      config.headers["x-vercel-protection-bypass"] = BYPASS_TOKEN;
     }
     return config;
   },
