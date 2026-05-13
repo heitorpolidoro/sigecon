@@ -12,7 +12,9 @@ import { Select } from "../../../components/ui/select";
 import { Alert, AlertDescription } from "../../../components/ui/alert";
 
 const AdminUserDashboard: React.FC = () => {
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "inactive"
+  >("all");
   const [actionError, setActionError] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [editFullName, setEditFullName] = useState("");
@@ -22,7 +24,11 @@ const AdminUserDashboard: React.FC = () => {
   const { user: currentUser, logout } = useAuth();
   const { t } = useTranslation();
 
-  const { data: users, isLoading, error } = useQuery({
+  const {
+    data: users,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["users", statusFilter],
     queryFn: async () => {
       const params: Record<string, boolean> = {};
@@ -42,7 +48,13 @@ const AdminUserDashboard: React.FC = () => {
   });
 
   const updateUserMutation = useMutation({
-    mutationFn: async ({ userId, data }: { userId: string; data: Partial<User> & { type_id?: string | null } }) => {
+    mutationFn: async ({
+      userId,
+      data,
+    }: {
+      userId: string;
+      data: Partial<User> & { type_id?: string | null };
+    }) => {
       const response = await apiClient.patch<User>(`/users/${userId}`, data);
       return response.data;
     },
@@ -52,7 +64,9 @@ const AdminUserDashboard: React.FC = () => {
       setEditingUser(null);
     },
     onError: (err: Error & { response?: { data?: { detail?: string } } }) => {
-      setActionError(err.response?.data?.detail || t("admin.errorUpdatingUser"));
+      setActionError(
+        err.response?.data?.detail || t("admin.errorUpdatingUser"),
+      );
     },
   });
 
@@ -66,7 +80,9 @@ const AdminUserDashboard: React.FC = () => {
       setNewTypeName("");
     },
     onError: (err: Error & { response?: { data?: { detail?: string } } }) => {
-      setActionError(err.response?.data?.detail || t("admin.errorCreatingType"));
+      setActionError(
+        err.response?.data?.detail || t("admin.errorCreatingType"),
+      );
     },
   });
 
@@ -79,7 +95,9 @@ const AdminUserDashboard: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (err: Error & { response?: { data?: { detail?: string } } }) => {
-      setActionError(err.response?.data?.detail || t("admin.errorDeletingType"));
+      setActionError(
+        err.response?.data?.detail || t("admin.errorDeletingType"),
+      );
     },
   });
 
@@ -88,7 +106,10 @@ const AdminUserDashboard: React.FC = () => {
       setActionError(t("admin.cannotDeactivateSelf"));
       return;
     }
-    updateUserMutation.mutate({ userId: user.id, data: { is_active: !user.is_active } });
+    updateUserMutation.mutate({
+      userId: user.id,
+      data: { is_active: !user.is_active },
+    });
   };
 
   const handleRoleChange = (user: User) => {
@@ -96,7 +117,10 @@ const AdminUserDashboard: React.FC = () => {
       setActionError(t("admin.cannotChangeOwnRole"));
       return;
     }
-    const newRole = user.role === UserRole.ADMINISTRATOR ? UserRole.DIRECTOR : UserRole.ADMINISTRATOR;
+    const newRole =
+      user.role === UserRole.ADMINISTRATOR
+        ? UserRole.DIRECTOR
+        : UserRole.ADMINISTRATOR;
     updateUserMutation.mutate({ userId: user.id, data: { role: newRole } });
   };
 
@@ -124,14 +148,20 @@ const AdminUserDashboard: React.FC = () => {
   };
 
   if (isLoading)
-    return <div className="p-8 text-muted-foreground">{t("admin.loadingUsers")}</div>;
+    return (
+      <div className="p-8 text-muted-foreground">{t("admin.loadingUsers")}</div>
+    );
   if (error)
-    return <div className="p-8 text-destructive">{t("admin.errorLoadingUsers")}</div>;
+    return (
+      <div className="p-8 text-destructive">{t("admin.errorLoadingUsers")}</div>
+    );
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-foreground">{t("admin.title")}</h1>
+        <h1 className="text-2xl font-bold text-foreground">
+          {t("admin.title")}
+        </h1>
         <div className="flex gap-3">
           <Button variant="outline" asChild>
             <Link to="/dashboard">{t("admin.backToDashboard")}</Link>
@@ -159,10 +189,14 @@ const AdminUserDashboard: React.FC = () => {
 
       {/* User Types Section */}
       <div className="rounded-xl border bg-card p-4 mb-6">
-        <h2 className="text-sm font-semibold text-foreground mb-3">{t("admin.userTypes")}</h2>
+        <h2 className="text-sm font-semibold text-foreground mb-3">
+          {t("admin.userTypes")}
+        </h2>
         <div className="flex flex-wrap gap-2 mb-3">
           {userTypes?.length === 0 && (
-            <span className="text-sm text-muted-foreground">{t("admin.noTypesYet")}</span>
+            <span className="text-sm text-muted-foreground">
+              {t("admin.noTypesYet")}
+            </span>
           )}
           {userTypes?.map((ut) => (
             <div key={ut.id} className="flex items-center gap-1">
@@ -188,20 +222,29 @@ const AdminUserDashboard: React.FC = () => {
             placeholder={t("admin.newTypeName")}
             className="h-8 text-sm w-48"
           />
-          <Button type="submit" size="sm" disabled={!newTypeName.trim() || createTypeMutation.isPending}>
+          <Button
+            type="submit"
+            size="sm"
+            disabled={!newTypeName.trim() || createTypeMutation.isPending}
+          >
             {t("admin.addType")}
           </Button>
         </form>
       </div>
 
       <div className="flex items-center gap-3 mb-5">
-        <label htmlFor="status-filter" className="text-sm font-medium text-muted-foreground">
+        <label
+          htmlFor="status-filter"
+          className="text-sm font-medium text-muted-foreground"
+        >
           {t("admin.filterByStatus")}
         </label>
         <Select
           id="status-filter"
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as "all" | "active" | "inactive")}
+          onChange={(e) =>
+            setStatusFilter(e.target.value as "all" | "active" | "inactive")
+          }
           className="w-44"
         >
           <option value="all">{t("admin.filterAll")}</option>
@@ -215,20 +258,41 @@ const AdminUserDashboard: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-muted/40">
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground">{t("admin.colName")}</th>
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground">{t("admin.colUsername")}</th>
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground hidden md:table-cell">{t("admin.colEmail")}</th>
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground">{t("admin.colType")}</th>
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground">{t("admin.colStatus")}</th>
-                <th className="text-right px-4 py-3 font-semibold text-muted-foreground">{t("admin.colActions")}</th>
+                <th className="text-left px-4 py-3 font-semibold text-muted-foreground">
+                  {t("admin.colName")}
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-muted-foreground">
+                  {t("admin.colUsername")}
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-muted-foreground hidden md:table-cell">
+                  {t("admin.colEmail")}
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-muted-foreground">
+                  {t("admin.colType")}
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-muted-foreground">
+                  {t("admin.colStatus")}
+                </th>
+                <th className="text-right px-4 py-3 font-semibold text-muted-foreground">
+                  {t("admin.colActions")}
+                </th>
               </tr>
             </thead>
             <tbody>
               {users?.map((user) => (
-                <tr key={user.id} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
-                  <td className="px-4 py-3 font-medium text-foreground">{user.full_name}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{user.username}</td>
-                  <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">{user.email}</td>
+                <tr
+                  key={user.id}
+                  className="border-b last:border-0 hover:bg-muted/20 transition-colors"
+                >
+                  <td className="px-4 py-3 font-medium text-foreground">
+                    {user.full_name}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {user.username}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
+                    {user.email}
+                  </td>
                   <td className="px-4 py-3">
                     {user.type ? (
                       <Badge variant="secondary">{user.type.name}</Badge>
@@ -238,12 +302,18 @@ const AdminUserDashboard: React.FC = () => {
                   </td>
                   <td className="px-4 py-3">
                     <Badge variant={user.is_active ? "active" : "inactive"}>
-                      {user.is_active ? t("admin.statusActive") : t("admin.statusInactive")}
+                      {user.is_active
+                        ? t("admin.statusActive")
+                        : t("admin.statusInactive")}
                     </Badge>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2 justify-end flex-wrap">
-                      <Button size="sm" variant="outline" onClick={() => openEditModal(user)}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openEditModal(user)}
+                      >
                         {t("admin.edit")}
                       </Button>
                       <Button
@@ -251,10 +321,18 @@ const AdminUserDashboard: React.FC = () => {
                         variant={user.is_active ? "destructive" : "success"}
                         onClick={() => handleToggleActive(user)}
                       >
-                        {user.is_active ? t("admin.deactivate") : t("admin.approve")}
+                        {user.is_active
+                          ? t("admin.deactivate")
+                          : t("admin.approve")}
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleRoleChange(user)}>
-                        {user.role === UserRole.ADMINISTRATOR ? t("admin.makeDirector") : t("admin.makeAdministrator")}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleRoleChange(user)}
+                      >
+                        {user.role === UserRole.ADMINISTRATOR
+                          ? t("admin.makeDirector")
+                          : t("admin.makeAdministrator")}
                       </Button>
                     </div>
                   </td>
@@ -269,10 +347,14 @@ const AdminUserDashboard: React.FC = () => {
       {editingUser && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-          onClick={(e) => { if (e.target === e.currentTarget) setEditingUser(null); }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setEditingUser(null);
+          }}
         >
           <div className="bg-card border rounded-xl shadow-xl p-6 w-full max-w-sm mx-4">
-            <h2 className="text-lg font-semibold text-foreground mb-4">{t("admin.editUser")}</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-4">
+              {t("admin.editUser")}
+            </h2>
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-muted-foreground block mb-1">
@@ -294,7 +376,9 @@ const AdminUserDashboard: React.FC = () => {
                 >
                   <option value="">{t("admin.noType")}</option>
                   {userTypes?.map((ut) => (
-                    <option key={ut.id} value={ut.id}>{ut.name}</option>
+                    <option key={ut.id} value={ut.id}>
+                      {ut.name}
+                    </option>
                   ))}
                 </Select>
               </div>
@@ -303,7 +387,10 @@ const AdminUserDashboard: React.FC = () => {
               <Button variant="outline" onClick={() => setEditingUser(null)}>
                 {t("admin.cancel")}
               </Button>
-              <Button onClick={handleSaveEdit} disabled={updateUserMutation.isPending}>
+              <Button
+                onClick={handleSaveEdit}
+                disabled={updateUserMutation.isPending}
+              >
                 {t("admin.save")}
               </Button>
             </div>

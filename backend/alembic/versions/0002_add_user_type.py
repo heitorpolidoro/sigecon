@@ -21,7 +21,9 @@ def upgrade() -> None:
     )
     op.create_index("ix_user_type_name", "user_type", ["name"], unique=True)
 
-    op.add_column("user", sa.Column("type_id", postgresql.UUID(as_uuid=True), nullable=True))
+    op.add_column(
+        "user", sa.Column("type_id", postgresql.UUID(as_uuid=True), nullable=True)
+    )
     op.create_index("ix_user_type_id", "user", ["type_id"], unique=False)
     op.create_foreign_key("fk_user_type_id", "user", "user_type", ["type_id"], ["id"])
 
