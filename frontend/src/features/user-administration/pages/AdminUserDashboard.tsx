@@ -268,6 +268,9 @@ const AdminUserDashboard: React.FC = () => {
                   {t("admin.colEmail")}
                 </th>
                 <th className="text-left px-4 py-3 font-semibold text-muted-foreground">
+                  {t("admin.colRole")}
+                </th>
+                <th className="text-left px-4 py-3 font-semibold text-muted-foreground">
                   {t("admin.colType")}
                 </th>
                 <th className="text-left px-4 py-3 font-semibold text-muted-foreground">
@@ -292,6 +295,9 @@ const AdminUserDashboard: React.FC = () => {
                   </td>
                   <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
                     {user.email}
+                  </td>
+                  <td className="px-4 py-3">
+                    <Badge variant="secondary">{user.role}</Badge>
                   </td>
                   <td className="px-4 py-3">
                     {user.type ? (
