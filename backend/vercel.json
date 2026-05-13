@@ -1,4 +1,5 @@
 {
+  "buildCommand": "python -m alembic upgrade head",
   "builds": [
     {
       "src": "index.py",
