@@ -1,31 +1,23 @@
-"""Application configuration module."""
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Application settings loaded from environment variables."""
-
     PROJECT_NAME: str = "SIGECON"
     ENVIRONMENT: str = "production"
 
     # Database
-    DB_HOST: str
-    DB_PORT: str
-    DB_USER: str
-    DB_PASSWORD: str
-    DB_NAME: str
+    POSTGRES_URL: str
+    POSTGRES_URL_NON_POOLING: str | None = None
     SQL_ECHO: bool = False
 
     @property
     def database_url(self) -> str:
-        """
-        Construct the database URL from components.
+        return self.POSTGRES_URL.replace("postgres://", "postgresql://", 1)
 
-        Returns:
-            str: The full PostgreSQL connection string.
-        """
-        return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+    @property
+    def migration_database_url(self) -> str:
+        url = self.POSTGRES_URL_NON_POOLING or self.POSTGRES_URL
+        return url.replace("postgres://", "postgresql://", 1)
 
     # Security
     SECRET_KEY: str
