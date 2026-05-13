@@ -40,6 +40,7 @@ class Settings(BaseSettings):
 
     # CORS
     BACKEND_CORS_ORIGINS: list[str] = [
+        "https://sigecon.vercel.app",
         "https://sigecon-front.vercel.app",
         "http://localhost:3000",
         "http://localhost:5173",
