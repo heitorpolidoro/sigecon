@@ -4,10 +4,16 @@ import { useTranslation } from "react-i18next";
 import { useAuth, UserRole } from "../context/AuthContext";
 import { cn } from "../../../lib/utils";
 
+const LANGUAGES = [
+  { code: "pt", label: "PT" },
+  { code: "en", label: "EN" },
+];
+
 const Navbar: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const location = useLocation();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.resolvedLanguage ?? i18n.language;
 
   if (!isAuthenticated) return null;
 
@@ -52,6 +58,22 @@ const Navbar: React.FC = () => {
       </div>
 
       <div className="flex items-center gap-5">
+        <div className="flex items-center gap-1 border border-border/50 rounded-md overflow-hidden">
+          {LANGUAGES.map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => i18n.changeLanguage(lang.code)}
+              className={cn(
+                "px-2.5 py-1 text-xs font-semibold transition-all",
+                currentLang.startsWith(lang.code)
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {lang.label}
+            </button>
+          ))}
+        </div>
         <div className="hidden sm:flex flex-col items-end">
           <span className="text-sm font-semibold text-foreground leading-tight">
             {user?.full_name}
