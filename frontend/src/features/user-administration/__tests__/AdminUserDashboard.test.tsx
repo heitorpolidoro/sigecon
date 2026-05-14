@@ -12,6 +12,7 @@ vi.mock("../../../api/client", () => ({
     get: vi.fn(),
     post: vi.fn(),
     patch: vi.fn(),
+    delete: vi.fn(),
     interceptors: {
       request: { use: vi.fn(), eject: vi.fn() },
       response: { use: vi.fn(), eject: vi.fn() },
@@ -27,6 +28,11 @@ const mockCurrentUser = {
   role: UserRole.ADMINISTRATOR,
   is_active: true,
 };
+
+const mockUserTypes = [
+  { id: "type-1", name: "Manager" },
+  { id: "type-2", name: "Employee" },
+];
 
 const mockUsers = [
   {
@@ -358,5 +364,324 @@ describe("AdminUserDashboard", () => {
     expect(
       screen.queryByText("Você não pode desativar sua própria conta."),
     ).toBeNull();
+  });
+
+  // ── User type badge & empty list ────────────────────────────────────────
+
+  it("renders user type badge when user has a type", async () => {
+    const usersWithType = [{ ...mockUsers[0], type: { id: "type-1", name: "Manager" } }];
+    (apiClient.get as any).mockResolvedValue({ data: usersWithType });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("Manager")).toBeInTheDocument();
+    });
+  });
+
+  it("shows 'no types yet' message when user types list is empty", async () => {
+    (apiClient.get as any).mockImplementation((url: string) => {
+      if (url === "/user-types/") return Promise.resolve({ data: [] });
+      return Promise.resolve({ data: mockUsers });
+    });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("Nenhum tipo cadastrado.")).toBeInTheDocument();
+    });
+  });
+
+  // ── Add type form ────────────────────────────────────────────────────────
+
+  it("updates newTypeName state when input changes", async () => {
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    const input = screen.getByPlaceholderText("Nome do tipo");
+    fireEvent.change(input, { target: { value: "Finance" } });
+    expect((input as HTMLInputElement).value).toBe("Finance");
+  });
+
+  it("creates a user type on form submit", async () => {
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+    (apiClient.post as any).mockResolvedValue({ data: { id: "type-new", name: "Finance" } });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    const input = screen.getByPlaceholderText("Nome do tipo");
+    fireEvent.change(input, { target: { value: "Finance" } });
+    fireEvent.click(screen.getByText("Adicionar tipo"));
+
+    await waitFor(() => {
+      expect(apiClient.post).toHaveBeenCalledWith("/user-types/", { name: "Finance" });
+    });
+  });
+
+  it("does not create a type when name is empty", async () => {
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    const form = screen.getByPlaceholderText("Nome do tipo").closest("form")!;
+    fireEvent.submit(form);
+
+    expect(apiClient.post).not.toHaveBeenCalled();
+  });
+
+  it("shows error when creating a type fails", async () => {
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+    (apiClient.post as any).mockRejectedValue({
+      response: { data: { detail: "Nome duplicado" } },
+    });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    const input = screen.getByPlaceholderText("Nome do tipo");
+    fireEvent.change(input, { target: { value: "Finance" } });
+    fireEvent.click(screen.getByText("Adicionar tipo"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Nome duplicado")).toBeInTheDocument();
+    });
+  });
+
+  it("shows fallback error when creating a type fails without detail", async () => {
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+    (apiClient.post as any).mockRejectedValue(new Error("network"));
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    const input = screen.getByPlaceholderText("Nome do tipo");
+    fireEvent.change(input, { target: { value: "Finance" } });
+    fireEvent.click(screen.getByText("Adicionar tipo"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Erro ao criar tipo.")).toBeInTheDocument();
+    });
+  });
+
+  // ── Delete type ──────────────────────────────────────────────────────────
+
+  it("deletes a user type when confirm dialog is accepted", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    (apiClient.get as any).mockImplementation((url: string) => {
+      if (url === "/user-types/") return Promise.resolve({ data: mockUserTypes });
+      return Promise.resolve({ data: mockUsers });
+    });
+    (apiClient.delete as any).mockResolvedValue({});
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("Manager")).toBeInTheDocument());
+
+    fireEvent.click(screen.getByLabelText("delete Manager"));
+
+    await waitFor(() => {
+      expect(apiClient.delete).toHaveBeenCalledWith("/user-types/type-1");
+    });
+  });
+
+  it("does not delete a type when confirm dialog is cancelled", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(false);
+    (apiClient.get as any).mockImplementation((url: string) => {
+      if (url === "/user-types/") return Promise.resolve({ data: mockUserTypes });
+      return Promise.resolve({ data: mockUsers });
+    });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("Manager")).toBeInTheDocument());
+
+    fireEvent.click(screen.getByLabelText("delete Manager"));
+
+    expect(apiClient.delete).not.toHaveBeenCalled();
+  });
+
+  it("shows error when deleting a type fails", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    (apiClient.get as any).mockImplementation((url: string) => {
+      if (url === "/user-types/") return Promise.resolve({ data: mockUserTypes });
+      return Promise.resolve({ data: mockUsers });
+    });
+    (apiClient.delete as any).mockRejectedValue({
+      response: { data: { detail: "Tipo em uso" } },
+    });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("Manager")).toBeInTheDocument());
+
+    fireEvent.click(screen.getByLabelText("delete Manager"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Tipo em uso")).toBeInTheDocument();
+    });
+  });
+
+  it("shows fallback error when deleting a type fails without detail", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    (apiClient.get as any).mockImplementation((url: string) => {
+      if (url === "/user-types/") return Promise.resolve({ data: mockUserTypes });
+      return Promise.resolve({ data: mockUsers });
+    });
+    (apiClient.delete as any).mockRejectedValue(new Error("network"));
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("Manager")).toBeInTheDocument());
+
+    fireEvent.click(screen.getByLabelText("delete Manager"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Erro ao excluir tipo.")).toBeInTheDocument();
+    });
+  });
+
+  // ── Edit modal ───────────────────────────────────────────────────────────
+
+  it("opens edit modal when Edit button is clicked", async () => {
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    fireEvent.click(screen.getAllByText("Editar")[0]);
+
+    expect(screen.getByText("Editar Usuário")).toBeInTheDocument();
+  });
+
+  it("pre-fills full name and closes on Cancel", async () => {
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    fireEvent.click(screen.getAllByText("Editar")[0]);
+    expect(screen.getByDisplayValue("User One")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("Cancelar"));
+    expect(screen.queryByText("Editar Usuário")).toBeNull();
+  });
+
+  it("closes edit modal when backdrop is clicked", async () => {
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    fireEvent.click(screen.getAllByText("Editar")[0]);
+    expect(screen.getByText("Editar Usuário")).toBeInTheDocument();
+
+    const backdrop = document.querySelector(".fixed.inset-0.z-50")!;
+    fireEvent.click(backdrop);
+
+    expect(screen.queryByText("Editar Usuário")).toBeNull();
+  });
+
+  it("updates full name in modal input", async () => {
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    fireEvent.click(screen.getAllByText("Editar")[0]);
+
+    const nameInput = screen.getByDisplayValue("User One");
+    fireEvent.change(nameInput, { target: { value: "User One Updated" } });
+    expect((nameInput as HTMLInputElement).value).toBe("User One Updated");
+  });
+
+  it("changes type in modal select", async () => {
+    (apiClient.get as any).mockImplementation((url: string) => {
+      if (url === "/user-types/") return Promise.resolve({ data: mockUserTypes });
+      return Promise.resolve({ data: mockUsers });
+    });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    fireEvent.click(screen.getAllByText("Editar")[0]);
+
+    const selects = screen.getAllByRole("combobox");
+    const typeSelect = selects[selects.length - 1];
+    fireEvent.change(typeSelect, { target: { value: "type-1" } });
+    expect((typeSelect as HTMLSelectElement).value).toBe("type-1");
+  });
+
+  it("saves edit with updated full name", async () => {
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+    (apiClient.patch as any).mockResolvedValue({ data: mockUsers[0] });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    fireEvent.click(screen.getAllByText("Editar")[0]);
+    fireEvent.change(screen.getByDisplayValue("User One"), {
+      target: { value: "User One Updated" },
+    });
+    fireEvent.click(screen.getByText("Salvar"));
+
+    await waitFor(() => {
+      expect(apiClient.patch).toHaveBeenCalledWith(
+        "/users/user-1",
+        expect.objectContaining({ full_name: "User One Updated" }),
+      );
+    });
+  });
+
+  it("saves edit with empty full name (sends undefined)", async () => {
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+    (apiClient.patch as any).mockResolvedValue({ data: mockUsers[0] });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    fireEvent.click(screen.getAllByText("Editar")[0]);
+    fireEvent.change(screen.getByDisplayValue("User One"), { target: { value: "" } });
+    fireEvent.click(screen.getByText("Salvar"));
+
+    await waitFor(() => {
+      expect(apiClient.patch).toHaveBeenCalledWith(
+        "/users/user-1",
+        expect.objectContaining({ full_name: undefined, type_id: null }),
+      );
+    });
+  });
+
+  it("pre-fills type_id when user has a type", async () => {
+    const userWithType = { ...mockUsers[0], type: { id: "type-1", name: "Manager" } };
+    (apiClient.get as any).mockImplementation((url: string) => {
+      if (url === "/user-types/") return Promise.resolve({ data: mockUserTypes });
+      return Promise.resolve({ data: [userWithType, mockUsers[1]] });
+    });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    fireEvent.click(screen.getAllByText("Editar")[0]);
+
+    const selects = screen.getAllByRole("combobox");
+    const typeSelect = selects[selects.length - 1];
+    expect((typeSelect as HTMLSelectElement).value).toBe("type-1");
   });
 });
