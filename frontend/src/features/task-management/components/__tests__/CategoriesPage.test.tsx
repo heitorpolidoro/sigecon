@@ -119,8 +119,6 @@ describe("CategoriesPage", () => {
 
   it("shows edit form when pencil button is clicked", () => {
     render(<CategoriesPage />);
-    const editButtons = screen.getAllByRole("button", { name: "" });
-    // First edit button corresponds to "General"
     const pencilButtons = document.querySelectorAll('button[class*="px-2"]');
     fireEvent.click(pencilButtons[0]);
     expect(screen.getByDisplayValue("General")).toBeInTheDocument();
