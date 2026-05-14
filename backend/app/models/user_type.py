@@ -10,6 +10,8 @@ if TYPE_CHECKING:
 
 
 class UserType(SQLModel, table=True):
+    """Database model for user type labels managed by administrators."""
+
     __tablename__ = "user_type"
 
     id: UUID = Field(default_factory=uuid4, primary_key=True)

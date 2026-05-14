@@ -6,10 +6,14 @@ from pydantic import BaseModel, ConfigDict
 
 
 class UserTypeCreate(BaseModel):
+    """Schema for creating a new user type."""
+
     name: str
 
 
 class UserTypeRead(BaseModel):
+    """Schema for reading user type data."""
+
     id: UUID
     name: str
 
@@ -17,4 +21,6 @@ class UserTypeRead(BaseModel):
 
 
 class UserTypeUpdate(BaseModel):
+    """Schema for updating an existing user type."""
+
     name: str

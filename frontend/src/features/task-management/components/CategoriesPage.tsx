@@ -88,7 +88,7 @@ const CategoriesPage: React.FC = () => {
 
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editState || !editState.name.trim()) return;
+    if (!editState?.name.trim()) return;
     setError(null);
     updateMutation.mutate(
       { id: editState.id, data: { name: editState.name.trim(), color: editState.color } },
@@ -102,7 +102,7 @@ const CategoriesPage: React.FC = () => {
   };
 
   const handleDelete = (cat: CategoryRead) => {
-    if (!window.confirm(t("categories.confirmDelete", { name: cat.name }))) return;
+    if (!globalThis.confirm(t("categories.confirmDelete", { name: cat.name }))) return;
     setError(null);
     deleteMutation.mutate(cat.id, {
       onError: (err: any) => {
@@ -114,6 +114,91 @@ const CategoriesPage: React.FC = () => {
   const startEdit = (cat: CategoryRead) => {
     setEditState({ id: cat.id, name: cat.name, color: cat.color });
     setShowForm(false);
+  };
+
+  const renderList = () => {
+    if (isLoading) {
+      return <p className="text-sm text-muted-foreground">{t("categories.loading")}</p>;
+    }
+    if (!categories?.length) {
+      return <p className="text-sm text-muted-foreground">{t("categories.empty")}</p>;
+    }
+    return (
+      <ul className="flex flex-col gap-2">
+        {categories.map((cat) => {
+          if (editState?.id === cat.id) {
+            return (
+              <li key={cat.id} className="rounded-lg border bg-card p-4">
+                <form onSubmit={handleUpdate} className="flex flex-col gap-3">
+                  <Input
+                    value={editState.name}
+                    onChange={(e) =>
+                      setEditState((s) => (s ? { ...s, name: e.target.value } : null))
+                    }
+                    autoFocus
+                    disabled={updateMutation.isPending}
+                  />
+                  <ColorPicker
+                    value={editState.color}
+                    onChange={(c) => setEditState((s) => (s ? { ...s, color: c } : null))}
+                  />
+                  <div className="flex gap-2 justify-end">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setEditState(null)}
+                    >
+                      <X className="size-4" />
+                    </Button>
+                    <Button
+                      type="submit"
+                      size="sm"
+                      disabled={!editState.name.trim() || updateMutation.isPending}
+                    >
+                      <Check className="size-4" />
+                    </Button>
+                  </div>
+                </form>
+              </li>
+            );
+          }
+          return (
+            <li
+              key={cat.id}
+              className="flex items-center justify-between rounded-lg border bg-card px-4 py-3"
+            >
+              <div className="flex items-center gap-3">
+                <span
+                  className="size-4 rounded-full shrink-0"
+                  style={{ backgroundColor: cat.color }}
+                />
+                <span className="text-sm font-medium">{cat.name}</span>
+              </div>
+              <div className="flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => startEdit(cat)}
+                  className="px-2"
+                >
+                  <Pencil className="size-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleDelete(cat)}
+                  className="px-2 text-destructive hover:text-destructive"
+                  disabled={deleteMutation.isPending}
+                >
+                  <Trash2 className="size-3.5" />
+                </Button>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    );
   };
 
   return (
@@ -172,83 +257,7 @@ const CategoriesPage: React.FC = () => {
         </form>
       )}
 
-      {isLoading ? (
-        <p className="text-sm text-muted-foreground">{t("categories.loading")}</p>
-      ) : !categories?.length ? (
-        <p className="text-sm text-muted-foreground">{t("categories.empty")}</p>
-      ) : (
-        <ul className="flex flex-col gap-2">
-          {categories.map((cat) =>
-            editState?.id === cat.id ? (
-              <li key={cat.id} className="rounded-lg border bg-card p-4">
-                <form onSubmit={handleUpdate} className="flex flex-col gap-3">
-                  <Input
-                    value={editState.name}
-                    onChange={(e) =>
-                      setEditState((s) => s && { ...s, name: e.target.value })
-                    }
-                    autoFocus
-                    disabled={updateMutation.isPending}
-                  />
-                  <ColorPicker
-                    value={editState.color}
-                    onChange={(c) => setEditState((s) => s && { ...s, color: c })}
-                  />
-                  <div className="flex gap-2 justify-end">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setEditState(null)}
-                    >
-                      <X className="size-4" />
-                    </Button>
-                    <Button
-                      type="submit"
-                      size="sm"
-                      disabled={!editState.name.trim() || updateMutation.isPending}
-                    >
-                      <Check className="size-4" />
-                    </Button>
-                  </div>
-                </form>
-              </li>
-            ) : (
-              <li
-                key={cat.id}
-                className="flex items-center justify-between rounded-lg border bg-card px-4 py-3"
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className="size-4 rounded-full shrink-0"
-                    style={{ backgroundColor: cat.color }}
-                  />
-                  <span className="text-sm font-medium">{cat.name}</span>
-                </div>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => startEdit(cat)}
-                    className="px-2"
-                  >
-                    <Pencil className="size-3.5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDelete(cat)}
-                    className="px-2 text-destructive hover:text-destructive"
-                    disabled={deleteMutation.isPending}
-                  >
-                    <Trash2 className="size-3.5" />
-                  </Button>
-                </div>
-              </li>
-            ),
-          )}
-        </ul>
-      )}
+      {renderList()}
     </div>
   );
 };
