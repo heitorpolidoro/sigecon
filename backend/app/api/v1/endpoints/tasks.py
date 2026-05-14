@@ -4,9 +4,9 @@ from typing import Annotated
 from uuid import UUID
 
 from app.api import deps as api_deps
-from app.core.exceptions import ForbiddenError, TaskNotFoundError
+from app.core.exceptions import TaskNotFoundError
 from app.db import get_session
-from app.models.enums import TaskPriority, TaskStatus, UserRole
+from app.models.enums import TaskPriority, TaskStatus
 from app.models.task import Task, TaskHistory
 from app.models.user import User
 from app.schemas.task import TaskCreate, TaskHistoryRead, TaskRead, TaskUpdate

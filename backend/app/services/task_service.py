@@ -3,8 +3,6 @@
 from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
-from app.core.exceptions import ForbiddenError
-from app.models.enums import UserRole
 from app.models.task import Task, TaskHistory, get_utc_now
 from app.schemas.task import TaskCreate, TaskUpdate
 from sqlmodel import Session, select

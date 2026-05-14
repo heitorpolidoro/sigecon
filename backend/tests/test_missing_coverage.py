@@ -1,10 +1,7 @@
-import importlib
 import uuid
 from unittest.mock import patch
 
-import pytest
 from app.core import security
-from app.core.config import settings
 from app.models.enums import TaskStatus, UserRole
 from app.models.task import Task
 from app.models.user import User

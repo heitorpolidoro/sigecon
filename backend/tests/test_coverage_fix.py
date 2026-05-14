@@ -1,7 +1,5 @@
-import pytest
 from app.main import get_origins
 from app.core.config import settings
-from app.models.task import Task
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 from unittest.mock import patch

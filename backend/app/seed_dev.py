@@ -7,7 +7,7 @@ from app.models.category import Category
 from app.models.enums import TaskPriority, TaskStatus, UserRole
 from app.models.task import Task
 from app.models.user import User
-from sqlmodel import Session, create_engine, select
+from sqlmodel import Session, create_engine
 
 
 def seed_dev():

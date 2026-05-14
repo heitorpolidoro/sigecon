@@ -1,6 +1,5 @@
 import uuid
 
-import pytest
 from app.models.category import Category
 from app.schemas.category import CategoryCreate, CategoryUpdate
 from app.services.category_service import CategoryService

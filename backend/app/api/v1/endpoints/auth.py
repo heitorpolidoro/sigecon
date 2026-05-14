@@ -1,6 +1,5 @@
 """Authentication API endpoints."""
 
-from datetime import timedelta
 from typing import Annotated
 
 from app.api import deps as api_deps
