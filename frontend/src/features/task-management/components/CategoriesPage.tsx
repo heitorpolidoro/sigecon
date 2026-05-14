@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pencil, Trash2, Plus, Check, X } from "lucide-react";
+import { Pencil, Trash2, Plus, Check, X, AlertTriangle } from "lucide-react";
 import {
   useCategories,
   useCreateCategory,
@@ -11,6 +11,10 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Alert, AlertDescription } from "../../../components/ui/alert";
 import type { CategoryRead } from "../types";
+
+interface ApiError {
+  response?: { data?: { detail?: string } };
+}
 
 const PRESET_COLORS = [
   "#6366f1", "#8b5cf6", "#ec4899", "#ef4444",
@@ -65,6 +69,7 @@ const CategoriesPage: React.FC = () => {
   const [newColor, setNewColor] = useState("#6366f1");
   const [showForm, setShowForm] = useState(false);
   const [editState, setEditState] = useState<EditState | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleCreate = (e: React.FormEvent) => {
@@ -79,7 +84,7 @@ const CategoriesPage: React.FC = () => {
           setNewColor("#6366f1");
           setShowForm(false);
         },
-        onError: (err: any) => {
+        onError: (err: ApiError) => {
           setError(err.response?.data?.detail || t("categories.errorCreating"));
         },
       },
@@ -94,25 +99,27 @@ const CategoriesPage: React.FC = () => {
       { id: editState.id, data: { name: editState.name.trim(), color: editState.color } },
       {
         onSuccess: () => setEditState(null),
-        onError: (err: any) => {
+        onError: (err: ApiError) => {
           setError(err.response?.data?.detail || t("categories.errorUpdating"));
         },
       },
     );
   };
 
-  const handleDelete = (cat: CategoryRead) => {
-    if (!globalThis.confirm(t("categories.confirmDelete", { name: cat.name }))) return;
+  const handleDelete = (id: string) => {
     setError(null);
-    deleteMutation.mutate(cat.id, {
-      onError: (err: any) => {
+    deleteMutation.mutate(id, {
+      onSuccess: () => setConfirmDeleteId(null),
+      onError: (err: ApiError) => {
         setError(err.response?.data?.detail || t("categories.errorDeleting"));
+        setConfirmDeleteId(null);
       },
     });
   };
 
   const startEdit = (cat: CategoryRead) => {
     setEditState({ id: cat.id, name: cat.name, color: cat.color });
+    setConfirmDeleteId(null);
     setShowForm(false);
   };
 
@@ -135,7 +142,6 @@ const CategoriesPage: React.FC = () => {
                     onChange={(e) =>
                       setEditState((s) => (s ? { ...s, name: e.target.value } : null))
                     }
-                    autoFocus
                     disabled={updateMutation.isPending}
                   />
                   <ColorPicker
@@ -163,6 +169,38 @@ const CategoriesPage: React.FC = () => {
               </li>
             );
           }
+
+          if (confirmDeleteId === cat.id) {
+            return (
+              <li
+                key={cat.id}
+                className="flex items-center justify-between rounded-lg border border-destructive/40 bg-destructive/5 px-4 py-3"
+              >
+                <div className="flex items-center gap-2 text-sm text-destructive">
+                  <AlertTriangle className="size-4 shrink-0" />
+                  <span>{t("categories.confirmDelete", { name: cat.name })}</span>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setConfirmDeleteId(null)}
+                  >
+                    <X className="size-4" />
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDelete(cat.id)}
+                    disabled={deleteMutation.isPending}
+                  >
+                    <Check className="size-4" />
+                  </Button>
+                </div>
+              </li>
+            );
+          }
+
           return (
             <li
               key={cat.id}
@@ -187,9 +225,8 @@ const CategoriesPage: React.FC = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleDelete(cat)}
+                  onClick={() => setConfirmDeleteId(cat.id)}
                   className="px-2 text-destructive hover:text-destructive"
-                  disabled={deleteMutation.isPending}
                 >
                   <Trash2 className="size-3.5" />
                 </Button>
@@ -233,7 +270,6 @@ const CategoriesPage: React.FC = () => {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder={t("categories.namePlaceholder")}
-            autoFocus
             disabled={createMutation.isPending}
           />
           <ColorPicker value={newColor} onChange={setNewColor} />

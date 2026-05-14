@@ -42,8 +42,6 @@ const makeHooks = (overrides: {
 describe("CategoriesPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(window, "confirm").mockReturnValue(true);
-
     vi.mocked(useCategories).mockReturnValue({
       data: mockCategories,
       isLoading: false,
@@ -119,8 +117,7 @@ describe("CategoriesPage", () => {
 
   it("shows edit form when pencil button is clicked", () => {
     render(<CategoriesPage />);
-    const pencilButtons = document.querySelectorAll('button[class*="px-2"]');
-    fireEvent.click(pencilButtons[0]);
+    fireEvent.click(document.querySelectorAll('svg.lucide-pencil')[0].closest("button")!);
     expect(screen.getByDisplayValue("General")).toBeInTheDocument();
   });
 
@@ -129,15 +126,9 @@ describe("CategoriesPage", () => {
     makeHooks({ update: { mutate } });
     render(<CategoriesPage />);
 
-    // Click first edit (pencil) button
-    const pencilButtons = document.querySelectorAll('svg.lucide-pencil');
-    fireEvent.click(pencilButtons[0].closest("button")!);
-
-    const input = screen.getByDisplayValue("General");
-    fireEvent.change(input, { target: { value: "General Updated" } });
-
-    const checkButton = document.querySelector('svg.lucide-check')?.closest("button");
-    fireEvent.click(checkButton!);
+    fireEvent.click(document.querySelectorAll('svg.lucide-pencil')[0].closest("button")!);
+    fireEvent.change(screen.getByDisplayValue("General"), { target: { value: "General Updated" } });
+    fireEvent.click(document.querySelector('svg.lucide-check')!.closest("button")!);
 
     expect(mutate).toHaveBeenCalledWith(
       expect.objectContaining({ id: "cat-1", data: expect.objectContaining({ name: "General Updated" }) }),
@@ -147,39 +138,42 @@ describe("CategoriesPage", () => {
 
   it("cancels edit when X button is clicked", () => {
     render(<CategoriesPage />);
-    const pencilButtons = document.querySelectorAll('svg.lucide-pencil');
-    fireEvent.click(pencilButtons[0].closest("button")!);
-
+    fireEvent.click(document.querySelectorAll('svg.lucide-pencil')[0].closest("button")!);
     expect(screen.getByDisplayValue("General")).toBeInTheDocument();
 
-    const xButton = document.querySelector('svg.lucide-x')?.closest("button");
-    fireEvent.click(xButton!);
+    fireEvent.click(document.querySelector('svg.lucide-x')!.closest("button")!);
 
     expect(screen.queryByDisplayValue("General")).not.toBeInTheDocument();
     expect(screen.getByText("General")).toBeInTheDocument();
   });
 
-  it("calls deleteMutation when delete is confirmed", () => {
-    const mutate = vi.fn();
+  it("shows inline confirm when trash button is clicked", () => {
+    render(<CategoriesPage />);
+    fireEvent.click(document.querySelectorAll('svg.lucide-trash-2')[0].closest("button")!);
+    expect(screen.getByText(/Excluir a categoria/)).toBeInTheDocument();
+  });
+
+  it("calls deleteMutation when inline confirm is accepted", () => {
+    const mutate = vi.fn((_id, options) => options?.onSuccess?.());
     makeHooks({ delete: { mutate } });
     render(<CategoriesPage />);
 
-    const trashButtons = document.querySelectorAll('svg.lucide-trash-2');
-    fireEvent.click(trashButtons[0].closest("button")!);
+    fireEvent.click(document.querySelectorAll('svg.lucide-trash-2')[0].closest("button")!);
+    fireEvent.click(document.querySelector('svg.lucide-check')!.closest("button")!);
 
-    expect(window.confirm).toHaveBeenCalled();
     expect(mutate).toHaveBeenCalledWith("cat-1", expect.any(Object));
   });
 
-  it("does not call deleteMutation when confirm is cancelled", () => {
-    vi.spyOn(window, "confirm").mockReturnValue(false);
+  it("dismisses delete confirm when X is clicked", () => {
     const mutate = vi.fn();
     makeHooks({ delete: { mutate } });
     render(<CategoriesPage />);
 
-    const trashButtons = document.querySelectorAll('svg.lucide-trash-2');
-    fireEvent.click(trashButtons[0].closest("button")!);
+    fireEvent.click(document.querySelectorAll('svg.lucide-trash-2')[0].closest("button")!);
+    expect(screen.getByText(/Excluir a categoria/)).toBeInTheDocument();
 
+    fireEvent.click(document.querySelector('svg.lucide-x')!.closest("button")!);
+    expect(screen.queryByText(/Excluir a categoria/)).not.toBeInTheDocument();
     expect(mutate).not.toHaveBeenCalled();
   });
 
