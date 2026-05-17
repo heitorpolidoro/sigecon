@@ -12,7 +12,7 @@ import { Input } from "../../../components/ui/input";
 import { Alert, AlertDescription } from "../../../components/ui/alert";
 import type { CategoryRead } from "../types";
 
-interface ApiError {
+interface ApiError extends Error {
   response?: { data?: { detail?: string } };
 }
 

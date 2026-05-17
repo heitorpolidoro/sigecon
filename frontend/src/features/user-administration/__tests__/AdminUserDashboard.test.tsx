@@ -430,7 +430,7 @@ describe("AdminUserDashboard", () => {
 
     await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
 
-    const form = screen.getByPlaceholderText("Nome do tipo").closest("form")!;
+    const form = screen.getByPlaceholderText("Nome do tipo").closest("form") as HTMLFormElement;
     fireEvent.submit(form);
 
     expect(apiClient.post).not.toHaveBeenCalled();
@@ -578,7 +578,7 @@ describe("AdminUserDashboard", () => {
   });
 
   it("closes edit modal when backdrop is clicked", async () => {
-    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers }); // skipcq: JS-0323
 
     render(<AdminUserDashboard />, { wrapper: createWrapper() });
 
@@ -587,14 +587,14 @@ describe("AdminUserDashboard", () => {
     fireEvent.click(screen.getAllByText("Editar")[0]);
     expect(screen.getByText("Editar Usuário")).toBeInTheDocument();
 
-    const backdrop = document.querySelector(".fixed.inset-0.z-50")!;
+    const backdrop = document.querySelector(".fixed.inset-0.z-50") as HTMLElement;
     fireEvent.click(backdrop);
 
     expect(screen.queryByText("Editar Usuário")).toBeNull();
   });
 
   it("closes edit modal when Escape key is pressed on backdrop", async () => {
-    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers }); // skipcq: JS-0323
 
     render(<AdminUserDashboard />, { wrapper: createWrapper() });
 
@@ -603,7 +603,7 @@ describe("AdminUserDashboard", () => {
     fireEvent.click(screen.getAllByText("Editar")[0]);
     expect(screen.getByText("Editar Usuário")).toBeInTheDocument();
 
-    const backdrop = document.querySelector(".fixed.inset-0.z-50")!;
+    const backdrop = document.querySelector(".fixed.inset-0.z-50") as HTMLElement;
     fireEvent.keyDown(backdrop, { key: "Tab" });
     expect(screen.getByText("Editar Usuário")).toBeInTheDocument();
 
