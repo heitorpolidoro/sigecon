@@ -354,8 +354,12 @@ const AdminUserDashboard: React.FC = () => {
       {editingUser && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          role="presentation"
           onClick={(e) => {
             if (e.target === e.currentTarget) setEditingUser(null);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setEditingUser(null);
           }}
         >
           <div className="bg-card border rounded-xl shadow-xl p-6 w-full max-w-sm mx-4">

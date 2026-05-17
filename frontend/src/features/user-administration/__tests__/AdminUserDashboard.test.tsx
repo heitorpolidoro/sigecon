@@ -593,6 +593,24 @@ describe("AdminUserDashboard", () => {
     expect(screen.queryByText("Editar Usuário")).toBeNull();
   });
 
+  it("closes edit modal when Escape key is pressed on backdrop", async () => {
+    (apiClient.get as any).mockResolvedValue({ data: mockUsers });
+
+    render(<AdminUserDashboard />, { wrapper: createWrapper() });
+
+    await waitFor(() => expect(screen.getByText("User One")).toBeDefined());
+
+    fireEvent.click(screen.getAllByText("Editar")[0]);
+    expect(screen.getByText("Editar Usuário")).toBeInTheDocument();
+
+    const backdrop = document.querySelector(".fixed.inset-0.z-50")!;
+    fireEvent.keyDown(backdrop, { key: "Tab" });
+    expect(screen.getByText("Editar Usuário")).toBeInTheDocument();
+
+    fireEvent.keyDown(backdrop, { key: "Escape" });
+    expect(screen.queryByText("Editar Usuário")).toBeNull();
+  });
+
   it("updates full name in modal input", async () => {
     (apiClient.get as any).mockResolvedValue({ data: mockUsers });
 
